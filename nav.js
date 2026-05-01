@@ -1,7 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
   initializeToggleBars();
+  initializeMobileMenu();
   registerServiceWorker();
 });
+
+function initializeMobileMenu() {
+  const menuBtn = document.querySelector('.mobile-menu-btn');
+  const closeBtn = document.querySelector('.mobile-nav-close');
+  const navLinks = document.querySelectorAll('.site-toggle-link');
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', () => {
+      document.body.classList.add('menu-open');
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+      document.body.classList.remove('menu-open');
+    });
+  }
+
+  // Close menu when a link is clicked
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      document.body.classList.remove('menu-open');
+    });
+  });
+}
 
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {

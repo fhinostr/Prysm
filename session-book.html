@@ -21,7 +21,7 @@
   <main class="app-container bcba-container">
     <header class="app-header glass-panel">
       <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
-      <nav class="site-toggle" aria-label="Site Navigation">
+      <nav class="site-toggle" aria-label="Site Navigation"><button class="mobile-nav-close btn-icon" aria-label="Close Menu"><i data-lucide="x"></i></button>
         <a href="index.html" class="site-toggle-link">Home</a>
         <a href="treatment-plan.html" class="site-toggle-link active" aria-current="page">Clients</a>
         <a href="billing.html" class="site-toggle-link">Billing</a>
@@ -29,7 +29,7 @@
         <a href="contacts.html" class="site-toggle-link">Staff</a>
         <a href="get-started.html" class="site-toggle-link">Get Started</a>
       </nav>
-      <div class="header-right" style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center; min-width: 140px;">
+      <button class="mobile-menu-btn" aria-label="Open Menu" style="margin-left: auto; margin-right: 1rem;"><i data-lucide="menu"></i></button><div class="header-right" style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center; min-width: 140px;">
         <div style="font-variant-numeric: tabular-nums; font-weight: 600; color: var(--color-blue-dark); margin-right: 0.5rem;" id="session-timer">00:00:00</div>
         <button class="glass-btn btn-sm" id="btn-session-toggle" onclick="toggleMainSession()" aria-label="Start Session" style="padding: 0.5rem;">
           <i data-lucide="play" id="icon-session-toggle"></i>
