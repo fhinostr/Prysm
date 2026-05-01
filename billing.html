@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing | Liquid Glass</title>
+  <meta name="description" content="Placeholder billing workspace for the ABA platform.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="marketing-page">
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container home-container">
+    <header class="app-header glass-panel">
+      <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link">Clients</a>
+        <a href="billing.html" class="site-toggle-link active" aria-current="page">Billing</a>
+        <a href="files.html" class="site-toggle-link">Files</a>
+        <a href="contacts.html" class="site-toggle-link">Staff</a>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+      <div class="header-right"></div>
+    </header>
+
+    <section class="hub-hero glass-panel">
+      <div>
+        <span class="hero-eyebrow">Billing</span>
+        <h1>Billing calendar</h1>
+      </div>
+    </section>
+
+    <section class="billing-shell">
+      <article class="glass-panel billing-panel">
+        <div class="billing-toolbar">
+          <div>
+            <span class="hero-eyebrow">Schedule</span>
+            <h2>Appointment Blocks</h2>
+          </div>
+          
+        </div>
+
+        <div class="billing-calendar" id="billing-calendar">
+          <div class="billing-grid" id="billing-grid">
+            <div class="billing-time-column" id="billing-time-column"></div>
+            <div class="billing-days" id="billing-days"></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Session Notes Archive -->
+      <article class="glass-panel billing-panel" style="margin-top: 2rem;">
+        <div class="billing-toolbar">
+          <div>
+            <span class="hero-eyebrow">Documentation</span>
+            <h2>Session Notes Archive</h2>
+          </div>
+          
+        </div>
+
+        <div class="scrollable-content" style="max-height: 400px; padding: 0;">
+          <div id="session-notes-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            
+            <!-- Generate Note Section -->
+            <article class="data-card glass-panel-inner">
+              <header class="card-header">
+                <div class="card-title-group">
+                  <i data-lucide="message-square" class="card-icon"></i>
+                  <h3>Draft New Session Note</h3>
+                </div>
+                <button class="glass-btn btn-sm btn-primary" onclick="autoGenerateNote()">
+                  <i data-lucide="wand-2"></i> Auto-Generate Note
+                </button>
+              </header>
+              <div class="card-body">
+                <textarea id="session-notes-textarea" class="glass-textarea" placeholder="Review the session overall. Leave notes regarding unexpected behaviors, environmental barriers, illness, or progress for treatment planning..."></textarea>
+                <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+                  <button class="glass-btn btn-primary" onclick="saveSessionNote()">Save Note to Archive</button>
+                </div>
+              </div>
+            </article>
+
+            <!-- Archived Notes (Mock) -->
+            <article class="data-card glass-panel-inner" style="background: rgba(255,255,255,0.2);">
+              <header class="card-header" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.75rem;">
+                <div class="card-title-group">
+                  <i data-lucide="file-text" class="card-icon" style="color: var(--color-text-light);"></i>
+                  <h4 style="margin: 0; font-size: 1rem;">Session on Oct 24, 2023 - John Doe</h4>
+                </div>
+              </header>
+              <div class="card-body" style="padding-top: 0.75rem;">
+                <p style="font-size: 0.9rem; color: var(--color-text-light); margin: 0; white-space: pre-wrap;">Skill Acquisition: Tying Shoes (80%), Tacting Colors (90%).
+Problem Behaviors: Hitting (2 occurrences).
+The client participated in skill acquisition programming. Behavior intervention plan was implemented as written.</p>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="billing-modal-overlay" style="display: none;">
+    <div class="glass-modal billing-modal">
+      <div class="modal-header" style="position: relative;">
+        <h2>Appointment Details</h2>
+        <button class="btn-icon" onclick="closeBillingModal(true)" aria-label="Cancel" style="position: absolute; top: 1rem; right: 1rem;">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="billing-appointment-form" onsubmit="saveBillingAppointment(event)">
+          <div class="form-group">
+            <label for="billing-client">Client</label>
+            <div class="client-picker">
+              <input id="billing-client" name="client" type="text" class="glass-input" placeholder="Start typing a client name..." autocomplete="off" required oninput="handleBillingClientInput(event)" onfocus="handleBillingClientFocus()">
+              <input id="billing-client-id" name="client_id" type="hidden">
+              <div class="client-suggestions glass-panel" id="billing-client-suggestions" style="display: none;"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="billing-rbt">RBT</label>
+            <input id="billing-rbt" name="rbt" type="text" class="glass-input" placeholder="e.g. Jane Smith" required>
+          </div>
+          <div class="form-group">
+            <label for="billing-reason">Reason for Session</label>
+            <textarea id="billing-reason" name="reason" class="glass-input" rows="3" placeholder="e.g. Direct treatment, reassessment support, caregiver training..." required></textarea>
+          </div>
+          <div class="modal-footer" style="padding: 1rem 0 0; border-top: none;">
+            <button type="button" class="glass-btn" onclick="closeBillingModal(true)">Cancel</button>
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" id="btn-start-session" class="glass-btn" style="background-color: var(--color-green); color: white; display: none;" onclick="startSessionFromSchedule()">
+                <i data-lucide="play"></i> Start Session
+              </button>
+              <button type="submit" class="glass-btn btn-primary">Save Appointment</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="billing-delete-modal-overlay" style="display: none;">
+    <div class="glass-modal billing-modal">
+      <div class="modal-header" style="position: relative;">
+        <h2>Delete Session</h2>
+        <button class="btn-icon" onclick="closeBillingDeleteModal()" aria-label="Close" style="position: absolute; top: 1rem; right: 1rem;">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="glass-btn" onclick="closeBillingDeleteModal()">Cancel</button>
+        <button type="button" class="glass-btn btn-primary text-red" onclick="confirmDeleteBillingAppointment()">Delete Session</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="nav.js"></script>
+  <script src="clients-data.js"></script>
+  <script src="billing.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

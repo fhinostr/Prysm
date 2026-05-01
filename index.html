@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prysm | Home</title>
+  <meta name="description" content="Landing page for the ABA platform with home and client navigation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="marketing-page">
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container home-container">
+    <header class="app-header glass-panel">
+      <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link active" aria-current="page">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link">Clients</a>
+        <a href="billing.html" class="site-toggle-link">Billing</a>
+        <a href="files.html" class="site-toggle-link">Files</a>
+        <a href="contacts.html" class="site-toggle-link">Staff</a>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+      <div class="header-right"></div>
+    </header>
+
+    <section class="home-hero glass-panel">
+      <div class="hero-logo-side">
+        <img src="assets/prysm-logo-new.png" alt="Prysm" class="hero-logo-large">
+      </div>
+      <div class="hero-copy">
+        <span class="hero-eyebrow">Welcome to Prysm</span>
+        <h1>Smarter ABA Therapy Management</h1>
+        <div class="hero-actions">
+          <a href="treatment-plan.html" class="glass-btn btn-primary">Get Started</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="nav.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

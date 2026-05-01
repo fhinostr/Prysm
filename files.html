@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Files | Liquid Glass</title>
+  <meta name="description" content="Client file hub for insurance documents, assessments, treatment plans, and additional records.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="marketing-page">
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container home-container">
+    <header class="app-header glass-panel">
+      <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link">Clients</a>
+        <a href="billing.html" class="site-toggle-link">Billing</a>
+        <a href="files.html" class="site-toggle-link active" aria-current="page">Files</a>
+        <a href="contacts.html" class="site-toggle-link">Staff</a>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+      <div class="header-right"></div>
+    </header>
+
+    <section class="hub-hero glass-panel">
+      <div>
+        <span class="hero-eyebrow">Files</span>
+        <h1>Client document library</h1>
+      </div>
+    </section>
+
+    <div class="subnav-shell">
+      <nav class="view-toggle files-toggle" aria-label="File Categories">
+        <button type="button" class="view-toggle-link active files-tab-btn" data-files-tab="insurance" onclick="switchFilesTab('insurance')">Insurance</button>
+        <button type="button" class="view-toggle-link files-tab-btn" data-files-tab="assessments" onclick="switchFilesTab('assessments')">Assessments</button>
+        <button type="button" class="view-toggle-link files-tab-btn" data-files-tab="treatment" onclick="switchFilesTab('treatment')">Treatment Plans</button>
+        <button type="button" class="view-toggle-link files-tab-btn" data-files-tab="additional" onclick="switchFilesTab('additional')">Additional Docs</button>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+    </div>
+
+    <section class="files-panel glass-panel">
+      <article class="file-group files-tab-pane active" data-files-pane="insurance">
+        <div class="file-group-header">
+          <div class="hub-icon-wrap">
+            <i data-lucide="shield-check"></i>
+          </div>
+          <div>
+            <h2>Insurance Files</h2>
+            
+          </div>
+        </div>
+        <div class="file-list">
+          <div class="file-row">
+            <div>
+              <strong>John Doe - Insurance Authorization.pdf</strong>
+              <span>Active authorization on file</span>
+            </div>
+            <span class="badge">John Doe</span>
+          </div>
+          <div class="file-row">
+            <div>
+              <strong>Mia Hernandez - Insurance Card Front/Back.pdf</strong>
+              <span>Member card and subscriber details</span>
+            </div>
+            <span class="badge">Mia Hernandez</span>
+          </div>
+          <div class="file-row">
+            <div>
+              <strong>Ethan Brooks - Benefits Verification.pdf</strong>
+              <span>Coverage and billing verification</span>
+            </div>
+            <span class="badge">Ethan Brooks</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="file-group files-tab-pane" data-files-pane="assessments" style="display: none;">
+        <div class="file-group-header">
+          <div class="hub-icon-wrap">
+            <i data-lucide="clipboard-list"></i>
+          </div>
+          <div>
+            <h2>Assessments</h2>
+            
+          </div>
+        </div>
+        <div class="file-list">
+          <div class="file-row">
+            <div>
+              <strong>John Doe - Initial Assessment Report.pdf</strong>
+              <span>Clinical intake and baseline findings</span>
+            </div>
+            <span class="badge">Assessment</span>
+          </div>
+          <div class="file-row">
+            <div>
+              <strong>Mia Hernandez - Reassessment Summary.pdf</strong>
+              <span>Updated progress and recommendations</span>
+            </div>
+            <span class="badge">Assessment</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="file-group files-tab-pane" data-files-pane="treatment" style="display: none;">
+        <div class="file-group-header">
+          <div class="hub-icon-wrap">
+            <i data-lucide="folder-kanban"></i>
+          </div>
+          <div>
+            <h2>Treatment Plans</h2>
+            
+          </div>
+        </div>
+        <div class="file-list">
+          <div class="file-row">
+            <div>
+              <strong>John Doe - Current Treatment Plan.pdf</strong>
+              <span>Most recent approved plan of care</span>
+            </div>
+            <span class="badge">Current</span>
+          </div>
+          <div class="file-row">
+            <div>
+              <strong>Mia Hernandez - Current Treatment Plan.pdf</strong>
+              <span>Active goals, procedures, and targets</span>
+            </div>
+            <span class="badge">Current</span>
+          </div>
+          <div class="file-row">
+            <div>
+              <strong>Ethan Brooks - Prior Treatment Plan.pdf</strong>
+              <span>Archived reference document</span>
+            </div>
+            <span class="badge">Archive</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="file-group files-tab-pane" data-files-pane="additional" style="display: none;">
+        <div class="file-group-header">
+          <div class="hub-icon-wrap">
+            <i data-lucide="files"></i>
+          </div>
+          <div>
+            <h2>Additional Documents</h2>
+            
+          </div>
+        </div>
+        <div class="file-list">
+          <div class="file-row">
+            <div>
+              <strong>John Doe - Parent Consent Form.pdf</strong>
+              <span>Signed consent documentation</span>
+            </div>
+            <span class="badge">Consent</span>
+          </div>
+          <div class="file-row">
+            <div>
+              <strong>Mia Hernandez - School Collaboration Notes.pdf</strong>
+              <span>Outside coordination record</span>
+            </div>
+            <span class="badge">Notes</span>
+          </div>
+          <div class="file-row">
+            <div>
+              <strong>Ethan Brooks - Physician Referral.pdf</strong>
+              <span>Referral and supporting intake paperwork</span>
+            </div>
+            <span class="badge">Referral</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="nav.js"></script>
+  <script src="files.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

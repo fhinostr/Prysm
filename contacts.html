@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacts | Liquid Glass</title>
+  <meta name="description" content="Staff directory including BCBAs and RBTs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="marketing-page">
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container home-container">
+    <header class="app-header glass-panel">
+      <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link">Clients</a>
+        <a href="billing.html" class="site-toggle-link">Billing</a>
+        <a href="files.html" class="site-toggle-link">Files</a>
+        <a href="contacts.html" class="site-toggle-link active" aria-current="page">Staff</a>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+      <div class="header-right"></div>
+    </header>
+
+    <section class="hub-hero glass-panel">
+      <div>
+        <span class="hero-eyebrow">Contacts</span>
+        <h1>Staff Directory</h1>
+      </div>
+    </section>
+
+    <div class="subnav-shell">
+      <nav class="view-toggle contacts-toggle" aria-label="Staff Categories">
+        <button type="button" class="view-toggle-link active contacts-tab-btn" data-contacts-tab="bcbas" onclick="switchContactsTab('bcbas')">BCBAs</button>
+        <button type="button" class="view-toggle-link contacts-tab-btn" data-contacts-tab="rbts" onclick="switchContactsTab('rbts')">RBTs</button>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+    </div>
+
+    <section class="client-list-shell">
+      <article class="client-list-card glass-panel contacts-tab-pane active" data-contacts-pane="bcbas">
+        <div class="client-list-header">
+          <h2>BCBAs</h2>
+          <span class="badge" id="bcba-count-badge">0</span>
+        </div>
+        <div id="bcba-list"></div>
+      </article>
+
+      <article class="client-list-card glass-panel contacts-tab-pane" data-contacts-pane="rbts" style="display: none;">
+        <div class="client-list-header">
+          <h2>RBTs</h2>
+          <span class="badge" id="rbt-count-badge">0</span>
+        </div>
+        <div id="rbt-list"></div>
+      </article>
+    </section>
+
+  </main>
+
+  <script src="nav.js"></script>
+  <script src="contacts.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

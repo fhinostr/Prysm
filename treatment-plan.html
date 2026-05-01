@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clients | Liquid Glass</title>
+  <meta name="description" content="Client directory with links to individual treatment plans.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="marketing-page">
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container home-container">
+    <header class="app-header glass-panel">
+      <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link active" aria-current="page">Clients</a>
+        <a href="billing.html" class="site-toggle-link">Billing</a>
+        <a href="files.html" class="site-toggle-link">Files</a>
+        <a href="contacts.html" class="site-toggle-link">Staff</a>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+      <div class="header-right"></div>
+    </header>
+
+    <section class="hub-hero glass-panel">
+      <div>
+        <span class="hero-eyebrow">Clients</span>
+        <h1>Select a client</h1>
+      </div>
+    </section>
+
+    <section class="client-list-shell">
+      <article class="client-list-card glass-panel">
+        <div class="client-list-header">
+          <h2>Client List</h2>
+          <span class="badge" id="client-count-badge">0 Clients</span>
+        </div>
+        <div id="client-list"></div>
+      </article>
+    </section>
+  </main>
+
+  <script src="nav.js"></script>
+  <script src="clients-data.js"></script>
+  <script src="treatment-plan.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

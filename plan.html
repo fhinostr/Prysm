@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing Plans | Liquid Glass</title>
+  <meta name="description" content="View pricing and plans for Prysm services.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="marketing-page">
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container home-container">
+    <header class="app-header glass-panel">
+      <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link">Clients</a>
+        <a href="billing.html" class="site-toggle-link">Billing</a>
+        <a href="files.html" class="site-toggle-link">Files</a>
+        <a href="contacts.html" class="site-toggle-link">Contacts</a>
+      </nav>
+      <div class="header-right"></div>
+    </header>
+
+    <section class="hub-hero glass-panel">
+      <div>
+        <span class="hero-eyebrow">Pricing</span>
+        <h1>Choose your plan</h1>
+        <p>Simple, transparent pricing to support your clinic's growth. Start with the essentials, or upgrade for advanced data analytics and billing integrations.</p>
+      </div>
+    </section>
+
+    <section class="scrollable-content">
+      <div class="pricing-grid">
+        
+        <!-- Basic Plan -->
+        <article class="pricing-card glass-panel">
+          <h3>Basic</h3>
+          <p>For independent BCBAs</p>
+          <div class="pricing-price">$49<span>/mo</span></div>
+          <button class="glass-btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Get Started</button>
+          <ul class="pricing-features">
+            <li><i data-lucide="check-circle-2"></i> Up to 10 active clients</li>
+            <li><i data-lucide="check-circle-2"></i> Basic Session Book</li>
+            <li><i data-lucide="check-circle-2"></i> Simple target graphing</li>
+            <li><i data-lucide="check-circle-2"></i> File storage (5GB)</li>
+          </ul>
+        </article>
+
+        <!-- Pro Plan (Popular) -->
+        <article class="pricing-card glass-panel popular">
+          <div class="popular-badge">Most Popular</div>
+          <h3>Professional</h3>
+          <p>For growing clinics</p>
+          <div class="pricing-price">$129<span>/mo</span></div>
+          <button class="glass-btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Start Free Trial</button>
+          <ul class="pricing-features">
+            <li><i data-lucide="check-circle-2"></i> Unlimited active clients</li>
+            <li><i data-lucide="check-circle-2"></i> Advanced RBT/BCBA roles</li>
+            <li><i data-lucide="check-circle-2"></i> Automated data tracking</li>
+            <li><i data-lucide="check-circle-2"></i> Client directory & file management</li>
+            <li><i data-lucide="check-circle-2"></i> Email & Phone Support</li>
+          </ul>
+        </article>
+
+        <!-- Enterprise Plan -->
+        <article class="pricing-card glass-panel">
+          <h3>Enterprise</h3>
+          <p>For large organizations</p>
+          <div class="pricing-price">Custom</div>
+          <button class="glass-btn" style="width: 100%; margin-bottom: 1rem;">Contact Sales</button>
+          <ul class="pricing-features">
+            <li><i data-lucide="check-circle-2"></i> Everything in Pro</li>
+            <li><i data-lucide="check-circle-2"></i> Custom EHR integrations</li>
+            <li><i data-lucide="check-circle-2"></i> White-glove onboarding</li>
+            <li><i data-lucide="check-circle-2"></i> Dedicated account manager</li>
+            <li><i data-lucide="check-circle-2"></i> Custom SLA</li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="nav.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

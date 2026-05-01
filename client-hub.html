@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Hub | Liquid Glass</title>
+  <meta name="description" content="Centralized hub for client assets, sessions, and files.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .hub-primary {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--color-blue), var(--color-blue-dark));
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
+    }
+    .hub-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
+    }
+    .hub-primary i {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1rem;
+    }
+    .hub-primary h3 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+    .hub-primary p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+    
+    .hub-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .hub-list-item {
+      display: flex;
+      align-items: center;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: var(--color-text);
+      transition: all 0.3s ease;
+    }
+    .hub-list-item:hover {
+      transform: translateX(4px);
+      border-color: rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.5);
+    }
+    .hub-list-item .icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(37, 99, 235, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1.5rem;
+      color: var(--color-blue);
+    }
+    .hub-list-item h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+    .hub-list-item p {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      margin: 0;
+    }
+    .hub-list-item .chevron {
+      margin-left: auto;
+      color: var(--color-text-light);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container">
+    <header class="app-header glass-panel">
+      <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link active" aria-current="page">Clients</a>
+        <a href="billing.html" class="site-toggle-link">Billing</a>
+        <a href="files.html" class="site-toggle-link">Files</a>
+        <a href="contacts.html" class="site-toggle-link">Staff</a>
+        <a href="get-started.html" class="site-toggle-link">Get Started</a>
+      </nav>
+      <div class="header-right"></div>
+    </header>
+
+    <div style="max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; flex: 1; overflow: hidden; padding-top: 2rem;">
+      <div style="padding: 0 1.5rem;">
+        <h2 class="section-title" id="client-name-title">Client Dashboard</h2>
+      </div>
+
+      <div class="scrollable-content" style="flex: 1; padding: 0 1.5rem 2rem;">
+        <a href="session-book.html" class="hub-primary">
+          <i data-lucide="play-circle"></i>
+          <h3>Session Book</h3>
+        </a>
+
+        <div class="hub-list">
+          <a href="bcba.html" class="glass-panel hub-list-item">
+            <div class="icon-wrapper">
+              <i data-lucide="layout-dashboard"></i>
+            </div>
+            <div>
+              <h3>Treatment Planning</h3>
+            </div>
+            <i data-lucide="chevron-right" class="chevron"></i>
+          </a>
+          
+          <a href="files.html" class="glass-panel hub-list-item">
+            <div class="icon-wrapper">
+              <i data-lucide="folder-open"></i>
+            </div>
+            <div>
+              <h3>Files</h3>
+            </div>
+            <i data-lucide="chevron-right" class="chevron"></i>
+          </a>
+          
+          <a href="billing.html" class="glass-panel hub-list-item">
+            <div class="icon-wrapper">
+              <i data-lucide="calendar"></i>
+            </div>
+            <div>
+              <h3>Scheduled Sessions</h3>
+            </div>
+            <i data-lucide="chevron-right" class="chevron"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="nav.js"></script>
+  <script src="program-data.js"></script>
+  <script>
+    lucide.createIcons();
+    
+    // Attempt to set client name from program data
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const program = loadProgramData();
+        if (program && program.clientName) {
+          const title = document.getElementById('client-name-title');
+          if (title) title.textContent = `${program.clientName}'s Dashboard`;
+        }
+      } catch(e) {}
+    });
+  </script>
+</body>
+</html>
