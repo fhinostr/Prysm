@@ -506,11 +506,20 @@ body.marketing-page {
     padding: 1.2rem;
     font-size: 1.2rem;
     border-radius: 16px;
-    background: rgba(255,255,255,0.3);
+    background: transparent; /* Removed background for liquid glass look */
+    text-align: left; /* Align text left for vertical menu */
   }
 
   .site-toggle .toggle-slider {
-    display: none; /* Hide slider on mobile vertical menu */
+    display: block; /* Re-enabled slider for mobile vertical menu */
+    border-radius: 16px;
+    background:
+      radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.2) 32%, transparent 52%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08));
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      0 14px 28px rgba(5, 87, 155, 0.12);
   }
 
   .view-toggle {

@@ -12,6 +12,16 @@ function initializeMobileMenu() {
   if (menuBtn) {
     menuBtn.addEventListener('click', () => {
       document.body.classList.add('menu-open');
+      
+      // Sync slider position when menu opens
+      const siteToggle = document.querySelector('.site-toggle');
+      if (siteToggle) {
+        const activeLink = siteToggle.querySelector('.active') || siteToggle.querySelector('a');
+        if (activeLink) {
+          // Small timeout to allow the slide-in transition to start/visibility to trigger
+          setTimeout(() => updateToggleSlider(siteToggle, activeLink), 50);
+        }
+      }
     });
   }
 
