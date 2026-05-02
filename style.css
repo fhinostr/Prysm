@@ -454,10 +454,11 @@ body.marketing-page {
 
   .brand-chip-logo-horizontal {
     height: 48px;
+    margin-bottom: 0;
   }
 
   .mobile-menu-btn {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
   }
@@ -474,13 +475,13 @@ body.marketing-page {
     -webkit-backdrop-filter: blur(32px);
     z-index: 1050;
     transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    padding: 5rem 2rem;
+    padding: 6rem 2rem;
     justify-content: flex-start;
     border-radius: 0;
-    gap: 1rem;
+    gap: 1.2rem;
     max-width: none;
     box-shadow: -10px 0 30px rgba(0,0,0,0.05);
-    overflow: visible; /* Ensure slider isn't clipped */
+    overflow: visible;
   }
 
   body.menu-open .site-toggle {
@@ -497,11 +498,13 @@ body.marketing-page {
 
   .site-toggle-link {
     width: 100%;
-    padding: 1.2rem;
-    font-size: 1.2rem;
+    padding: 1rem 2rem; /* Exactly as laptop */
+    font-size: 1.25rem;  /* Exactly as laptop */
+    font-weight: 700;
     border-radius: 16px;
-    background: transparent; /* Removed background for liquid glass look */
-    text-align: left; /* Align text left for vertical menu */
+    background: transparent;
+    text-align: center; /* Exactly as laptop */
+    white-space: nowrap;
   }
 
   .site-toggle .toggle-slider {
@@ -532,7 +535,7 @@ body.marketing-page {
   .view-toggle-link {
     flex: none;
     padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .subnav-shell {
