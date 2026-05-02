@@ -18,8 +18,8 @@ function initializeMobileMenu() {
       if (siteToggle) {
         const activeLink = siteToggle.querySelector('.active') || siteToggle.querySelector('a');
         if (activeLink) {
-          // Small timeout to allow the slide-in transition to start/visibility to trigger
-          setTimeout(() => updateToggleSlider(siteToggle, activeLink), 50);
+          // Sync slider after the overlay animation has completed for perfect positioning
+          setTimeout(() => updateToggleSlider(siteToggle, activeLink), 450);
         }
       }
     });

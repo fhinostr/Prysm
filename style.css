@@ -445,13 +445,6 @@ body.marketing-page {
 }
 
 @media (max-width: 1024px) {
-  .site-toggle-link {
-    font-size: 1.1rem;
-    padding: 0.8rem 1.2rem;
-  }
-}
-
-@media (max-width: 768px) {
   .app-header {
     display: flex;
     justify-content: space-between;
@@ -487,6 +480,7 @@ body.marketing-page {
     gap: 1rem;
     max-width: none;
     box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+    overflow: visible; /* Ensure slider isn't clipped */
   }
 
   body.menu-open .site-toggle {
