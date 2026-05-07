@@ -12,7 +12,7 @@
  * @returns {Promise<Array>} Array of client objects
  */
 async function loadAssignedClients() {
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from('clients')
     .select('*')
     .eq('status', 'active')
@@ -40,7 +40,7 @@ async function loadAssignedClients() {
  * @returns {Promise<Object|null>}
  */
 async function getClientByIdAsync(clientId) {
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from('clients')
     .select('*')
     .eq('id', clientId)
@@ -75,7 +75,7 @@ async function loadProgramDataAsync(clientId) {
   }
 
   // Load targets
-  const { data: targets, error } = await supabase
+  const { data: targets, error } = await window.supabaseClient
     .from('targets')
     .select('*')
     .eq('client_id', clientId)
@@ -99,7 +99,7 @@ async function loadProgramDataAsync(clientId) {
  * @returns {Promise<Array>}
  */
 async function loadSessionHistory(targetId, limit = 10) {
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from('session_data')
     .select('*')
     .eq('target_id', targetId)
@@ -124,7 +124,7 @@ async function loadSessionHistory(targetId, limit = 10) {
  * @returns {Promise<Object|null>}
  */
 async function saveSessionDataAsync(clientId, targetId, dataJson, durationSecs, notes) {
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from('session_data')
     .insert({
       client_id: clientId,
@@ -154,7 +154,7 @@ async function saveSessionDataAsync(clientId, targetId, dataJson, durationSecs, 
 async function upsertTargetAsync(clientId, target) {
   const payload = normalizeTargetToDB(clientId, target);
 
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from('targets')
     .upsert(payload, { onConflict: 'id' })
     .select()
@@ -174,7 +174,7 @@ async function upsertTargetAsync(clientId, target) {
  * @returns {Promise<boolean>}
  */
 async function deleteTargetAsync(targetId) {
-  const { error } = await supabase
+  const { error } = await window.supabaseClient
     .from('targets')
     .delete()
     .eq('id', targetId);
@@ -193,7 +193,7 @@ async function deleteTargetAsync(targetId) {
  * @returns {Promise<Object|null>}
  */
 async function getTargetByIdAsync(targetId) {
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from('targets')
     .select('*')
     .eq('id', targetId)
@@ -212,7 +212,7 @@ async function getTargetByIdAsync(targetId) {
  * @returns {Promise<Object>} { insurance: [], assessment: [], treatment: [], additional: [] }
  */
 async function loadClientFiles(clientId) {
-  const { data, error } = await supabase
+  const { data, error } = await window.supabaseClient
     .from('client_files')
     .select('*')
     .eq('client_id', clientId)
