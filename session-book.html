@@ -37,6 +37,7 @@
         <button class="glass-btn btn-sm text-red" id="btn-session-end" onclick="endMainSession()" aria-label="End Session" style="padding: 0.5rem; display: none;">
           <i data-lucide="square"></i>
         </button>
+        <button class="glass-btn btn-sm" onclick="signOut()" title="Sign Out" style="padding: 0.5rem;" aria-label="Sign Out"><i data-lucide="log-out"></i></button>
       </div>
     </header>
 
@@ -139,6 +140,11 @@
     </div>
   </div>
 
+  <!-- Supabase Auth Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth-guard.js"></script>
+  <script src="supabase-data.js"></script>
   <script src="nav.js"></script>
   <script src="program-data.js"></script>
   <script src="app.js"></script>

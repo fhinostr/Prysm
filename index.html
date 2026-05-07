@@ -29,7 +29,10 @@
         <a href="contacts.html" class="site-toggle-link">Staff</a>
         <a href="get-started.html" class="site-toggle-link">Get Started</a>
       </nav>
-      <div class="header-right"><button class="mobile-menu-btn" aria-label="Open Menu"><i data-lucide="menu"></i></button></div>
+      <div class="header-right">
+        <button class="glass-btn btn-sm" onclick="signOut()" title="Sign Out" style="padding: 0.5rem;" aria-label="Sign Out"><i data-lucide="log-out"></i></button>
+        <button class="mobile-menu-btn" aria-label="Open Menu"><i data-lucide="menu"></i></button>
+      </div>
     </header>
 
     <section class="home-hero glass-panel">
@@ -46,6 +49,10 @@
     </section>
   </main>
 
+  <!-- Supabase Auth Integration -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth-guard.js"></script>
   <script src="nav.js"></script>
   <script>
     lucide.createIcons();

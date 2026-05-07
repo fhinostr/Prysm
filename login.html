@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | Prysm</title>
+  <meta name="description" content="Secure sign-in for the Prysm ABA clinical management platform.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* ─── Login-Specific Styles ─────────────────────────────── */
+    body {
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      padding: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-brand {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .login-brand img {
+      height: 80px;
+      width: auto;
+      filter:
+        drop-shadow(0 6px 16px rgba(32, 178, 170, 0.3))
+        drop-shadow(0 2px 6px rgba(1, 87, 155, 0.12));
+      animation: heroLogoFloat 6s ease-in-out infinite;
+    }
+
+    .login-card {
+      padding: 2.5rem;
+    }
+
+    .login-card h1 {
+      font-size: 1.5rem;
+      color: var(--color-blue-dark);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-card .login-subtitle {
+      text-align: center;
+      color: var(--color-text-light);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .login-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .login-field label {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--color-blue-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .login-field label i {
+      width: 16px;
+      height: 16px;
+      opacity: 0.6;
+    }
+
+    .login-field .glass-input {
+      padding: 0.85rem 1rem;
+      font-size: 1rem;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+
+    .login-btn:hover::before {
+      left: 100%;
+    }
+
+    .login-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .login-btn.loading {
+      background: linear-gradient(
+        90deg,
+        var(--color-blue),
+        var(--color-turquoise),
+        var(--color-blue)
+      );
+      background-size: 200% 100%;
+      animation: shimmerBtn 1.5s ease-in-out infinite;
+    }
+
+    @keyframes shimmerBtn {
+      0% { background-position: 100% 50%; }
+      100% { background-position: -100% 50%; }
+    }
+
+    /* Error state */
+    .login-error {
+      display: none;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      background: rgba(254, 226, 226, 0.6);
+      border: 1px solid rgba(252, 165, 165, 0.5);
+      color: #991b1b;
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .login-error.visible {
+      display: block;
+    }
+
+    .login-error i {
+      width: 16px;
+      height: 16px;
+      vertical-align: -3px;
+      margin-right: 0.35rem;
+    }
+
+    /* Divider */
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 0.75rem 0;
+      color: var(--color-text-light);
+      font-size: 0.8rem;
+    }
+
+    .login-divider::before,
+    .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    /* Security badge */
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.65rem 1rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      font-size: 0.78rem;
+      color: var(--color-text-light);
+    }
+
+    .security-badge i {
+      width: 14px;
+      height: 14px;
+      color: var(--color-turquoise-dark);
+    }
+
+    /* Password visibility toggle */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper .glass-input {
+      padding-right: 3rem;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-light);
+      padding: 0.25rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      color: var(--color-blue-dark);
+    }
+
+    .password-toggle i {
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-brand">
+      <img src="assets/prysm-logo-new.png" alt="Prysm" id="login-logo">
+    </div>
+
+    <div class="glass-panel login-card">
+      <h1>Welcome Back</h1>
+      <p class="login-subtitle">Sign in to access your clinical workspace</p>
+
+      <div class="login-error" id="login-error" role="alert">
+        <i data-lucide="alert-circle"></i>
+        <span id="login-error-text">Invalid email or password.</span>
+      </div>
+
+      <form class="login-form" id="login-form" onsubmit="handleLogin(event)">
+        <div class="login-field">
+          <label for="login-email">
+            <i data-lucide="mail"></i>
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="login-email"
+            class="glass-input"
+            placeholder="yourname@practice.com"
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="login-field">
+          <label for="login-password">
+            <i data-lucide="lock"></i>
+            Password
+          </label>
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="login-password"
+              class="glass-input"
+              placeholder="Enter your password"
+              required
+              autocomplete="current-password"
+              minlength="6"
+            >
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" aria-label="Show password">
+              <i data-lucide="eye" id="password-eye-icon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="glass-btn btn-primary login-btn" id="login-btn">
+          <i data-lucide="log-in"></i>
+          Sign In
+        </button>
+      </form>
+
+      <div class="security-badge">
+        <i data-lucide="shield-check"></i>
+        HIPAA-compliant infrastructure · Encrypted at rest & in transit
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // ─── Check if already logged in ───────────────────────────
+    (async function checkExistingSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // Already logged in — redirect based on role
+        const { data: profile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profile) {
+          redirectByRole(profile.role);
+        }
+      }
+    })();
+
+    // ─── Login Handler ────────────────────────────────────────
+    async function handleLogin(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const btn = document.getElementById('login-btn');
+      const errorEl = document.getElementById('login-error');
+      const errorText = document.getElementById('login-error-text');
+
+      // Hide previous errors
+      errorEl.classList.remove('visible');
+
+      // Show loading state
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.innerHTML = '<i data-lucide="loader-2" style="animation: spin 1s linear infinite;"></i> Signing in...';
+      lucide.createIcons();
+
+      try {
+        // 1. Authenticate with Supabase
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        // 2. Fetch user role
+        const { data: profile, error: profileError } = await supabase
+          .from('users')
+          .select('role, full_name')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError || !profile) {
+          throw new Error('Could not load your user profile. Please contact support.');
+        }
+
+        // 3. Redirect based on role
+        redirectByRole(profile.role);
+
+      } catch (err) {
+        // Show error
+        errorText.textContent = formatErrorMessage(err.message);
+        errorEl.classList.add('visible');
+
+        // Reset button
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.innerHTML = '<i data-lucide="log-in"></i> Sign In';
+        lucide.createIcons();
+
+        // Shake the card
+        const card = document.querySelector('.login-card');
+        card.style.animation = 'none';
+        void card.offsetWidth; // force reflow
+        card.style.animation = 'shake 0.4s ease';
+      }
+    }
+
+    // ─── Role-Based Redirect ──────────────────────────────────
+    function redirectByRole(role) {
+      if (role === 'bcba') {
+        window.location.href = 'bcba.html';
+      } else {
+        window.location.href = 'session-book.html';
+      }
+    }
+
+    // ─── Password Visibility Toggle ───────────────────────────
+    function togglePasswordVisibility() {
+      const input = document.getElementById('login-password');
+      const icon = document.getElementById('password-eye-icon');
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    // ─── Error Message Formatter ──────────────────────────────
+    function formatErrorMessage(msg) {
+      if (msg.includes('Invalid login credentials')) {
+        return 'Invalid email or password. Please try again.';
+      }
+      if (msg.includes('Email not confirmed')) {
+        return 'Your email has not been verified. Check your inbox.';
+      }
+      if (msg.includes('Too many requests')) {
+        return 'Too many attempts. Please wait a moment and try again.';
+      }
+      return msg;
+    }
+  </script>
+
+  <style>
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</body>
+</html>
