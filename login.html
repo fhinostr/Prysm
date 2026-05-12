@@ -280,6 +280,9 @@
             placeholder="yourname@practice.com"
             required
             autocomplete="email"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
           >
         </div>
 
@@ -289,15 +292,18 @@
             Password
           </label>
           <div class="password-wrapper">
-            <input
-              type="password"
-              id="login-password"
-              class="glass-input"
-              placeholder="Enter your password"
-              required
-              autocomplete="current-password"
-              minlength="6"
-            >
+              <input
+                type="password"
+                id="login-password"
+                class="glass-input"
+                placeholder="Enter your password"
+                required
+                autocomplete="current-password"
+                minlength="6"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+              >
             <button type="button" class="password-toggle" onclick="togglePasswordVisibility()" aria-label="Show password">
               <i data-lucide="eye" id="password-eye-icon"></i>
             </button>
@@ -314,12 +320,19 @@
         <i data-lucide="shield-check"></i>
         HIPAA-compliant infrastructure · Encrypted at rest & in transit
       </div>
+
+      <div style="text-align: center; margin-top: 1.5rem;">
+        <button onclick="clearAppCache()" style="background: none; border: none; color: var(--color-text-light); font-size: 0.75rem; text-decoration: underline; cursor: pointer; opacity: 0.7;">
+          Trouble logging in? Reset App & Clear Cache
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
+  <script src="supabase-client.js?v=2"></script>
+  <script src="auth-utils.js?v=1"></script>
   <script>
     lucide.createIcons();
 
@@ -327,16 +340,8 @@
     (async function checkExistingSession() {
       const { data: { session } } = await window.supabaseClient.auth.getSession();
       if (session) {
-        // Already logged in — redirect based on role
-        const { data: profile } = await window.supabaseClient
-          .from('users')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
-        if (profile) {
-          redirectByRole(profile.role);
-        }
+        const profile = await window.PrysmAuth.loadOrCreateProfile(session.user);
+        window.PrysmAuth.redirectByRole(profile.role);
       }
     })();
 
@@ -344,7 +349,7 @@
     async function handleLogin(event) {
       event.preventDefault();
 
-      const email = document.getElementById('login-email').value.trim();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
       const password = document.getElementById('login-password').value;
       const btn = document.getElementById('login-btn');
       const errorEl = document.getElementById('login-error');
@@ -360,34 +365,13 @@
       lucide.createIcons();
 
       try {
-        // 1. Authenticate with Supabase
-        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-
-        if (error) {
-          throw new Error(error.message);
-        }
-
-        // 2. Fetch user role
-        const { data: profile, error: profileError } = await window.supabaseClient
-          .from('users')
-          .select('role, full_name')
-          .eq('id', data.user.id)
-          .single();
-
-        if (profileError || !profile) {
-          throw new Error('Could not load your user profile. Please contact support.');
-        }
-
-        // 3. Redirect based on role
-        redirectByRole(profile.role);
-
+        const { profile } = await window.PrysmAuth.login(email, password);
+        window.PrysmAuth.redirectByRole(profile.role);
       } catch (err) {
         // Show error
-        errorText.textContent = formatErrorMessage(err.message);
+        errorText.textContent = window.PrysmAuth.formatError(err);
         errorEl.classList.add('visible');
+        console.error('Login failed:', err);
 
         // Reset button
         btn.disabled = false;
@@ -400,15 +384,6 @@
         card.style.animation = 'none';
         void card.offsetWidth; // force reflow
         card.style.animation = 'shake 0.4s ease';
-      }
-    }
-
-    // ─── Role-Based Redirect ──────────────────────────────────
-    function redirectByRole(role) {
-      if (role === 'bcba') {
-        window.location.href = 'bcba.html';
-      } else {
-        window.location.href = 'session-book.html';
       }
     }
 
@@ -426,20 +401,6 @@
       }
       lucide.createIcons();
     }
-
-    // ─── Error Message Formatter ──────────────────────────────
-    function formatErrorMessage(msg) {
-      if (msg.includes('Invalid login credentials')) {
-        return 'Invalid email or password. Please try again.';
-      }
-      if (msg.includes('Email not confirmed')) {
-        return 'Your email has not been verified. Check your inbox.';
-      }
-      if (msg.includes('Too many requests')) {
-        return 'Too many attempts. Please wait a moment and try again.';
-      }
-      return msg;
-    }
   </script>
 
   <style>
@@ -456,5 +417,33 @@
       to { transform: rotate(360deg); }
     }
   </style>
+  <script>
+    // ─── Cache Clearing Utility ──────────────────────────────
+    async function clearAppCache() {
+      if (confirm('This will clear the local app cache and reload the page. Continue?')) {
+        // 1. Unregister service workers
+        if (navigator.serviceWorker) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (let registration of registrations) {
+            await registration.unregister();
+          }
+        }
+        
+        // 2. Clear Cache Storage
+        if (window.caches) {
+          const cacheNames = await caches.keys();
+          for (let name of cacheNames) {
+            await caches.delete(name);
+          }
+        }
+
+        // 3. Clear LocalStorage
+        localStorage.clear();
+
+        // 4. Force Reload
+        window.location.reload(true);
+      }
+    }
+  </script>
 </body>
 </html>

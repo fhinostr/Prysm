@@ -6,6 +6,17 @@
 // ═══════════════════════════════════════════════════════════════
 
 (async function authGuard() {
+  // 0. Ensure auth-utils.js is loaded
+  if (!window.PrysmAuth) {
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'auth-utils.js?v=1';
+      script.onload = resolve;
+      script.onerror = () => reject(new Error('Failed to load auth-utils.js'));
+      document.head.appendChild(script);
+    });
+  }
+
   try {
     // 1. Check for existing session
     const { data: { session }, error: sessionError } = await window.supabaseClient.auth.getSession();
@@ -15,7 +26,8 @@
       return;
     }
 
-    await loadUserProfile(session);
+    const profile = await window.PrysmAuth.loadOrCreateProfile(session.user);
+    initUserSession(session, profile);
 
   } catch (err) {
     console.error('Auth guard: Unexpected error', err);
@@ -23,20 +35,7 @@
   }
 })();
 
-async function loadUserProfile(session) {
-  // Fetch the user's profile
-  const { data: profile, error: profileError } = await window.supabaseClient
-    .from('users')
-    .select('full_name, role')
-    .eq('id', session.user.id)
-    .single();
-
-  if (profileError || !profile) {
-    console.error('Auth guard: Could not load user profile', profileError);
-    showLoginModal('Could not load profile. Please contact support.');
-    return;
-  }
-
+function initUserSession(session, profile) {
   // Expose user data globally
   window.PRYSM_USER = {
     id: session.user.id,
@@ -83,13 +82,12 @@ function showLoginModal(errorMsg = '') {
         </div>
 
         <form id="modal-login-form" style="display: flex; flex-direction: column; gap: 1.25rem; text-align: left;">
-          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
             <label style="font-weight: 600; font-size: 0.88rem; color: var(--color-blue-dark);">Email Address</label>
-            <input type="email" id="modal-login-email" class="glass-input" required>
+            <input type="email" id="modal-login-email" class="glass-input" required autocapitalize="none" autocorrect="off" spellcheck="false">
           </div>
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
             <label style="font-weight: 600; font-size: 0.88rem; color: var(--color-blue-dark);">Password</label>
-            <input type="password" id="modal-login-password" class="glass-input" required>
+            <input type="password" id="modal-login-password" class="glass-input" required autocapitalize="none" autocorrect="off" spellcheck="false">
           </div>
           <button type="submit" id="modal-login-btn" class="glass-btn btn-primary" style="margin-top: 0.5rem; padding: 1rem; font-weight: 700;">Sign In</button>
         </form>
@@ -107,29 +105,24 @@ function showLoginModal(errorMsg = '') {
     btn.textContent = 'Signing in...';
     errBox.style.display = 'none';
 
-    const email = document.getElementById('modal-login-email').value;
+    const email = document.getElementById('modal-login-email').value.trim().toLowerCase();
     const password = document.getElementById('modal-login-password').value;
 
-    const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
-    
-    if (error) {
+    try {
+      const { session, profile } = await window.PrysmAuth.login(email, password);
+      // Success: Init session and remove modal
+      initUserSession(session, profile);
+    } catch (err) {
       btn.disabled = false;
       btn.textContent = 'Sign In';
-      errBox.textContent = 'Invalid email or password.';
+      errBox.textContent = window.PrysmAuth.formatError(err);
       errBox.style.display = 'block';
-    } else {
-      // Re-run the auth guard to load profile and remove modal
-      await loadUserProfile(data.session);
+      console.error('Modal login failed:', err);
     }
   });
 }
 
-// ─── Sign Out Helper ─────────────────────────────────────────
-async function signOut() {
-  await window.supabaseClient.auth.signOut();
-  window.location.reload();
-}
-
+// Sign out is handled globally in nav.js
 // ─── Listen for auth state changes ───────────────────────────
 window.supabaseClient.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {

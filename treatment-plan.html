@@ -21,15 +21,19 @@
   <main class="app-container home-container">
     <header class="app-header glass-panel">
       <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
-      <nav class="site-toggle" aria-label="Site Navigation"><button class="mobile-nav-close btn-icon" aria-label="Close Menu"><i data-lucide="x"></i></button>
-        <a href="index.html" class="site-toggle-link">Home</a>
+      <nav class="site-toggle" aria-label="Site Navigation"><a href="index.html" class="site-toggle-link">Home</a>
         <a href="treatment-plan.html" class="site-toggle-link active" aria-current="page">Clients</a>
         <a href="billing.html" class="site-toggle-link">Billing</a>
         <a href="files.html" class="site-toggle-link">Files</a>
         <a href="contacts.html" class="site-toggle-link">Staff</a>
       </nav>
-      <div class="header-right">
-        <button class="glass-btn btn-sm" onclick="signOut()" title="Sign Out" style="padding: 0.5rem;" aria-label="Sign Out"><i data-lucide="log-out"></i></button>
+            <div class="header-right" style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="login.html" id="auth-sign-in-btn" class="glass-btn btn-sm" style="display: none; white-space: nowrap;">Sign In</a>
+        <div id="auth-profile-menu" style="display: none; align-items: center; gap: 0.5rem;">
+          <div id="auth-user-avatar" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">?</div>
+          <span id="auth-user-name" style="font-size: 0.9rem; font-weight: 600; color: var(--color-blue-dark); display: none;"></span>
+          <button class="glass-btn btn-sm" onclick="signOut()" title="Sign Out" style="padding: 0.5rem;" aria-label="Sign Out"><i data-lucide="log-out"></i></button>
+        </div>
         <button class="mobile-menu-btn" aria-label="Open Menu"><i data-lucide="menu"></i></button>
       </div>
     </header>
@@ -54,7 +58,7 @@
 
   <!-- Supabase Auth Integration -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
+  <script src="supabase-client.js?v=2"></script>
   <script src="auth-guard.js"></script>
   <script src="supabase-data.js"></script>
   <script src="nav.js"></script>

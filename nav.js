@@ -2,7 +2,52 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeToggleBars();
   initializeMobileMenu();
   registerServiceWorker();
+  initializeAuthUI();
 });
+
+function initializeAuthUI() {
+  if (window.supabaseClient) {
+    window.supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      updateAuthUI(session);
+    });
+
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
+      updateAuthUI(session);
+    });
+  }
+}
+
+function updateAuthUI(session) {
+  const authProfile = document.getElementById('auth-profile-menu');
+  const authSignIn = document.getElementById('auth-sign-in-btn');
+  
+  if (session) {
+    if (authSignIn) authSignIn.style.display = 'none';
+    if (authProfile) {
+      authProfile.style.display = 'flex';
+      const avatar = document.getElementById('auth-user-avatar');
+      const nameEl = document.getElementById('auth-user-name');
+      const email = session.user.email;
+      if (email) {
+        if (avatar) avatar.textContent = email.charAt(0).toUpperCase();
+        if (nameEl) {
+          nameEl.textContent = email.split('@')[0];
+          nameEl.style.display = 'inline'; // Show name on larger screens if desired, but we keep it hidden by default in CSS if space is tight.
+        }
+      }
+    }
+  } else {
+    if (authSignIn) authSignIn.style.display = 'inline-flex';
+    if (authProfile) authProfile.style.display = 'none';
+  }
+}
+
+async function signOut() {
+  if (window.supabaseClient) {
+    await window.supabaseClient.auth.signOut();
+    window.location.href = 'index.html';
+  }
+}
 
 function initializeMobileMenu() {
   const menuBtn = document.querySelector('.mobile-menu-btn');
@@ -41,13 +86,28 @@ function initializeMobileMenu() {
 
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
+    // 1. Force a reload when a new service worker takes control
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        window.location.reload();
+        refreshing = true;
+      }
+    });
+
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
+      // 2. Add version query to force the browser to check for a new script
+      navigator.serviceWorker.register('sw.js?v=4')
         .then(registration => {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          console.log('ServiceWorker registered:', registration.scope);
+          
+          // 3. Periodically check for updates
+          setInterval(() => {
+            registration.update();
+          }, 60 * 60 * 1000); // Check every hour
         })
         .catch(err => {
-          console.log('ServiceWorker registration failed: ', err);
+          console.error('ServiceWorker failed:', err);
         });
     });
   }
