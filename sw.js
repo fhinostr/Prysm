@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aba-lms-cache-v4';
+const CACHE_NAME = 'aba-lms-cache-v6';
 const ASSETS = [
   './',
   './index.html',

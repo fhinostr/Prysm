@@ -11,7 +11,7 @@ window.PrysmAuth = {
    * @returns {Promise<{user: object, profile: object}>}
    */
   async login(email, password) {
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanEmail = email.trim(); // Removed .toLowerCase()
     
     try {
       const { data, error } = await window.supabaseClient.auth.signInWithPassword({
@@ -21,10 +21,8 @@ window.PrysmAuth = {
 
       if (error) {
         console.error('Supabase Auth Error:', error);
-        // Only alert if we're not on a laptop/localhost to help debug mobile
-        if (!window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
-          alert('Mobile Debug - Auth Error: ' + error.message + ' (Status: ' + error.status + ')');
-        }
+        // Universal alert for both laptop and mobile
+        alert('AUTH DEBUG: ' + error.message + ' (Status: ' + error.status + ')');
         throw error;
       }
 
