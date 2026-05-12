@@ -1,9 +1,21 @@
 (async function authGuard() {
-  // 0. Ensure auth-utils-v8.js is loaded
+  // 0. Wait for supabaseClient to be available
+  let retry = 0;
+  while (!window.supabaseClient && retry < 50) {
+    await new Promise(r => setTimeout(r, 100));
+    retry++;
+  }
+
+  if (!window.supabaseClient) {
+    console.error('Auth Guard: Supabase client not found after 5s.');
+    return;
+  }
+
+  // 1. Ensure auth-utils-v8.js is loaded
   if (!window.PrysmAuth) {
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'auth-utils-v8.js?v=9';
+      script.src = 'auth-utils-v8.js?v=10';
       script.onload = resolve;
       script.onerror = () => reject(new Error('Failed to load auth-utils-v8.js'));
       document.head.appendChild(script);
