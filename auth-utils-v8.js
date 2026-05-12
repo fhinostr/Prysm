@@ -11,18 +11,23 @@ window.PrysmAuth = {
    * @returns {Promise<{user: object, profile: object}>}
    */
   async login(email, password) {
-    const cleanEmail = email.trim(); // Removed .toLowerCase()
+    const cleanEmail = email.trim();
+    // Cleanse password of "Smart Quotes" which often sneak in on mobile
+    const cleanPassword = password.replace(/[\u201c\u201d\u2018\u2019]/g, (match) => {
+      const map = { '\u201c': '"', '\u201d': '"', '\u2018': "'", '\u2019': "'" };
+      return map[match];
+    });
     
     try {
       const { data, error } = await window.supabaseClient.auth.signInWithPassword({
         email: cleanEmail,
-        password: password
+        password: cleanPassword
       });
 
       if (error) {
         console.error('Supabase Auth Error:', error);
-        // Universal alert for both laptop and mobile
-        alert('AUTH DEBUG: ' + error.message + ' (Status: ' + error.status + ')');
+        // Universal alert with specific version ID
+        alert('[V8] AUTH ERROR: ' + error.message + ' (Code: ' + error.status + ')');
         throw error;
       }
 

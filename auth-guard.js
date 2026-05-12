@@ -10,7 +10,7 @@
   if (!window.PrysmAuth) {
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'auth-utils.js?v=1';
+      script.src = 'auth-utils-v8.js?v=8';
       script.onload = resolve;
       script.onerror = () => reject(new Error('Failed to load auth-utils.js'));
       document.head.appendChild(script);
@@ -71,8 +71,8 @@ function showLoginModal(errorMsg = '') {
   if (existing) existing.remove();
 
   const modalHtml = `
-    <div id="prysm-auth-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); animation: fadeIn 0.3s ease; padding: 1rem;">
-      <div class="glass-panel" style="width: 100%; max-width: 400px; padding: 2rem 1.5rem; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.2);">
+    <div id="prysm-auth-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); animation: fadeIn 0.3s ease; padding: 1rem;">
+      <div class="glass-panel" style="width: 92%; max-width: 400px; padding: 1.75rem 1.25rem; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);">
         <img src="assets/prysm-logo-new.png" alt="Prysm" style="height: 60px; margin-bottom: 1rem; filter: drop-shadow(0 4px 12px rgba(32, 178, 170, 0.3));">
         <h1 style="color: var(--color-blue-dark); font-size: 1.5rem; margin-bottom: 0.5rem;">Welcome Back</h1>
         <p style="color: var(--color-text-light); font-size: 0.9rem; margin-bottom: 2rem;">Sign in to access your clinical workspace</p>
