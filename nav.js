@@ -42,10 +42,34 @@ function updateAuthUI(session) {
   }
 }
 
+/**
+ * Nuclear Sign-Out — delegates to PrysmAuth for full cleanup.
+ * Falls back to basic signOut if PrysmAuth isn't loaded.
+ */
 async function signOut() {
-  if (window.supabaseClient) {
-    await window.supabaseClient.auth.signOut();
-    window.location.href = 'index.html';
+  if (window.PrysmAuth && window.PrysmAuth.nuclearSignOut) {
+    await window.PrysmAuth.nuclearSignOut();
+  } else {
+    // Fallback: basic sign-out with storage clear
+    if (window.supabaseClient) {
+      await window.supabaseClient.auth.signOut();
+    }
+    try { localStorage.clear(); } catch(e) {}
+    try { sessionStorage.clear(); } catch(e) {}
+
+    // Unregister service workers
+    if (navigator.serviceWorker) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const reg of regs) { await reg.unregister(); }
+    }
+
+    // Clear cache storage
+    if (window.caches) {
+      const keys = await caches.keys();
+      for (const key of keys) { await caches.delete(key); }
+    }
+
+    window.location.href = 'index.html?signed_out=' + Date.now();
   }
 }
 
@@ -95,13 +119,20 @@ function registerServiceWorker() {
       }
     });
 
+    // Listen for cache-cleared messages from SW
+    navigator.serviceWorker.addEventListener('message', event => {
+      if (event.data === 'CACHES_CLEARED') {
+        console.log('Service Worker caches cleared.');
+      }
+    });
+
     window.addEventListener('load', () => {
-      // 2. Add version query to force the browser to check for a new script
-      navigator.serviceWorker.register('sw.js?v=4')
+      // Cache-busted SW registration with updated version
+      navigator.serviceWorker.register('sw.js?v=12')
         .then(registration => {
           console.log('ServiceWorker registered:', registration.scope);
           
-          // 3. Periodically check for updates
+          // Periodically check for updates
           setInterval(() => {
             registration.update();
           }, 60 * 60 * 1000); // Check every hour

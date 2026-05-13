@@ -1,5 +1,19 @@
-const CACHE_NAME = 'aba-lms-cache-v10';
-const ASSETS = [
+// ═══════════════════════════════════════════════════════════════
+// PRYSM ABA LMS — Service Worker v12 (Cache-Busted)
+// Network-first for auth files, cache-first for static assets.
+// ═══════════════════════════════════════════════════════════════
+const CACHE_VERSION = 'v12';
+const CACHE_NAME = `aba-lms-cache-${CACHE_VERSION}`;
+
+// Files that should NEVER be served from cache (always network-first)
+const AUTH_CRITICAL_PATTERNS = [
+  'auth-guard',
+  'auth-utils',
+  'supabase-client',
+  'supabase-data'
+];
+
+const STATIC_ASSETS = [
   './',
   './index.html',
   './treatment-plan.html',
@@ -9,6 +23,8 @@ const ASSETS = [
   './files.html',
   './contacts.html',
   './plan.html',
+  './client-hub.html',
+  './get-started.html',
   './style.css',
   './nav.js',
   './app.js',
@@ -20,49 +36,84 @@ const ASSETS = [
   './program-data.js',
   './treatment-plan.js',
   './assets/prysm-logo-new.png',
-  'https://unpkg.com/lucide@latest',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
 
+// ── Install ──────────────────────────────────────────────────
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
 
+// ── Activate ─────────────────────────────────────────────────
 self.addEventListener('activate', event => {
   event.waitUntil(
     Promise.all([
-      // Clean up old caches
-      caches.keys().then(keys => {
-        return Promise.all(
-          keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-        );
-      }),
-      // Immediately take control of all open clients
+      // Purge every cache except the current version
+      caches.keys().then(keys =>
+        Promise.all(
+          keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        )
+      ),
       self.clients.claim()
     ])
   );
 });
 
+// ── Fetch ────────────────────────────────────────────────────
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      return cachedResponse || fetch(event.request).then(response => {
-        return caches.open(CACHE_NAME).then(cache => {
-          if (event.request.url.startsWith('http')) {
-            cache.put(event.request, response.clone());
-          }
+
+  const url = event.request.url;
+
+  // Auth-critical files → network-first (never serve stale auth code)
+  const isAuthCritical = AUTH_CRITICAL_PATTERNS.some(p => url.includes(p));
+
+  if (isAuthCritical) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          // Cache the fresh copy for offline fallback
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           return response;
-        });
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // All other assets → cache-first with network fallback
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      return cached || fetch(event.request).then(response => {
+        if (url.startsWith('http')) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return response;
       });
     }).catch(() => {
-      // Return a fallback or just fail gracefully if offline
+      // Graceful offline fallback
     })
   );
+});
+
+// ── Message Handler (Nuclear Cache Clear) ────────────────────
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  if (event.data === 'CLEAR_ALL_CACHES') {
+    caches.keys().then(keys =>
+      Promise.all(keys.map(k => caches.delete(k)))
+    ).then(() => {
+      // Notify all clients to reload
+      self.clients.matchAll().then(clients => {
+        clients.forEach(client => client.postMessage('CACHES_CLEARED'));
+      });
+    });
+  }
 });

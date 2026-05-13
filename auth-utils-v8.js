@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════
-// PRYSM ABA LMS — Auth Utilities
-// Shared logic for authentication, profile loading, and redirection.
+// PRYSM ABA LMS — Auth Utilities v10
+// Shared logic for authentication, profile loading, and sign-out.
 // ═══════════════════════════════════════════════════════════════
 
 window.PrysmAuth = {
@@ -8,7 +8,7 @@ window.PrysmAuth = {
    * Performs the login process, including sanitization and error handling.
    * @param {string} email 
    * @param {string} password 
-   * @returns {Promise<{user: object, profile: object}>}
+   * @returns {Promise<{session: object, profile: object}>}
    */
   async login(email, password) {
     const cleanEmail = email.trim();
@@ -26,8 +26,6 @@ window.PrysmAuth = {
 
       if (error) {
         console.error('Supabase Auth Error:', error);
-        // Universal alert with specific version ID
-        alert('[V8] AUTH ERROR: ' + error.message + ' (Code: ' + error.status + ')');
         throw error;
       }
 
@@ -99,12 +97,69 @@ window.PrysmAuth = {
    * @returns {string}
    */
   formatError(error) {
-    if (error.message.includes('Invalid login credentials')) {
+    if (error.message && error.message.includes('Invalid login credentials')) {
       return 'Invalid email or password. Please try again.';
     }
-    if (error.message.includes('Email not confirmed')) {
+    if (error.message && error.message.includes('Email not confirmed')) {
       return 'Your email has not been verified. Check your inbox.';
     }
-    return error.message;
+    return error.message || 'An unexpected error occurred. Please try again.';
+  },
+
+  /**
+   * ════════════════════════════════════════════════════════════
+   *  NUCLEAR SIGN-OUT
+   *  Clears Supabase session, localStorage, sessionStorage,
+   *  Cache Storage, and unregisters all Service Workers.
+   * ════════════════════════════════════════════════════════════
+   */
+  async nuclearSignOut() {
+    try {
+      // 1. Sign out from Supabase (invalidates the JWT)
+      if (window.supabaseClient) {
+        await window.supabaseClient.auth.signOut();
+      }
+    } catch (e) {
+      console.warn('Supabase sign-out error (non-blocking):', e);
+    }
+
+    // 2. Clear all web storage
+    try { localStorage.clear(); } catch (e) {}
+    try { sessionStorage.clear(); } catch (e) {}
+
+    // 3. Tell the Service Worker to nuke all caches
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage('CLEAR_ALL_CACHES');
+    }
+
+    // 4. Unregister all Service Workers
+    if (navigator.serviceWorker) {
+      try {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const reg of registrations) {
+          await reg.unregister();
+        }
+      } catch (e) {
+        console.warn('SW unregister error:', e);
+      }
+    }
+
+    // 5. Clear Cache Storage from the page context too
+    if (window.caches) {
+      try {
+        const keys = await caches.keys();
+        for (const key of keys) {
+          await caches.delete(key);
+        }
+      } catch (e) {
+        console.warn('Cache clear error:', e);
+      }
+    }
+
+    // 6. Clear PRYSM_USER from memory
+    delete window.PRYSM_USER;
+
+    // 7. Hard redirect to index (cache-busted)
+    window.location.href = 'index.html?signed_out=' + Date.now();
   }
 };
