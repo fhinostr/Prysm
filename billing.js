@@ -126,7 +126,10 @@ function endBillingDrag(event) {
     clientId: '',
     client: '',
     rbt: '',
-    reason: ''
+    reason: '',
+    cptCode: '',
+    status: 'scheduled',
+    durationMinutes: 0
   };
 
   billingState.appointments.push(appointment);
@@ -176,21 +179,27 @@ function renderAppointmentBlock(appointment) {
     ? `${startTime} - ${endTime} | ${appointment.rbt}`
     : `${startTime} - ${endTime}`;
   const isSelected = !appointment.isDraft && appointment.id === billingState.selectedAppointmentId;
+  const isCompleted = appointment.status === 'completed';
+  const cptBadge = appointment.cptCode ? `<span style="font-size:0.68rem; padding:0.15rem 0.4rem; border-radius:6px; background:rgba(1,87,155,0.12); color:var(--color-blue-dark); font-weight:600; margin-top:0.15rem; display:inline-block;">${escapeHtml(appointment.cptCode)}</span>` : '';
+  const completedStyle = isCompleted ? 'border-left: 3px solid #10b981; opacity: 0.8;' : '';
+  const completedBadge = isCompleted ? '<span style="font-size:0.65rem; padding:0.1rem 0.35rem; border-radius:5px; background:rgba(16,185,129,0.15); color:#059669; font-weight:700; margin-top:0.1rem; display:inline-block;">✓ Completed</span>' : '';
 
   return `
     <article
       class="billing-appointment${appointment.isDraft ? ' draft' : ''}${isSelected ? ' selected' : ''}"
       data-appointment-id="${appointment.id || ''}"
-      style="top: calc(${top}% / ${TOTAL_SLOTS}); height: calc(${height}% / ${TOTAL_SLOTS});"
+      style="top: calc(${top}% / ${TOTAL_SLOTS}); height: calc(${height}% / ${TOTAL_SLOTS}); ${completedStyle}"
       ${appointment.isDraft ? '' : `tabindex="0"`}
     >
       ${appointment.isDraft ? '' : `<button type="button" class="billing-delete-btn" onclick="requestDeleteBillingAppointment(event, '${appointment.id}')" aria-label="Delete session"><i data-lucide="x"></i></button>`}
-      ${(!appointment.isDraft && appointment.clientId) ? `<button type="button" class="billing-start-btn glass-btn btn-sm" style="position:absolute; bottom:0.5rem; right:0.5rem; background:var(--color-green); color:white; z-index:10; border-radius:8px; padding: 0.2rem 0.5rem;" onclick="startSessionFromBlock(event, '${appointment.id}')"><i data-lucide="play" style="width:14px; height:14px;"></i> Start</button>` : ''}
+      ${(!appointment.isDraft && appointment.clientId && !isCompleted) ? `<button type="button" class="billing-start-btn glass-btn btn-sm" style="position:absolute; bottom:0.5rem; right:0.5rem; background:var(--color-green); color:white; z-index:10; border-radius:8px; padding: 0.2rem 0.5rem;" onclick="startSessionFromBlock(event, '${appointment.id}')"><i data-lucide="play" style="width:14px; height:14px;"></i> Start</button>` : ''}
       ${appointment.isDraft ? '' : `<button type="button" class="billing-resize-handle top" onpointerdown="startBillingResize(event, '${appointment.id}', 'top')" aria-label="Adjust start time"></button>`}
       <div class="billing-appointment-content" onclick="openBillingModal('${appointment.id}')">
         <strong>${escapeHtml(title)}</strong>
         <span>${escapeHtml(subtitle)}</span>
-        ${appointment.reason ? `<small>${escapeHtml(appointment.reason)}</small>` : ''}
+        ${cptBadge}
+        ${completedBadge}
+        ${(appointment.reason && !isCompleted) ? `<small>${escapeHtml(appointment.reason)}</small>` : ''}
       </div>
       ${appointment.isDraft ? '' : `<button type="button" class="billing-resize-handle bottom" onpointerdown="startBillingResize(event, '${appointment.id}', 'bottom')" aria-label="Adjust end time"></button>`}
     </article>
@@ -345,6 +354,7 @@ function openBillingModal(appointmentId) {
   const form = document.getElementById('billing-appointment-form');
   const clientInput = document.getElementById('billing-client');
   const clientIdInput = document.getElementById('billing-client-id');
+  const cptSelect = document.getElementById('billing-cpt-code');
 
   if (!appointment || !overlay || !form || !clientInput || !clientIdInput) return;
 
@@ -353,14 +363,17 @@ function openBillingModal(appointmentId) {
   clientIdInput.value = appointment.clientId || '';
   form.rbt.value = appointment.rbt || '';
   form.reason.value = appointment.reason || '';
+  if (cptSelect) cptSelect.value = appointment.cptCode || '';
   
   const startBtn = document.getElementById('btn-start-session');
+  const completeBtn = document.getElementById('btn-complete-session');
+  const isCompleted = appointment.status === 'completed';
+
   if (startBtn) {
-    if (!appointment.isDraft && appointment.clientId) {
-      startBtn.style.display = 'inline-flex';
-    } else {
-      startBtn.style.display = 'none';
-    }
+    startBtn.style.display = (!appointment.isDraft && appointment.clientId && !isCompleted) ? 'inline-flex' : 'none';
+  }
+  if (completeBtn) {
+    completeBtn.style.display = (!appointment.isDraft && appointment.clientId && !isCompleted) ? 'inline-flex' : 'none';
   }
 
   overlay.style.display = 'flex';
@@ -409,6 +422,7 @@ function saveBillingAppointment(event) {
   const form = event.target;
   const clientInput = document.getElementById('billing-client');
   const clientIdInput = document.getElementById('billing-client-id');
+  const cptSelect = document.getElementById('billing-cpt-code');
   const appointment = billingState.appointments.find(item => item.id === billingState.pendingAppointmentId);
 
   if (!appointment || !clientInput || !clientIdInput) {
@@ -428,6 +442,11 @@ function saveBillingAppointment(event) {
   appointment.client = selectedClient.name;
   appointment.rbt = form.rbt.value.trim();
   appointment.reason = form.reason.value.trim();
+  appointment.cptCode = cptSelect ? cptSelect.value : '';
+
+  // Calculate duration from slots
+  const slotCount = appointment.endSlot - appointment.startSlot;
+  appointment.durationMinutes = slotCount * SLOT_MINUTES;
 
   billingState.pendingAppointmentId = null;
   hideBillingClientSuggestions();
@@ -557,6 +576,42 @@ function saveSessionNote() {
   list.children[0].insertAdjacentHTML('afterend', newNoteHtml);
   lucide.createIcons();
   alert('Session note saved to archive.');
+}
+
+/**
+ * Mark the currently open appointment as "Completed".
+ * Calculates duration from slot range and persists status.
+ */
+function markAppointmentComplete() {
+  const appointment = billingState.appointments.find(
+    item => item.id === billingState.pendingAppointmentId || item.id === billingState.selectedAppointmentId
+  );
+  if (!appointment) return;
+
+  // Ensure CPT code is set
+  const cptSelect = document.getElementById('billing-cpt-code');
+  if (cptSelect && cptSelect.value) {
+    appointment.cptCode = cptSelect.value;
+  }
+  if (!appointment.cptCode) {
+    alert('Please select a Service Code before marking complete.');
+    return;
+  }
+
+  // Calculate duration
+  const slotCount = appointment.endSlot - appointment.startSlot;
+  appointment.durationMinutes = slotCount * SLOT_MINUTES;
+  appointment.status = 'completed';
+
+  // Close modal and render
+  billingState.pendingAppointmentId = null;
+  hideBillingClientSuggestions();
+  document.getElementById('billing-modal-overlay').style.display = 'none';
+  renderAppointments();
+
+  // Notify user
+  const hours = (appointment.durationMinutes / 60).toFixed(1);
+  console.log(`Appointment ${appointment.id} marked complete: ${hours}h of ${appointment.cptCode}`);
 }
 
 function escapeHtml(value) {

@@ -330,6 +330,264 @@ function normalizeTargetToDB(clientId, target) {
 }
 
 
+// ─── CPT CODE REFERENCE ──────────────────────────────────────
+
+const CPT_CODES = [
+  { code: '97151', title: 'Behavior Identification Assessment', description: 'Initial/re-assessment, data review, and plan development', unit: 15 },
+  { code: '97153', title: 'Adaptive Behavior Treatment (Direct)', description: 'One-on-one therapy (RBT)', unit: 15 },
+  { code: '97155', title: 'Adaptive Behavior Treatment (Supervision)', description: 'Protocol modification by supervisor (BCBA)', unit: 15 },
+  { code: '97156', title: 'Family Treatment Guidance', description: 'Training family members (with or without client)', unit: 15 },
+  { code: '97154', title: 'Group Adaptive Behavior Treatment', description: 'Direct treatment for 2+ clients by a technician', unit: 15 },
+  { code: '97158', title: 'Group Adaptive Behavior Treatment (Supervision)', description: 'Group treatment with protocol modification by supervisor', unit: 15 },
+  { code: '97157', title: 'Multiple-family Group Guidance', description: 'Parent training with multiple families at once', unit: 15 }
+];
+
+function getCPTByCode(code) {
+  return CPT_CODES.find(c => c.code === code) || null;
+}
+
+
+// ─── AUTHORIZATION OPERATIONS ────────────────────────────────
+
+/**
+ * Load all authorizations for a specific client.
+ * @param {string} clientId
+ * @returns {Promise<Array>}
+ */
+async function loadClientAuthorizations(clientId) {
+  const { data, error } = await window.supabaseClient
+    .from('client_authorizations')
+    .select('*')
+    .eq('client_id', clientId)
+    .order('cpt_code', { ascending: true });
+
+  if (error) {
+    console.error('Error loading authorizations:', error);
+    return [];
+  }
+
+  return data.map(row => ({
+    id: row.id,
+    clientId: row.client_id,
+    cptCode: row.cpt_code,
+    authorizedHours: parseFloat(row.authorized_hours),
+    isActive: row.is_active,
+    authStartDate: row.auth_start_date,
+    authEndDate: row.auth_end_date
+  }));
+}
+
+/**
+ * Upsert (create or update) an authorization for a client.
+ * @param {string} clientId
+ * @param {string} cptCode
+ * @param {number} authorizedHours
+ * @param {boolean} isActive
+ * @returns {Promise<Object|null>}
+ */
+async function upsertClientAuthorization(clientId, cptCode, authorizedHours, isActive) {
+  const { data, error } = await window.supabaseClient
+    .from('client_authorizations')
+    .upsert({
+      client_id: clientId,
+      cpt_code: cptCode,
+      authorized_hours: authorizedHours,
+      is_active: isActive
+    }, { onConflict: 'client_id,cpt_code' })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error upserting authorization:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Delete an authorization row.
+ * @param {string} authId
+ * @returns {Promise<boolean>}
+ */
+async function deleteClientAuthorization(authId) {
+  const { error } = await window.supabaseClient
+    .from('client_authorizations')
+    .delete()
+    .eq('id', authId);
+
+  if (error) {
+    console.error('Error deleting authorization:', error);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Get completed hours per CPT code for a specific client.
+ * Aggregates from the appointments table where status='completed'.
+ * @param {string} clientId
+ * @returns {Promise<Object>} { '97153': 14.5, '97155': 3.0, ... }
+ */
+async function getCompletedHoursByCode(clientId) {
+  const { data, error } = await window.supabaseClient
+    .from('appointments')
+    .select('cpt_code, duration_minutes')
+    .eq('client_id', clientId)
+    .eq('status', 'completed');
+
+  if (error) {
+    console.error('Error loading completed hours:', error);
+    return {};
+  }
+
+  const totals = {};
+  (data || []).forEach(row => {
+    if (!row.cpt_code) return;
+    const hours = (parseFloat(row.duration_minutes) || 0) / 60;
+    totals[row.cpt_code] = (totals[row.cpt_code] || 0) + hours;
+  });
+
+  return totals;
+}
+
+
+// ─── APPOINTMENT OPERATIONS ──────────────────────────────────
+
+/**
+ * Load all appointments (for the billing calendar).
+ * @returns {Promise<Array>}
+ */
+async function loadAppointments() {
+  const { data, error } = await window.supabaseClient
+    .from('appointments')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error loading appointments:', error);
+    return [];
+  }
+
+  return data.map(row => ({
+    id: row.id,
+    dayIndex: row.day_index,
+    startSlot: row.start_slot,
+    endSlot: row.end_slot,
+    clientId: row.client_id || '',
+    client: row.client_name || '',
+    rbt: row.rbt_name || '',
+    reason: row.reason || '',
+    cptCode: row.cpt_code || '',
+    durationMinutes: parseFloat(row.duration_minutes) || 0,
+    status: row.status || 'scheduled'
+  }));
+}
+
+/**
+ * Save or update an appointment.
+ * @param {Object} appt
+ * @returns {Promise<Object|null>}
+ */
+async function saveAppointmentAsync(appt) {
+  const payload = {
+    day_index: appt.dayIndex,
+    start_slot: appt.startSlot,
+    end_slot: appt.endSlot,
+    client_id: appt.clientId || null,
+    client_name: appt.client || null,
+    rbt_name: appt.rbt || null,
+    reason: appt.reason || null,
+    cpt_code: appt.cptCode || null,
+    duration_minutes: appt.durationMinutes || null,
+    status: appt.status || 'scheduled'
+  };
+
+  if (appt.id && !appt.id.startsWith('appt-')) {
+    // Update existing DB record
+    payload.id = appt.id;
+  }
+
+  if (window.PRYSM_USER) {
+    payload.created_by = window.PRYSM_USER.id;
+  }
+
+  const { data, error } = await window.supabaseClient
+    .from('appointments')
+    .upsert(payload)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error saving appointment:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Mark an appointment as completed.
+ * @param {string} appointmentId (DB UUID)
+ * @returns {Promise<Object|null>}
+ */
+async function completeAppointmentAsync(appointmentId) {
+  const { data, error } = await window.supabaseClient
+    .from('appointments')
+    .update({
+      status: 'completed',
+      completed_at: new Date().toISOString()
+    })
+    .eq('id', appointmentId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error completing appointment:', error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * Delete an appointment from the database.
+ * @param {string} appointmentId
+ * @returns {Promise<boolean>}
+ */
+async function deleteAppointmentAsync(appointmentId) {
+  const { error } = await window.supabaseClient
+    .from('appointments')
+    .delete()
+    .eq('id', appointmentId);
+
+  if (error) {
+    console.error('Error deleting appointment:', error);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Get active CPT codes for a client (for billing dropdown filtering).
+ * @param {string} clientId
+ * @returns {Promise<Array>}
+ */
+async function getActiveCodesForClient(clientId) {
+  const auths = await loadClientAuthorizations(clientId);
+  return auths
+    .filter(a => a.isActive)
+    .map(a => {
+      const ref = getCPTByCode(a.cptCode);
+      return {
+        code: a.cptCode,
+        title: ref ? ref.title : a.cptCode,
+        authorizedHours: a.authorizedHours
+      };
+    });
+}
+
+
 // ─── CURRENT CLIENT CONTEXT ──────────────────────────────────
 // Tracks which client is currently selected in the UI
 

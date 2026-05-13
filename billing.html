@@ -139,12 +139,28 @@ The client participated in skill acquisition programming. Behavior intervention 
             <input id="billing-rbt" name="rbt" type="text" class="glass-input" placeholder="e.g. Jane Smith" required>
           </div>
           <div class="form-group">
+            <label for="billing-cpt-code">Service Code</label>
+            <select id="billing-cpt-code" name="cpt_code" class="glass-select" required>
+              <option value="">Select a CPT code...</option>
+              <option value="97151">97151 — Assessment</option>
+              <option value="97153">97153 — Direct Treatment (RBT)</option>
+              <option value="97155">97155 — Supervision (BCBA)</option>
+              <option value="97156">97156 — Parent Training</option>
+              <option value="97154">97154 — Group Treatment</option>
+              <option value="97158">97158 — Group Supervision</option>
+              <option value="97157">97157 — Multi-family Guidance</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="billing-reason">Reason for Session</label>
             <textarea id="billing-reason" name="reason" class="glass-input" rows="3" placeholder="e.g. Direct treatment, reassessment support, caregiver training..." required></textarea>
           </div>
           <div class="modal-footer" style="padding: 1rem 0 0; border-top: none;">
             <button type="button" class="glass-btn" onclick="closeBillingModal(true)">Cancel</button>
             <div style="display: flex; gap: 0.5rem;">
+              <button type="button" id="btn-complete-session" class="glass-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; display: none;" onclick="markAppointmentComplete()">
+                <i data-lucide="check-circle"></i> Complete
+              </button>
               <button type="button" id="btn-start-session" class="glass-btn" style="background-color: var(--color-green); color: white; display: none;" onclick="startSessionFromSchedule()">
                 <i data-lucide="play"></i> Start Session
               </button>

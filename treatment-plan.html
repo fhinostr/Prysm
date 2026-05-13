@@ -54,6 +54,57 @@
         <div id="client-list"></div>
       </article>
     </section>
+
+    <!-- Authorization Status Section (shown after client is selected) -->
+    <section class="client-list-shell" id="auth-status-section" style="display: none; margin-top: 1.5rem;">
+      <article class="glass-panel" style="padding: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, rgba(1,87,155,0.12), rgba(32,178,170,0.12)); display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="bar-chart-3" style="width: 18px; height: 18px; color: var(--color-blue-dark);"></i>
+            </div>
+            <div>
+              <h2 style="color: var(--color-blue-dark); font-size: 1.15rem; margin: 0;" id="auth-client-name">Authorization Status</h2>
+              <p style="color: var(--color-text-light); font-size: 0.8rem; margin: 0;">Insurance utilization by service code</p>
+            </div>
+          </div>
+          <button class="glass-btn btn-sm" id="btn-manage-auth" onclick="openManageAuthModal()" style="padding: 0.5rem 0.85rem; font-size: 0.82rem;">
+            <i data-lucide="settings-2" style="width: 14px; height: 14px;"></i> Manage
+          </button>
+        </div>
+        <div id="auth-progress-bars">
+          <!-- Progress bars rendered by JS -->
+        </div>
+        <div id="auth-empty-state" style="display: none; text-align: center; padding: 2rem 1rem; color: var(--color-text-light);">
+          <i data-lucide="clipboard-list" style="width: 40px; height: 40px; margin-bottom: 0.75rem; opacity: 0.4;"></i>
+          <p style="font-size: 0.9rem; margin: 0;">No authorizations configured.</p>
+          <p style="font-size: 0.82rem; margin-top: 0.25rem;">Click <strong>"Manage"</strong> to add service codes for this client.</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- Manage Authorizations Modal -->
+    <div class="modal-overlay" id="auth-manage-overlay" style="display: none;">
+      <div class="glass-modal" style="width: 90%; max-width: 560px; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header" style="position: relative; padding: 1.5rem; flex-shrink: 0;">
+          <h2>Manage Authorizations</h2>
+          <button class="btn-icon" onclick="closeManageAuthModal()" aria-label="Close" style="position: absolute; top: 1.5rem; right: 1.5rem;">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body scrollable-content" style="padding: 0 1.5rem 1.5rem; flex: 1; overflow-y: auto;">
+          <p style="color: var(--color-text-light); font-size: 0.85rem; margin-bottom: 1.25rem;">Toggle codes ON/OFF and set authorized hours for <strong id="auth-modal-client-name">this client</strong>.</p>
+          <div id="auth-code-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- CPT code toggle rows rendered by JS -->
+          </div>
+        </div>
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;">
+          <button class="glass-btn btn-primary" onclick="saveAuthorizationConfig()" style="width: 100%; padding: 0.85rem;">
+            <i data-lucide="save" style="width: 16px; height: 16px;"></i> Save Configuration
+          </button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Supabase Auth Integration -->
