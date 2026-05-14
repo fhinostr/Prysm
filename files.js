@@ -53,6 +53,17 @@ function showClientSelection() {
   document.getElementById('client-files-view').style.display = 'none';
 }
 
+function openAssessment(assessmentId) {
+  document.getElementById('assessments-list-view').style.display = 'none';
+  document.getElementById('assessment-document-view').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeAssessment() {
+  document.getElementById('assessments-list-view').style.display = 'flex'; // file-group uses flex
+  document.getElementById('assessment-document-view').style.display = 'none';
+}
+
 function switchFilesTab(tabId) {
   document.querySelectorAll('.files-tab-btn').forEach(button => {
     button.classList.toggle('active', button.dataset.filesTab === tabId);

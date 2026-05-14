@@ -2745,7 +2745,9 @@ body.marketing-page {
 }
 
 /* Form Elements */
-.assessment-textarea {
+.assessment-textarea,
+.assessment-input-date,
+.assessment-input-time {
   width: 100%;
   min-height: 40px;
   background: transparent;
@@ -2754,12 +2756,23 @@ body.marketing-page {
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--color-text);
-  resize: vertical;
   padding: 0.25rem 0;
   transition: all 0.3s ease;
 }
 
-.assessment-textarea:focus {
+.assessment-textarea {
+  resize: vertical;
+}
+
+.assessment-input-date,
+.assessment-input-time {
+  cursor: pointer;
+  color: var(--color-blue-dark);
+}
+
+.assessment-textarea:focus,
+.assessment-input-date:focus,
+.assessment-input-time:focus {
   outline: none;
   border-bottom-color: var(--color-blue);
   background: rgba(2, 136, 209, 0.02);
