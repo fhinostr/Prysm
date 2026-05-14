@@ -2466,18 +2466,25 @@ body.marketing-page {
     justify-content: flex-start;
   }
 
+  .hub-sidebar,
+  .hub-main,
   .hub-actions-list,
   .hub-action-item,
-  .hub-auth-card {
-    flex: none;
+  .hub-auth-card,
+  .hub-profile-card,
+  .hub-primary-action {
+    flex: none !important;
+    min-height: min-content;
+  }
+
+  .hub-sidebar,
+  .hub-main {
+    position: static;
+    overflow: visible !important;
   }
 
   .hub-action-item {
-    padding: 1.25rem;
-  }
-
-  .hub-sidebar {
-    position: static;
+    padding: 1.25rem !important;
   }
 
   /* On mobile, hide the auth card from the sidebar */
