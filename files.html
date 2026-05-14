@@ -132,6 +132,7 @@
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="biopsychosocial" onclick="switchAssessmentTab('biopsychosocial')">BioPsychosocial</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="narrative" onclick="switchAssessmentTab('narrative')">Narrative</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="goals" onclick="switchAssessmentTab('goals')">Goals</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="skill-acquisition" onclick="switchAssessmentTab('skill-acquisition')">Skill Acquisition</button>
               </nav>
             </div>
 
@@ -444,8 +445,14 @@
                 <textarea class="assessment-textarea" style="min-height: 80px;" placeholder="Response to treatment details..."></textarea>
               </div>
 
-              <div style="padding: 1.25rem 1.5rem; background: rgba(255,255,255,0.2); border-top: 1px solid rgba(0,0,0,0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
-                <h3 style="font-size: 1rem; color: var(--color-blue-dark); margin-bottom: 0.5rem;">Skill Acquisition Goals</h3>
+            </section>
+
+            <!-- SECTION 5: Skill Acquisition -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="skill-acquisition" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Skill Acquisition Goals</h2>
+              </div>
+              <div style="padding: 1.25rem 1.5rem; background: rgba(255,255,255,0.2); border-bottom: 1px solid rgba(0,0,0,0.05);">
                 <ul style="font-size: 0.85rem; color: var(--color-text); margin: 0; padding-left: 1.25rem; line-height: 1.6;">
                   <li>Must have measurable baseline</li>
                   <li>Should be derived from the functional assessment and/or skills-based assessments that occurred prior to initiating treatment.</li>
