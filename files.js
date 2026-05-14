@@ -272,3 +272,65 @@ function addAssessmentGoal(btn) {
     lucide.createIcons();
   }
 }
+
+function addNewBehavior() {
+  const behaviorName = prompt("Enter the name of the new behavior (e.g., 'Spitting', 'Biting'):");
+  if (!behaviorName || behaviorName.trim() === '') return;
+  
+  const name = behaviorName.trim();
+  
+  // Create Replacement Behaviors Domain HTML
+  const rbDomain = document.createElement('div');
+  rbDomain.className = 'assessment-domain-container';
+  rbDomain.style.cssText = 'background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);';
+  rbDomain.innerHTML = `
+    <h3 style="position: relative; font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+      ${name}
+      <button type="button" class="glass-btn btn-sm" onclick="addAssessmentGoal(this)" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.25rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+        <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Goal
+      </button>
+    </h3>
+    <table class="assessment-table">
+      <tr><td class="assessment-label-cell">Medical Necessity Rationale:</td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+      <tr><td class="assessment-label-cell">Goal Statement:<span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+      <tr><td class="assessment-label-cell">Baseline:<span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+      <tr><td class="assessment-label-cell">Date of Introduction:</td><td class="assessment-input-cell"><input type="date" class="assessment-input-date"></td></tr>
+      <tr><td class="assessment-label-cell">Projected Mastery:</td><td class="assessment-input-cell"><input type="date" class="assessment-input-date"></td></tr>
+      <tr><td class="assessment-label-cell">Progress Data:<ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;"><li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li><li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li></ul></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+    </table>
+  `;
+
+  // Create BIP Domain HTML
+  const bipDomain = document.createElement('div');
+  bipDomain.className = 'assessment-domain-container';
+  bipDomain.style.cssText = 'background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);';
+  bipDomain.innerHTML = `
+    <h3 style="position: relative; font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+      ${name}
+      <button type="button" class="glass-btn btn-sm" onclick="addAssessmentGoal(this)" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.25rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+        <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Goal
+      </button>
+    </h3>
+    <table class="assessment-table">
+      <tr><td class="assessment-label-cell">Function:</td><td class="assessment-input-cell"><div class="assessment-checklist"><label class="checklist-item"><input type="checkbox"> Attention</label><label class="checklist-item"><input type="checkbox"> Automatic</label><label class="checklist-item"><input type="checkbox"> Access to Tangible</label><label class="checklist-item"><input type="checkbox"> Escape</label></div></td></tr>
+      <tr><td class="assessment-label-cell">Medical Necessity Rationale:</td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+      <tr><td class="assessment-label-cell">Goal Statement:<span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+      <tr><td class="assessment-label-cell">Baseline:<span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+      <tr><td class="assessment-label-cell">Date of Introduction:</td><td class="assessment-input-cell"><input type="date" class="assessment-input-date"></td></tr>
+      <tr><td class="assessment-label-cell">Projected Mastery:</td><td class="assessment-input-cell"><input type="date" class="assessment-input-date"></td></tr>
+      <tr><td class="assessment-label-cell">Progress Data:<ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;"><li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li><li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li></ul></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
+    </table>
+  `;
+
+  // Append to the respective sections
+  const rbSection = document.querySelector('[data-assessment-pane="replacement-behaviors"]');
+  const bipSection = document.querySelector('[data-assessment-pane="bip"]');
+  
+  if (rbSection) rbSection.appendChild(rbDomain);
+  if (bipSection) bipSection.appendChild(bipDomain);
+  
+  // Re-initialize lucide icons for the newly added buttons
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+}

@@ -837,13 +837,21 @@
 
             <!-- SECTION 7: Behavior Intervention Plan -->
             <section class="assessment-section assessment-tab-pane" data-assessment-pane="bip" style="display: none;">
-              <div class="assessment-section-header">
+              <div class="assessment-section-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Behavior Intervention Plan</h2>
+                <button type="button" class="glass-btn btn-sm" onclick="addNewBehavior()" style="display: flex; align-items: center; gap: 4px;">
+                  <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Behavior
+                </button>
               </div>
 
               <!-- Aggression Domain -->
-              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
-                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Aggression</h3>
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="position: relative; font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Aggression
+                  <button type="button" class="glass-btn btn-sm" onclick="addAssessmentGoal(this)" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.25rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Goal
+                  </button>
+                </h3>
                 <table class="assessment-table">
                   <tr>
                     <td class="assessment-label-cell">Function:</td>
@@ -908,8 +916,13 @@
               </div>
 
               <!-- Elopement Domain -->
-              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
-                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Elopement</h3>
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="position: relative; font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Elopement
+                  <button type="button" class="glass-btn btn-sm" onclick="addAssessmentGoal(this)" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.25rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Goal
+                  </button>
+                </h3>
                 <table class="assessment-table">
                   <tr>
                     <td class="assessment-label-cell">Function:</td>
@@ -974,8 +987,13 @@
               </div>
 
               <!-- Property Destruction Domain -->
-              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
-                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Property Destruction</h3>
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="position: relative; font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Property Destruction
+                  <button type="button" class="glass-btn btn-sm" onclick="addAssessmentGoal(this)" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.25rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Goal
+                  </button>
+                </h3>
                 <table class="assessment-table">
                   <tr>
                     <td class="assessment-label-cell">Function:</td>
