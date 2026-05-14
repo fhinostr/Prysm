@@ -87,28 +87,200 @@
         <!-- Insurance removed -->
 
         <article class="file-group files-tab-pane active" data-files-pane="assessments">
-          <div class="file-group-header">
-            <div class="hub-icon-wrap">
-              <i data-lucide="clipboard-list"></i>
-            </div>
-            <div>
-              <h2>Assessments</h2>
-            </div>
-          </div>
-          <div class="file-list">
-            <div class="file-row">
-              <div>
-                <strong>Initial Assessment Report.pdf</strong>
-                <span>Clinical intake and baseline findings</span>
+          <div class="assessment-template-container">
+            
+            <!-- SECTION 1: Client Information -->
+            <section class="assessment-section">
+              <div class="assessment-section-header">
+                <h2>Client Information</h2>
               </div>
-              <span class="badge">Assessment</span>
-            </div>
-            <div class="file-row">
-              <div>
-                <strong>Reassessment Summary.pdf</strong>
-                <span>Updated progress and recommendations</span>
+              <table class="assessment-table">
+                <tr>
+                  <td class="assessment-label-cell">Participant name</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="Full Name"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">DOB</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="MM/DD/YYYY"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Date of initial assessment</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="MM/DD/YYYY"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Date of Current reassessment</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="MM/DD/YYYY"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Parent/Guardian Contact</td>
+                  <td class="assessment-input-cell">
+                    <div class="nested-input-group">
+                      <div>
+                        <span class="assessment-sub-label">Name</span>
+                        <textarea class="assessment-textarea" placeholder="Full Name"></textarea>
+                      </div>
+                      <div class="inline-input-row">
+                        <div>
+                          <span class="assessment-sub-label">Phone</span>
+                          <textarea class="assessment-textarea" placeholder="(555) 000-0000"></textarea>
+                        </div>
+                        <div>
+                          <span class="assessment-sub-label">Email</span>
+                          <textarea class="assessment-textarea" placeholder="email@example.com"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </section>
+
+            <!-- SECTION 2: BioPsychosocial Information -->
+            <section class="assessment-section">
+              <div class="assessment-section-header">
+                <h2>BioPsychosocial Information</h2>
               </div>
-              <span class="badge">Assessment</span>
+              <table class="assessment-table">
+                <tr>
+                  <td class="assessment-label-cell">Current Family Structure</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="Describe family dynamics, household members, etc."></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Medications</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="List current medications and dosages..."></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Date of initial Assessment</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="MM/DD/YYYY"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Medical history</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="Relevant medical conditions, allergies, or previous surgeries..."></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">School placement</td>
+                  <td class="assessment-input-cell">
+                    <div class="nested-input-group">
+                      <div>
+                        <span class="assessment-sub-label">Grade</span>
+                        <div class="assessment-checklist">
+                          <label class="checklist-item"><input type="checkbox"> Pre-K</label>
+                          <label class="checklist-item"><input type="checkbox"> K</label>
+                          <label class="checklist-item"><input type="checkbox"> 1st</label>
+                          <label class="checklist-item"><input type="checkbox"> 2nd</label>
+                          <label class="checklist-item"><input type="checkbox"> 3rd</label>
+                          <label class="checklist-item"><input type="checkbox"> 4th</label>
+                          <label class="checklist-item"><input type="checkbox"> 5th</label>
+                          <label class="checklist-item"><input type="checkbox"> 6th</label>
+                          <label class="checklist-item"><input type="checkbox"> 7th</label>
+                          <label class="checklist-item"><input type="checkbox"> 8th</label>
+                          <label class="checklist-item"><input type="checkbox"> 9th</label>
+                          <label class="checklist-item"><input type="checkbox"> 10th</label>
+                          <label class="checklist-item"><input type="checkbox"> 11th</label>
+                          <label class="checklist-item"><input type="checkbox"> 12th</label>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="assessment-sub-label">Type of School</span>
+                        <div class="assessment-checklist">
+                          <label class="checklist-item"><input type="radio" name="school_type"> Public</label>
+                          <label class="checklist-item"><input type="radio" name="school_type"> Private</label>
+                          <label class="checklist-item"><input type="radio" name="school_type"> Home School</label>
+                        </div>
+                      </div>
+                      <div class="inline-input-row">
+                        <div>
+                          <span class="assessment-sub-label">School Hours (Start)</span>
+                          <textarea class="assessment-textarea" placeholder="00:00 AM"></textarea>
+                        </div>
+                        <div>
+                          <span class="assessment-sub-label">School Hours (End)</span>
+                          <textarea class="assessment-textarea" placeholder="00:00 PM"></textarea>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="assessment-sub-label">Schedule of Academic Activities</span>
+                        <textarea class="assessment-textarea" placeholder="Describe daily academic schedule..."></textarea>
+                      </div>
+                      <div>
+                        <span class="assessment-sub-label">Total Hours Spent in School Per Week</span>
+                        <textarea class="assessment-textarea" placeholder="e.g. 35 hours"></textarea>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">History of ABA services (indicate N/A if no prior history)</td>
+                  <td class="assessment-input-cell">
+                    <div class="nested-input-group">
+                      <div class="inline-input-row">
+                        <div>
+                          <span class="assessment-sub-label">Provider Name</span>
+                          <textarea class="assessment-textarea" placeholder="Agency Name"></textarea>
+                        </div>
+                        <div>
+                          <span class="assessment-sub-label">Start Date</span>
+                          <textarea class="assessment-textarea" placeholder="MM/DD/YYYY"></textarea>
+                        </div>
+                        <div>
+                          <span class="assessment-sub-label">End Date</span>
+                          <textarea class="assessment-textarea" placeholder="MM/DD/YYYY"></textarea>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="assessment-sub-label">Outcomes</span>
+                        <textarea class="assessment-textarea" placeholder="Summary of results/progress..."></textarea>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Other Mental Health Services (include any mental health hospitalizations)</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="Details of psychiatric care, hospitalizations, etc."></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Other Services (e.g. OT, speech, PT, etc.)</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="Indicate sessions per week. Indicate N/A if none."></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Coordination of care with other providers (psychologists, psychiatrist, OT, SLP etc.)</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="Details of interdisciplinary coordination..."></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Major Life Changes</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea" placeholder="Recent moves, losses, births, or other stressors..."></textarea>
+                  </td>
+                </tr>
+              </table>
+            </section>
+
+            <div class="assessment-footer">
+              <button class="glass-btn btn-primary">
+                <i data-lucide="save" style="width: 18px; height: 18px; margin-right: 8px; display: inline-block; vertical-align: text-bottom;"></i> Save Assessment Draft
+              </button>
             </div>
           </div>
         </article>
