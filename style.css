@@ -185,6 +185,10 @@ body.marketing-page {
 
 .app-header .header-left {
   justify-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
 }
 
 .app-header .site-toggle {
@@ -2371,7 +2375,6 @@ body.marketing-page {
 }
 
 .hub-back-btn {
-  margin-top: 0.5rem;
   font-size: 0.8rem !important;
   padding: 0.4rem 0.85rem !important;
   text-decoration: none;
