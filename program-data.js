@@ -128,15 +128,25 @@ function normalizeProgramData(program) {
 
   return {
     clientName: program.clientName || DEFAULT_PROGRAM.clientName,
-    targets: program.targets.map((target, index) => ({
-      ...target,
-      id: target.id || slugify(`${target.name || 'target'}-${index + 1}`),
-      category: target.category || (target.domain === 'skill' ? 'General' : null),
-      masteryCriteria: target.masteryCriteria || getDefaultMasteryCriteria(target),
-      sessionData: target.sessionData || [],
-      phase: target.phase || 'Acquisition',
-      lastStaff: target.lastStaff || '—'
-    }))
+    targets: program.targets.map((target, index) => {
+      let cat = target.category;
+      if (!cat || cat === 'General') {
+        if (target.id === 'ta-shoes') cat = 'Daily Living';
+        else if (target.id === 'pc-colors') cat = 'Communication';
+        else if (target.id === 'int-play') cat = 'Play Skills';
+        else cat = target.domain === 'skill' ? 'General' : null;
+      }
+      
+      return {
+        ...target,
+        id: target.id || slugify(`${target.name || 'target'}-${index + 1}`),
+        category: cat,
+        masteryCriteria: target.masteryCriteria || getDefaultMasteryCriteria(target),
+        sessionData: target.sessionData || [],
+        phase: target.phase || 'Acquisition',
+        lastStaff: target.lastStaff || '—'
+      };
+    })
   };
 }
 
