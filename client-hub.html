@@ -3,92 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Hub | Liquid Glass</title>
-  <meta name="description" content="Centralized hub for client assets, sessions, and files.">
+  <title>Client Dashboard | Prysm</title>
+  <meta name="description" content="Client clinical command center with authorization tracking.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    .hub-primary {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 2rem;
-      text-align: center;
-      text-decoration: none;
-      color: white;
-      background: linear-gradient(135deg, var(--color-blue), var(--color-blue-dark));
-      border-radius: 16px;
-      margin-bottom: 2rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
-    }
-    .hub-primary:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
-    }
-    .hub-primary i {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 1rem;
-    }
-    .hub-primary h3 {
-      font-size: 1.75rem;
-      margin-bottom: 0.5rem;
-      color: white;
-    }
-    .hub-primary p {
-      font-size: 1rem;
-      opacity: 0.9;
-      margin: 0;
-    }
-    
-    .hub-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .hub-list-item {
-      display: flex;
-      align-items: center;
-      padding: 1.5rem;
-      text-decoration: none;
-      color: var(--color-text);
-      transition: all 0.3s ease;
-    }
-    .hub-list-item:hover {
-      transform: translateX(4px);
-      border-color: rgba(255,255,255,0.8);
-      background: rgba(255,255,255,0.5);
-    }
-    .hub-list-item .icon-wrapper {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: rgba(37, 99, 235, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 1.5rem;
-      color: var(--color-blue);
-    }
-    .hub-list-item h3 {
-      font-size: 1.1rem;
-      margin-bottom: 0.25rem;
-    }
-    .hub-list-item p {
-      font-size: 0.9rem;
-      color: var(--color-text-light);
-      margin: 0;
-    }
-    .hub-list-item .chevron {
-      margin-left: auto;
-      color: var(--color-text-light);
-    }
-  </style>
 </head>
 <body>
   <div class="app-background">
@@ -106,7 +27,7 @@
         <a href="files.html" class="site-toggle-link">Files</a>
         <a href="contacts.html" class="site-toggle-link">Staff</a>
       </nav>
-            <div class="header-right" style="display: flex; align-items: center; gap: 0.75rem;">
+      <div class="header-right" style="display: flex; align-items: center; gap: 0.75rem;">
         <a href="login.html" id="auth-sign-in-btn" class="glass-btn btn-sm" style="display: none; white-space: nowrap;">Sign In</a>
         <div id="auth-profile-menu" style="display: none; align-items: center; gap: 0.5rem;">
           <div id="auth-user-avatar" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">?</div>
@@ -117,50 +38,138 @@
       </div>
     </header>
 
-    <div style="max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; flex: 1; overflow: hidden; padding-top: 2rem;">
-      <div style="padding: 0 1.5rem;">
-        <h2 class="section-title" id="client-name-title">Client Dashboard</h2>
-      </div>
+    <!-- ═══ DASHBOARD GRID ═══ -->
+    <div class="hub-dashboard">
 
-      <div class="scrollable-content" style="flex: 1; padding: 0 1.5rem 2rem;">
-        <a href="session-book.html" class="hub-primary">
+      <!-- ─── LEFT COLUMN: Profile + Authorization ─── -->
+      <aside class="hub-sidebar">
+
+        <!-- Client Profile Card -->
+        <article class="glass-panel hub-profile-card">
+          <div class="hub-profile-avatar" id="hub-avatar">?</div>
+          <h2 class="hub-profile-name" id="hub-client-name">Loading...</h2>
+          <p class="hub-profile-meta" id="hub-client-meta"></p>
+          <a href="treatment-plan.html" class="glass-btn btn-sm hub-back-btn">
+            <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i> All Clients
+          </a>
+        </article>
+
+        <!-- Authorization Progress Card -->
+        <article class="glass-panel hub-auth-card">
+          <div class="hub-auth-header">
+            <div>
+              <h3 class="hub-auth-title">Authorization</h3>
+              <p class="hub-auth-subtitle">Insurance utilization</p>
+            </div>
+            <button class="glass-btn btn-sm" id="btn-manage-auth" onclick="openManageAuthModal()" style="padding: 0.4rem 0.7rem; font-size: 0.78rem;">
+              <i data-lucide="settings-2" style="width: 13px; height: 13px;"></i> Manage
+            </button>
+          </div>
+          <div id="auth-progress-bars">
+            <!-- Progress bars rendered by JS -->
+          </div>
+          <div id="auth-empty-state" style="display: none; text-align: center; padding: 1.25rem 0.75rem; color: var(--color-text-light);">
+            <i data-lucide="clipboard-list" style="width: 32px; height: 32px; margin-bottom: 0.5rem; opacity: 0.4;"></i>
+            <p style="font-size: 0.82rem; margin: 0;">No authorizations configured.</p>
+            <p style="font-size: 0.78rem; margin-top: 0.2rem;">Click <strong>"Manage"</strong> to add service codes.</p>
+          </div>
+        </article>
+
+      </aside>
+
+      <!-- ─── RIGHT COLUMN: Actions ─── -->
+      <section class="hub-main">
+
+        <!-- Primary Action: Session Book -->
+        <a href="session-book.html" class="hub-primary-action">
           <i data-lucide="play-circle"></i>
-          <h3>Session Book</h3>
+          <div>
+            <h3>Session Book</h3>
+            <p>Start a new clinical session</p>
+          </div>
+          <i data-lucide="chevron-right" class="hub-action-chevron"></i>
         </a>
 
-        <div class="hub-list">
-          <a href="bcba.html" class="glass-panel hub-list-item">
-            <div class="icon-wrapper">
+        <!-- Secondary Actions -->
+        <div class="hub-actions-list">
+          <a href="bcba.html" class="glass-panel hub-action-item">
+            <div class="hub-action-icon">
               <i data-lucide="layout-dashboard"></i>
             </div>
-            <div>
+            <div class="hub-action-copy">
               <h3>Treatment Planning</h3>
+              <p>View and edit targets</p>
             </div>
-            <i data-lucide="chevron-right" class="chevron"></i>
+            <i data-lucide="chevron-right" class="hub-action-chevron"></i>
           </a>
-          
-          <a href="files.html" class="glass-panel hub-list-item">
-            <div class="icon-wrapper">
+
+          <a href="files.html" class="glass-panel hub-action-item">
+            <div class="hub-action-icon">
               <i data-lucide="folder-open"></i>
             </div>
-            <div>
+            <div class="hub-action-copy">
               <h3>Files</h3>
+              <p>Documents & assessments</p>
             </div>
-            <i data-lucide="chevron-right" class="chevron"></i>
+            <i data-lucide="chevron-right" class="hub-action-chevron"></i>
           </a>
-          
-          <a href="billing.html" class="glass-panel hub-list-item">
-            <div class="icon-wrapper">
+
+          <a href="billing.html" class="glass-panel hub-action-item">
+            <div class="hub-action-icon">
               <i data-lucide="calendar"></i>
             </div>
-            <div>
+            <div class="hub-action-copy">
               <h3>Scheduled Sessions</h3>
+              <p>Calendar & billing</p>
             </div>
-            <i data-lucide="chevron-right" class="chevron"></i>
+            <i data-lucide="chevron-right" class="hub-action-chevron"></i>
           </a>
+        </div>
+      </section>
+
+      <!-- ─── MOBILE-ONLY: Authorization (appears at bottom) ─── -->
+      <section class="hub-mobile-auth">
+        <article class="glass-panel hub-auth-card">
+          <div class="hub-auth-header">
+            <div>
+              <h3 class="hub-auth-title">Authorization</h3>
+              <p class="hub-auth-subtitle">Insurance utilization</p>
+            </div>
+            <button class="glass-btn btn-sm" onclick="openManageAuthModal()" style="padding: 0.4rem 0.7rem; font-size: 0.78rem;">
+              <i data-lucide="settings-2" style="width: 13px; height: 13px;"></i> Manage
+            </button>
+          </div>
+          <div id="auth-progress-bars-mobile">
+            <!-- Mirror of progress bars for mobile -->
+          </div>
+        </article>
+      </section>
+
+    </div><!-- end .hub-dashboard -->
+
+    <!-- ═══ MANAGE AUTHORIZATIONS MODAL ═══ -->
+    <div class="modal-overlay" id="auth-manage-overlay" style="display: none;">
+      <div class="glass-modal" style="width: 90%; max-width: 560px; max-height: 90vh; display: flex; flex-direction: column;">
+        <div class="modal-header" style="position: relative; padding: 1.5rem; flex-shrink: 0;">
+          <h2>Manage Authorizations</h2>
+          <button class="btn-icon" onclick="closeManageAuthModal()" aria-label="Close" style="position: absolute; top: 1.5rem; right: 1.5rem;">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body scrollable-content" style="padding: 0 1.5rem 1.5rem; flex: 1; overflow-y: auto;">
+          <p style="color: var(--color-text-light); font-size: 0.85rem; margin-bottom: 1.25rem;">Toggle codes ON/OFF and set authorized hours for <strong id="auth-modal-client-name">this client</strong>.</p>
+          <div id="auth-code-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- CPT code toggle rows rendered by JS -->
+          </div>
+        </div>
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;">
+          <button class="glass-btn btn-primary" onclick="saveAuthorizationConfig()" style="width: 100%; padding: 0.85rem;">
+            <i data-lucide="save" style="width: 16px; height: 16px;"></i> Save Configuration
+          </button>
         </div>
       </div>
     </div>
+
   </main>
 
   <!-- Supabase Auth Integration -->
@@ -170,20 +179,10 @@
   <script src="auth-guard-v9.js?v=12"></script>
   <script src="supabase-data.js"></script>
   <script src="nav.js"></script>
-  <script src="program-data.js"></script>
+  <script src="clients-data.js"></script>
+  <script src="client-hub.js"></script>
   <script>
     lucide.createIcons();
-    
-    // Attempt to set client name from program data
-    document.addEventListener('DOMContentLoaded', () => {
-      try {
-        const program = loadProgramData();
-        if (program && program.clientName) {
-          const title = document.getElementById('client-name-title');
-          if (title) title.textContent = `${program.clientName}'s Dashboard`;
-        }
-      } catch(e) {}
-    });
   </script>
 </body>
 </html>
