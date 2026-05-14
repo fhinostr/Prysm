@@ -37,6 +37,17 @@ function loadClientProfile() {
     if (nameEl) nameEl.textContent = client.name;
     if (metaEl) metaEl.textContent = `ID: ${client.id}`;
     document.title = `${client.name} | Prysm`;
+
+    // Populate detail fields
+    const caregiverEl = document.getElementById('hub-caregiver');
+    const dobEl = document.getElementById('hub-dob');
+    const phoneEl = document.getElementById('hub-phone');
+    const diagnosisEl = document.getElementById('hub-diagnosis');
+
+    if (caregiverEl) caregiverEl.textContent = client.caregiver || '—';
+    if (dobEl) dobEl.textContent = client.dob || '—';
+    if (phoneEl) phoneEl.textContent = client.phone || '—';
+    if (diagnosisEl) diagnosisEl.textContent = client.diagnosis || '—';
   } else {
     if (nameEl) nameEl.textContent = 'Unknown Client';
   }
