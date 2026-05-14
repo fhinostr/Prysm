@@ -1,3 +1,58 @@
+// --- View State Management ---
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderClientList();
+  
+  // Default to first tab if already in file view (for testing)
+  if (document.getElementById('client-files-view').style.display !== 'none') {
+    switchFilesTab('assessments');
+  }
+});
+
+function renderClientList() {
+  const listContainer = document.getElementById('client-list');
+  const countBadge = document.getElementById('client-count-badge');
+  if (!listContainer || !countBadge) return;
+
+  // Assuming getClientProfiles is globally available from clients-data.js
+  const clients = typeof getClientProfiles === 'function' ? getClientProfiles() : [];
+  countBadge.textContent = `${clients.length} Client${clients.length === 1 ? '' : 's'}`;
+
+  listContainer.innerHTML = clients.map(client => `
+    <div class="client-row" onclick="selectClient('${client.id}', '${escapeHtml(client.name)}')">
+      <div class="client-avatar">${client.initials}</div>
+      <div class="client-copy">
+        <strong>${escapeHtml(client.name)}</strong>
+        <span>${escapeHtml(client.subtitle)}</span>
+      </div>
+      <i data-lucide="chevron-right"></i>
+    </div>
+  `).join('');
+
+  lucide.createIcons();
+}
+
+function selectClient(clientId, clientName) {
+  // Update UI text
+  document.getElementById('selected-client-name').textContent = clientName;
+  document.getElementById('selected-client-eyebrow').textContent = `Files for ${clientName}`;
+  
+  // Switch views
+  document.getElementById('client-selection-view').style.display = 'none';
+  document.getElementById('client-files-view').style.display = 'block';
+  
+  // Reset to default tab
+  switchFilesTab('assessments');
+  
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showClientSelection() {
+  document.getElementById('client-selection-view').style.display = 'block';
+  document.getElementById('client-files-view').style.display = 'none';
+}
+
 function switchFilesTab(tabId) {
   document.querySelectorAll('.files-tab-btn').forEach(button => {
     button.classList.toggle('active', button.dataset.filesTab === tabId);
@@ -14,7 +69,17 @@ function switchFilesTab(tabId) {
   }
 }
 
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // --- AI Migration Hub Logic ---
+// ... (rest of the existing logic)
 
 function triggerBulkUpload() {
   document.getElementById('migration-file-input').click();
