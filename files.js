@@ -13,3 +13,144 @@ function switchFilesTab(tabId) {
     initializeToggleBars();
   }
 }
+
+// --- AI Migration Hub Logic ---
+
+function triggerBulkUpload() {
+  document.getElementById('migration-file-input').click();
+}
+
+function handleFileUpload(event) {
+  const files = event.target.files;
+  if (!files || files.length === 0) return;
+  
+  const uploadZone = document.getElementById('migration-upload-zone');
+  const originalHtml = uploadZone.innerHTML;
+  
+  // Simulate AI parsing loading state
+  uploadZone.innerHTML = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+      <i data-lucide="loader-2" class="lucide-loader-2" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem; animation: spin 2s linear infinite;"></i>
+      <h3 style="color: var(--color-blue-dark);">AI is analyzing ${files.length} document(s)...</h3>
+      <p style="color: var(--color-text-light);">Extracting targets, baselines, and mastery criteria.</p>
+    </div>
+  `;
+  lucide.createIcons();
+  
+  // Adding spin animation if not exists
+  if (!document.getElementById('spin-anim')) {
+    const style = document.createElement('style');
+    style.id = 'spin-anim';
+    style.innerHTML = `@keyframes spin { 100% { transform: rotate(360deg); } }`;
+    document.head.appendChild(style);
+  }
+
+  setTimeout(() => {
+    uploadZone.innerHTML = originalHtml;
+    lucide.createIcons();
+    
+    // Add new draft to list
+    const draftList = document.getElementById('draft-migrations-list');
+    const newDraft = document.createElement('div');
+    newDraft.className = 'file-row';
+    newDraft.style.borderLeft = '4px solid var(--color-turquoise)';
+    newDraft.innerHTML = `
+      <div>
+        <strong>${files[0].name}</strong>
+        <span style="color: var(--color-blue-dark); font-weight: 500;">Extracted: 4 Goals, 15 Targets</span>
+      </div>
+      <button class="glass-btn btn-sm" onclick="openReviewModal('new-upload')">Review & Commit</button>
+    `;
+    draftList.prepend(newDraft);
+    
+    // Reset file input
+    event.target.value = '';
+  }, 2500);
+}
+
+function openReviewModal(clientId) {
+  const modal = document.getElementById('migration-modal-overlay');
+  const content = document.getElementById('migration-modal-content');
+  
+  let mockDataHtml = '';
+  
+  if (clientId === 'ethan-brooks') {
+    mockDataHtml = `
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.5rem;">Client Details</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);">
+          <div><strong>Name:</strong> Ethan Brooks</div>
+          <div><strong>DOB:</strong> 05/12/2018</div>
+          <div><strong>Diagnosis:</strong> F84.0</div>
+          <div><strong>Found in:</strong> Intake & Treatment Plan 2025.pdf</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+          Skill Acquisition Targets (12)
+          <button class="glass-btn btn-sm" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">+ Add Missing</button>
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="background: white; padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; color: var(--color-text);">Tacting Objects</div>
+              <div style="font-size: 0.85rem; color: var(--color-text-light);">Domain: Communication &bull; Baseline: 10% &bull; Mastery: 90% across 3 days</div>
+            </div>
+            <i data-lucide="edit-2" style="width: 16px; height: 16px; color: var(--color-blue); cursor: pointer;"></i>
+          </div>
+          <div style="background: white; padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-weight: 600; color: var(--color-text);">Washing Hands (Task Analysis)</div>
+              <div style="font-size: 0.85rem; color: var(--color-text-light);">Domain: Daily Living &bull; 8 Steps Extracted</div>
+            </div>
+            <i data-lucide="edit-2" style="width: 16px; height: 16px; color: var(--color-blue); cursor: pointer;"></i>
+          </div>
+          <div style="text-align: center; color: var(--color-blue); font-size: 0.9rem; cursor: pointer; padding: 0.5rem;">Show 10 more targets...</div>
+        </div>
+      </div>
+    `;
+  } else {
+    mockDataHtml = `
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.5rem;">Extraction Summary</h3>
+        <p style="color: var(--color-text-light);">The AI has processed your document and identified targets ready for migration.</p>
+      </div>
+      <div style="background: rgba(64, 224, 208, 0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(64, 224, 208, 0.3); text-align: center;">
+        <i data-lucide="check-circle" style="color: var(--color-turquoise-dark); width: 32px; height: 32px; margin-bottom: 0.5rem;"></i>
+        <h4 style="color: var(--color-blue-dark);">Ready to commit to database</h4>
+      </div>
+    `;
+  }
+  
+  content.innerHTML = mockDataHtml;
+  lucide.createIcons();
+  
+  modal.style.display = 'flex';
+}
+
+function closeReviewModal() {
+  document.getElementById('migration-modal-overlay').style.display = 'none';
+}
+
+function commitMigration() {
+  const btn = document.querySelector('#migration-modal-overlay .btn-primary, #migration-modal-overlay button[onclick="commitMigration()"]');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = `<i data-lucide="loader-2" class="lucide-loader-2" style="width: 18px; height: 18px; animation: spin 2s linear infinite;"></i> Committing...`;
+  lucide.createIcons();
+  
+  setTimeout(() => {
+    closeReviewModal();
+    btn.innerHTML = originalText;
+    
+    // Show a success toast or alert
+    alert('Success! Migrated data has been mapped and committed to the database.');
+    
+    // Optionally remove the first item from the draft list to simulate completion
+    const draftList = document.getElementById('draft-migrations-list');
+    if (draftList.children.length > 0) {
+        draftList.removeChild(draftList.children[0]);
+    }
+  }, 1500);
+}
