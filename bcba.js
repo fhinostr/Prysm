@@ -7,7 +7,7 @@ try {
 const dynamicFieldsContainer = document.getElementById('dynamic-fields-container');
 const form = document.getElementById('target-builder-form');
 const submitButton = document.getElementById('target-submit-btn');
-const clientNameEl = document.getElementById('client-name');
+var bcbaClientNameEl = document.getElementById('client-name');
 
 let editingTargetId = null;
 
@@ -16,8 +16,8 @@ initializeTreatmentPlanning();
 function initializeTreatmentPlanning() {
   try {
     const program = loadProgramData();
-    if (clientNameEl) {
-      clientNameEl.textContent = `Client: ${program.clientName}`;
+    if (bcbaClientNameEl) {
+      bcbaClientNameEl.textContent = `Client: ${program.clientName}`;
     }
     
     // Populate category select
@@ -142,8 +142,8 @@ function renderLibrary() {
   const skillTargets = targets.filter(target => target.domain === 'skill');
   const problemTargets = targets.filter(target => target.domain === 'problem');
 
-  const skillContainer = document.getElementById('skill-targets-container');
-  const problemContainer = document.getElementById('problem-targets-container');
+  const skillContainer = document.getElementById('bcba-skill-targets-container');
+  const problemContainer = document.getElementById('bcba-problem-targets-container');
 
   if (skillContainer) {
     // Group skills by category
@@ -566,7 +566,7 @@ function openGraphModal(targetId, targetName) {
     </svg>
   `;
 
-  document.getElementById('graph-modal-overlay').style.display = 'flex';
+  document.getElementById('bcba-graph-modal-overlay').style.display = 'flex';
 }
 
 window.addEventListener('storage', event => {
@@ -575,11 +575,14 @@ window.addEventListener('storage', event => {
   }
 });
 
-function escapeHtml(value) {
-  return String(value || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+// escapeHtml is defined in app.js — only define if not already available
+if (typeof escapeHtml === 'undefined') {
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
 }

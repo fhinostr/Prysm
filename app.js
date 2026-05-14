@@ -445,7 +445,7 @@ function openDrawer(targetId, targetTitle) {
     : '<p>No info available.</p>';
 
   document.getElementById('drawer-notes-input').value = '';
-  switchDrawerTab('info');
+  switchDrawerTab(0);
   document.getElementById('drawer-overlay').classList.add('open');
   document.getElementById('right-drawer').classList.add('open');
 }
@@ -475,17 +475,37 @@ function closeDrawer() {
   currentDrawerTarget = null;
 }
 
-function switchDrawerTab(tabId) {
-  ['info', 'data', 'notes'].forEach(id => {
-    document.getElementById(`tab-btn-${id}`).classList.remove('active');
-    document.getElementById(`drawer-pane-${id}`).classList.remove('active');
-    document.getElementById(`drawer-pane-${id}`).style.display = 'none';
+function switchDrawerTab(index) {
+  const tabIds = ['info', 'data', 'notes'];
+  const slider = document.getElementById('drawer-viewport-slider');
+  const pill = document.getElementById('drawer-tab-pill');
+
+  // Update active state on tab buttons
+  tabIds.forEach((id, i) => {
+    const btn = document.getElementById(`tab-btn-${id}`);
+    const pane = document.getElementById(`drawer-pane-${id}`);
+    if (i === index) {
+      btn.classList.add('active');
+      pane.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+      pane.classList.remove('active');
+    }
   });
 
-  document.getElementById(`tab-btn-${tabId}`).classList.add('active');
-  const pane = document.getElementById(`drawer-pane-${tabId}`);
-  pane.classList.add('active');
-  pane.style.display = 'block';
+  // Slide the viewport
+  if (slider) {
+    slider.style.transform = `translateX(-${index * 100}%)`;
+  }
+
+  // Sync the sliding pill
+  if (pill) {
+    const activeBtn = document.getElementById(`tab-btn-${tabIds[index]}`);
+    if (activeBtn) {
+      pill.style.width = `${activeBtn.offsetWidth}px`;
+      pill.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+    }
+  }
 }
 
 function graphDrawerCurrentData() {
@@ -510,6 +530,71 @@ function saveDrawerNote() {
 window.addEventListener('storage', event => {
   if (event.key === PROGRAM_STORAGE_KEY) {
     initializeRbtView();
+  }
+});
+
+/* ================================================================
+   MAIN VIEWPORT SLIDER — Session Book ↔ Treatment Planning
+   ================================================================ */
+
+let currentMainPane = 0;
+
+function switchMainPane(index) {
+  currentMainPane = index;
+  const slider = document.getElementById('main-viewport-slider');
+  const panes = slider.querySelectorAll('.main-viewport-pane');
+  const toggleBtns = document.querySelectorAll('.view-toggle-link');
+
+  // Slide
+  slider.style.transform = `translateX(-${index * 100}%)`;
+
+  // Opacity parallax + active class
+  panes.forEach((pane, i) => {
+    if (i === index) {
+      pane.classList.add('active');
+    } else {
+      pane.classList.remove('active');
+    }
+  });
+
+  // Update toggle button active state
+  toggleBtns.forEach((btn, i) => {
+    if (i === index) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+/* ================================================================
+   DRAWER PILL INITIALIZATION
+   ================================================================ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize drawer pill on first active tab
+  const pill = document.getElementById('drawer-tab-pill');
+  const firstTab = document.getElementById('tab-btn-info');
+  if (pill && firstTab) {
+    // Defer to allow layout to complete
+    requestAnimationFrame(() => {
+      pill.style.width = `${firstTab.offsetWidth}px`;
+      pill.style.transform = `translateX(${firstTab.offsetLeft}px)`;
+    });
+  }
+
+  // Check URL hash for initial pane
+  if (window.location.hash === '#treatment-planning') {
+    // Defer to let nav.js initialize the toggle bars first
+    requestAnimationFrame(() => {
+      switchMainPane(1);
+      // Sync pill
+      const viewToggle = document.querySelector('.view-toggle');
+      const activeBtn = document.querySelectorAll('.view-toggle-link')[1];
+      if (viewToggle && activeBtn && typeof updateToggleSlider === 'function') {
+        updateToggleSlider(viewToggle, activeBtn);
+      }
+    });
   }
 });
 

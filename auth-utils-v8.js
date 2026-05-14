@@ -85,7 +85,7 @@ window.PrysmAuth = {
    */
   redirectByRole(role) {
     if (role === 'bcba') {
-      window.location.href = 'bcba.html';
+      window.location.href = 'session-book.html#treatment-planning';
     } else {
       window.location.href = 'session-book.html';
     }

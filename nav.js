@@ -167,6 +167,15 @@ function initializeToggleBars() {
 
         updateToggleSlider(toggleBar, link);
 
+        // For view-toggle buttons, delegate to switchMainPane
+        if (link.tagName.toLowerCase() === 'button' && link.dataset.pane !== undefined) {
+          event.preventDefault();
+          if (typeof switchMainPane === 'function') {
+            switchMainPane(parseInt(link.dataset.pane, 10));
+          }
+          return;
+        }
+
         if (link.tagName.toLowerCase() === 'a') {
           event.preventDefault();
           window.setTimeout(() => {

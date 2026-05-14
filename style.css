@@ -1595,7 +1595,24 @@ body.marketing-page {
   display: flex;
   border-bottom: 1px solid rgba(0,0,0,0.1);
   background: rgba(255,255,255,0.4);
+  position: relative;
+  overflow: visible;
 }
+
+/* Sliding pill indicator for drawer tabs */
+.drawer-tabs .drawer-tab-pill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2.5px;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(90deg, var(--color-blue), var(--color-turquoise));
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 2;
+}
+
 .drawer-tab {
   flex: 1;
   background: transparent;
@@ -1606,27 +1623,43 @@ body.marketing-page {
   cursor: pointer;
   color: var(--color-text-light);
   border-bottom: 2px solid transparent;
-  transition: all 0.2s;
+  transition: color 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 .drawer-tab.active {
   color: var(--color-blue);
-  border-bottom-color: var(--color-blue);
+  border-bottom-color: transparent; /* pill handles this now */
 }
 .drawer-tab:hover:not(.active) {
-  background: rgba(255,255,255,0.3);
+  color: var(--color-blue-dark);
 }
 
+/* Sliding viewport for drawer content */
 .drawer-content {
   flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.drawer-viewport-slider {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  height: 100%;
+}
+
+.drawer-tab-pane {
+  min-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
   overflow-y: auto;
   padding: 1.5rem;
-}
-.drawer-tab-pane {
-  display: none;
-  animation: fadeIn 0.3s ease;
+  opacity: 0.5;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .drawer-tab-pane.active {
-  display: block;
+  opacity: 1;
 }
 
 .drawer-textarea {
@@ -2613,4 +2646,40 @@ body.marketing-page {
   .hub-primary-action h3 {
     font-size: 1.15rem;
   }
+}
+
+/* ================================================================
+   MAIN VIEWPORT SLIDER — Session Book ↔ Treatment Planning
+   ================================================================ */
+
+.main-viewport-wrapper {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-viewport-slider {
+  display: flex;
+  flex: 1;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+  min-height: 0;
+}
+
+.main-viewport-pane {
+  min-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0.4;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.main-viewport-pane.active {
+  opacity: 1;
 }
