@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════════
-// PRYSM ABA LMS — Service Worker v12 (Cache-Busted)
-// Network-first for auth files, cache-first for static assets.
+// PRYSM ABA LMS — Service Worker v13 (Network-First)
+// Always fetches from network first to ensure instant updates without clearing cache.
 // ═══════════════════════════════════════════════════════════════
-const CACHE_VERSION = 'v12';
+const CACHE_VERSION = 'v13';
 const CACHE_NAME = `aba-lms-cache-${CACHE_VERSION}`;
 
 // Files that should NEVER be served from cache (always network-first)
@@ -68,36 +68,22 @@ self.addEventListener('fetch', event => {
 
   const url = event.request.url;
 
-  // Auth-critical files → network-first (never serve stale auth code)
-  const isAuthCritical = AUTH_CRITICAL_PATTERNS.some(p => url.includes(p));
-
-  if (isAuthCritical) {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          // Cache the fresh copy for offline fallback
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          return response;
-        })
-        .catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  // All other assets → cache-first with network fallback
+  // Network-First Strategy for all assets
+  // This guarantees updates are immediately visible without clearing cache
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request).then(response => {
+    fetch(event.request)
+      .then(response => {
+        // Cache the fresh copy for offline fallback
         if (url.startsWith('http')) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
-      });
-    }).catch(() => {
-      // Graceful offline fallback
-    })
+      })
+      .catch(() => {
+        // If network fails (offline), fallback to cache
+        return caches.match(event.request);
+      })
   );
 });
 
