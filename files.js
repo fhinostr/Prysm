@@ -307,9 +307,6 @@ function addNewBehavior() {
   bipDomain.innerHTML = `
     <h3 style="position: relative; font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
       ${name}
-      <button type="button" class="glass-btn btn-sm" onclick="addAssessmentGoal(this)" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); padding: 0.25rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
-        <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Goal
-      </button>
     </h3>
     <table class="assessment-table">
       <tr><td class="assessment-label-cell">Function:</td><td class="assessment-input-cell"><div class="assessment-checklist"><label class="checklist-item"><input type="checkbox"> Attention</label><label class="checklist-item"><input type="checkbox"> Automatic</label><label class="checklist-item"><input type="checkbox"> Access to Tangible</label><label class="checklist-item"><input type="checkbox"> Escape</label></div></td></tr>
