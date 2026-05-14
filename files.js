@@ -246,3 +246,29 @@ function commitMigration() {
     }
   }, 1500);
 }
+
+function addAssessmentGoal(btn) {
+  // Find the container for this domain
+  const container = btn.closest('.assessment-domain-container');
+  if (!container) return;
+  
+  // Clone the first table in the container
+  const firstTable = container.querySelector('.assessment-table');
+  const newTable = firstTable.cloneNode(true);
+  
+  // Clear inputs in the new table
+  newTable.querySelectorAll('textarea').forEach(ta => ta.value = '');
+  newTable.querySelectorAll('input[type="date"]').forEach(inp => inp.value = '');
+  newTable.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+  
+  // Add some spacing between tables
+  newTable.style.marginTop = '1.5rem';
+  
+  // Append to the container
+  container.appendChild(newTable);
+  
+  // Re-initialize lucide icons if any were cloned
+  if (typeof lucide !== 'undefined' && lucide.createIcons) {
+    lucide.createIcons();
+  }
+}
