@@ -56,12 +56,28 @@ function showClientSelection() {
 function openAssessment(assessmentId) {
   document.getElementById('assessments-list-view').style.display = 'none';
   document.getElementById('assessment-document-view').style.display = 'block';
+  
+  // Reset to the first tab (Client Info)
+  switchAssessmentTab('client-info');
+  
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function closeAssessment() {
   document.getElementById('assessments-list-view').style.display = 'flex'; // file-group uses flex
   document.getElementById('assessment-document-view').style.display = 'none';
+}
+
+function switchAssessmentTab(tabId) {
+  document.querySelectorAll('.assessment-tab-btn').forEach(button => {
+    button.classList.toggle('active', button.dataset.assessmentTab === tabId);
+  });
+
+  document.querySelectorAll('.assessment-tab-pane').forEach(pane => {
+    const isActive = pane.dataset.assessmentPane === tabId;
+    // pane.classList.toggle('active', isActive); // Optional: if you use CSS classes for display
+    pane.style.display = isActive ? 'block' : 'none';
+  });
 }
 
 function switchFilesTab(tabId) {

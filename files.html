@@ -119,14 +119,24 @@
           <!-- Assessment Document View -->
           <div id="assessment-document-view" class="assessment-template-container" style="display: none;">
             
-            <div style="margin-bottom: 1rem;">
+            <div style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between;">
               <button class="glass-btn btn-sm" onclick="closeAssessment()">
                 <i data-lucide="arrow-left" style="width: 14px; height: 14px; margin-right: 4px;"></i> Back to Assessments
               </button>
             </div>
 
+            <!-- Assessment Sub-Navigation -->
+            <div class="subnav-shell" style="margin-bottom: 1.5rem;">
+              <nav class="view-toggle" aria-label="Assessment Sections">
+                <button type="button" class="view-toggle-link active assessment-tab-btn" data-assessment-tab="client-info" onclick="switchAssessmentTab('client-info')">Client Info</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="biopsychosocial" onclick="switchAssessmentTab('biopsychosocial')">BioPsychosocial</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="narrative" onclick="switchAssessmentTab('narrative')">Narrative</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="goals" onclick="switchAssessmentTab('goals')">Goals</button>
+              </nav>
+            </div>
+
             <!-- SECTION 1: Client Information -->
-            <section class="assessment-section">
+            <section class="assessment-section assessment-tab-pane active" data-assessment-pane="client-info">
               <div class="assessment-section-header">
                 <h2>Client Information</h2>
               </div>
@@ -180,7 +190,7 @@
             </section>
 
             <!-- SECTION 2: BioPsychosocial Information -->
-            <section class="assessment-section">
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="biopsychosocial" style="display: none;">
               <div class="assessment-section-header">
                 <h2>BioPsychosocial Information</h2>
               </div>
@@ -314,7 +324,7 @@
             </section>
 
             <!-- SECTION 3: Narrative -->
-            <section class="assessment-section">
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="narrative" style="display: none;">
               <div class="assessment-section-header">
                 <h2>Narrative</h2>
               </div>
@@ -379,7 +389,7 @@
             </section>
 
             <!-- SECTION 4: Goals & Skill Acquisition -->
-            <section class="assessment-section">
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="goals" style="display: none;">
               <div class="assessment-section-header">
                 <h2>Goals</h2>
               </div>
