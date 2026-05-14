@@ -2334,8 +2334,8 @@ body.marketing-page {
 .hub-primary-action {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 3vh 2.5rem;
+  gap: 2rem;
+  padding: 4.5vh 3rem;
   text-decoration: none;
   color: white;
   background: linear-gradient(135deg, var(--color-blue), var(--color-blue-dark));
@@ -2354,13 +2354,13 @@ body.marketing-page {
 }
 
 .hub-primary-action > i:first-child {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   flex-shrink: 0;
 }
 
 .hub-primary-action h3 {
-  font-size: 1.75rem;
+  font-size: 2.1rem;
   margin: 0;
   color: white;
 }
@@ -2382,8 +2382,8 @@ body.marketing-page {
 .hub-action-item {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  padding: 1.5vh 2rem;
+  gap: 1rem;
+  padding: 1.5vh 1.5rem;
   text-decoration: none;
   color: var(--color-text);
   transition: all 0.25s ease;
@@ -2391,7 +2391,7 @@ body.marketing-page {
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow:
-    0 6px 20px rgba(2, 136, 209, 0.08),
+    0 4px 16px rgba(2, 136, 209, 0.06),
     inset 0 1px 0 rgba(255,255,255,0.6);
   border-radius: 20px;
 }
@@ -2405,8 +2405,8 @@ body.marketing-page {
 }
 
 .hub-action-icon {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   background: linear-gradient(135deg, rgba(2, 136, 209, 0.1), rgba(32, 178, 170, 0.1));
   display: flex;
@@ -2417,8 +2417,8 @@ body.marketing-page {
 }
 
 .hub-action-icon i {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
 }
 
 .hub-action-copy {
@@ -2427,7 +2427,7 @@ body.marketing-page {
 }
 
 .hub-action-copy h3 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin: 0;
   color: var(--color-blue-dark);
 }
@@ -2448,12 +2448,19 @@ body.marketing-page {
 
 /* ─── Mobile Responsive ───────────────────────────────────── */
 @media (max-width: 768px) {
+  .app-container:has(.hub-dashboard),
+  .app-container.hub-container {
+    height: auto;
+    overflow: visible;
+  }
+
   .hub-dashboard {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    overflow-y: auto;
+    height: auto;
+    overflow: visible;
   }
 
   .hub-sidebar {
