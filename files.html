@@ -133,6 +133,8 @@
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="narrative" onclick="switchAssessmentTab('narrative')">Narrative</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="goals" onclick="switchAssessmentTab('goals')">Goals</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="skill-acquisition" onclick="switchAssessmentTab('skill-acquisition')">Skill Acquisition</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="replacement-behaviors" onclick="switchAssessmentTab('replacement-behaviors')">Replacement Behaviors</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="bip" onclick="switchAssessmentTab('bip')">BIP</button>
               </nav>
             </div>
 
@@ -579,6 +581,383 @@
               <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
                 <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Adaptive Skills</h3>
                 <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">Medical Necessity Rationale:</td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Goal Statement:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Baseline:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Date of Introduction:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Projected Mastery:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Progress Data:
+                      <ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;">
+                        <li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li>
+                        <li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li>
+                      </ul>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </section>
+
+            <!-- SECTION 6: Replacement Behaviors -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="replacement-behaviors" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Replacement Behaviors</h2>
+              </div>
+              
+              <!-- Aggression Domain -->
+              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Aggression</h3>
+                <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">Medical Necessity Rationale:</td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Goal Statement:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Baseline:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Date of Introduction:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Projected Mastery:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Progress Data:
+                      <ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;">
+                        <li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li>
+                        <li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li>
+                      </ul>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Elopement Domain -->
+              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Elopement</h3>
+                <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">Medical Necessity Rationale:</td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Goal Statement:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Baseline:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Date of Introduction:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Projected Mastery:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Progress Data:
+                      <ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;">
+                        <li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li>
+                        <li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li>
+                      </ul>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Property Destruction Domain -->
+              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Property Destruction</h3>
+                <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">Medical Necessity Rationale:</td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Goal Statement:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Baseline:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Date of Introduction:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Projected Mastery:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Progress Data:
+                      <ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;">
+                        <li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li>
+                        <li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li>
+                      </ul>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </section>
+
+            <!-- SECTION 7: Behavior Intervention Plan -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="bip" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Behavior Intervention Plan</h2>
+              </div>
+
+              <!-- Aggression Domain -->
+              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Aggression</h3>
+                <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">Function:</td>
+                    <td class="assessment-input-cell">
+                      <div class="assessment-checklist">
+                        <label class="checklist-item"><input type="checkbox"> Attention</label>
+                        <label class="checklist-item"><input type="checkbox"> Automatic</label>
+                        <label class="checklist-item"><input type="checkbox"> Access to Tangible</label>
+                        <label class="checklist-item"><input type="checkbox"> Escape</label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Medical Necessity Rationale:</td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Goal Statement:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Baseline:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Date of Introduction:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Projected Mastery:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Progress Data:
+                      <ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;">
+                        <li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li>
+                        <li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li>
+                      </ul>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Elopement Domain -->
+              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Elopement</h3>
+                <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">Function:</td>
+                    <td class="assessment-input-cell">
+                      <div class="assessment-checklist">
+                        <label class="checklist-item"><input type="checkbox"> Attention</label>
+                        <label class="checklist-item"><input type="checkbox"> Automatic</label>
+                        <label class="checklist-item"><input type="checkbox"> Access to Tangible</label>
+                        <label class="checklist-item"><input type="checkbox"> Escape</label>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Medical Necessity Rationale:</td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Goal Statement:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Baseline:
+                      <span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Date of Introduction:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Projected Mastery:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Progress Data:
+                      <ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;">
+                        <li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li>
+                        <li>If applicable, include narrative of any changes in teaching procedures that occurred to assist.</li>
+                      </ul>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Property Destruction Domain -->
+              <div style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">Property Destruction</h3>
+                <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">Function:</td>
+                    <td class="assessment-input-cell">
+                      <div class="assessment-checklist">
+                        <label class="checklist-item"><input type="checkbox"> Attention</label>
+                        <label class="checklist-item"><input type="checkbox"> Automatic</label>
+                        <label class="checklist-item"><input type="checkbox"> Access to Tangible</label>
+                        <label class="checklist-item"><input type="checkbox"> Escape</label>
+                      </div>
+                    </td>
+                  </tr>
                   <tr>
                     <td class="assessment-label-cell">Medical Necessity Rationale:</td>
                     <td class="assessment-input-cell">
