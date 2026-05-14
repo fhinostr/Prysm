@@ -2451,6 +2451,7 @@ body.marketing-page {
   .app-container:has(.hub-dashboard),
   .app-container.hub-container {
     height: 100vh !important;
+    height: 100dvh !important; /* Fix for mobile browser UI blocking the bottom */
     overflow: hidden !important;
   }
 
@@ -2459,6 +2460,7 @@ body.marketing-page {
     flex-direction: column;
     gap: 1.25rem;
     padding: 1.25rem;
+    padding-bottom: max(4rem, env(safe-area-inset-bottom) + 2rem) !important;
     height: auto !important;
     flex: 1 !important;
     overflow-y: auto !important;
