@@ -24,6 +24,7 @@ const DEFAULT_PROGRAM = {
         'Push the lace through the hole',
         'Pull both loops tight'
       ],
+      category: 'Daily Living',
       masteryCriteria: { threshold: 90, consecutiveSessions: 3 },
       sessionData: [85, 88, 91, 93, 94]
     },
@@ -38,6 +39,7 @@ const DEFAULT_PROGRAM = {
       procedures: 'Present Sd "What color?". Wait 3s. If incorrect, use echoic prompt and mark (-). If correct, provide vocal praise and mark (+).',
       example: 'Saying "Blue" clearly. Approximations like "Bwue" are acceptable.',
       nonExample: 'Saying the wrong color, no response, or saying "color".',
+      category: 'Communication',
       masteryCriteria: { threshold: 90, consecutiveSessions: 3 },
       sessionData: [72, 80, 84]
     },
@@ -52,6 +54,7 @@ const DEFAULT_PROGRAM = {
       procedures: 'Whole interval recording. Mark the interval ONLY if the child played independently for the entire 60 seconds without interruption.',
       example: 'Stacking blocks, looking at book pages quietly.',
       nonExample: 'Throwing toys, bringing toy to therapist during the interval.',
+      category: 'Play Skills',
       intervalLength: 60,
       intervalUnit: 'seconds',
       intervalKind: 'whole',
@@ -97,6 +100,16 @@ const MEASUREMENT_META = {
   duration: { label: 'Duration', icon: 'timer' }
 };
 
+const SKILL_CATEGORIES = [
+  'Communication',
+  'Social Skills',
+  'Daily Living',
+  'Academic',
+  'Play Skills',
+  'Motor Skills',
+  'General'
+];
+
 function cloneProgramData(data) {
   return JSON.parse(JSON.stringify(data));
 }
@@ -118,6 +131,7 @@ function normalizeProgramData(program) {
     targets: program.targets.map((target, index) => ({
       ...target,
       id: target.id || slugify(`${target.name || 'target'}-${index + 1}`),
+      category: target.category || (target.domain === 'skill' ? 'General' : null),
       masteryCriteria: target.masteryCriteria || getDefaultMasteryCriteria(target),
       sessionData: target.sessionData || [],
       phase: target.phase || 'Acquisition',

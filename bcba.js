@@ -19,6 +19,13 @@ function initializeTreatmentPlanning() {
     if (clientNameEl) {
       clientNameEl.textContent = `Client: ${program.clientName}`;
     }
+    
+    // Populate category select
+    const categorySelect = document.getElementById('target-category');
+    if (categorySelect && typeof SKILL_CATEGORIES !== 'undefined') {
+      categorySelect.innerHTML = SKILL_CATEGORIES.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+    }
+
     toggleDynamicFields();
     renderLibrary();
   } catch (err) {
@@ -110,6 +117,14 @@ function updateStepNumbers() {
 
 function updateDomainStyling() {
   const domain = document.getElementById('target-domain').value;
+  const categoryGroup = document.getElementById('category-group');
+  
+  if (domain === 'problem') {
+    if (categoryGroup) categoryGroup.style.display = 'none';
+  } else {
+    if (categoryGroup) categoryGroup.style.display = 'block';
+  }
+
   const allowedType = domain === 'problem' ? 'frequency' : 'percent';
   const checked = document.querySelector('input[name="measurement"]:checked').value;
 
@@ -131,7 +146,36 @@ function renderLibrary() {
   const problemContainer = document.getElementById('problem-targets-container');
 
   if (skillContainer) {
-    skillContainer.innerHTML = skillTargets.map(renderLibraryCard).join('') || `
+    // Group skills by category
+    const groupedSkills = {};
+    skillTargets.forEach(target => {
+      const cat = target.category || 'General';
+      if (!groupedSkills[cat]) groupedSkills[cat] = [];
+      groupedSkills[cat].push(target);
+    });
+
+    // Sort categories (keep 'General' or 'Uncategorized' at the end if you want, but alphabetical for now)
+    const sortedCats = Object.keys(groupedSkills).sort();
+
+    skillContainer.innerHTML = sortedCats.map(cat => {
+      const catTargets = groupedSkills[cat];
+      const catId = `cat-${slugify(cat)}`;
+      return `
+        <div class="category-folder" id="${catId}-wrapper">
+          <button class="category-header glass-panel" onclick="toggleCategory('${catId}')">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <i data-lucide="folder" class="folder-icon"></i>
+              <span class="category-name">${cat}</span>
+              <span class="category-count">${catTargets.length} Targets</span>
+            </div>
+            <i data-lucide="chevron-down" class="chevron-icon"></i>
+          </button>
+          <div class="category-content" id="${catId}">
+            ${catTargets.map(renderLibraryCard).join('')}
+          </div>
+        </div>
+      `;
+    }).join('') || `
       <div class="glass-panel" style="padding: 1rem; color: var(--color-text-light);">
         No skill targets in this view yet.
       </div>
@@ -147,6 +191,15 @@ function renderLibrary() {
   }
 
   try { lucide.createIcons(); } catch(e) {}
+}
+
+function toggleCategory(catId) {
+  const content = document.getElementById(catId);
+  const wrapper = document.getElementById(`${catId}-wrapper`);
+  if (!content || !wrapper) return;
+
+  const isCollapsed = wrapper.classList.toggle('collapsed');
+  // Optional: save state to localStorage if desired
 }
 
 // ─── Mastery Logic ────────────────────────────────────────────────────────────
@@ -325,6 +378,7 @@ function editTarget(targetId) {
   toggleDynamicFields();
   updateMasteryCriteriaFields(target.measurementType, target.masteryCriteria);
 
+  document.getElementById('target-category').value = target.category || 'General';
   document.getElementById('op-def').value = target.opDef || '';
   document.getElementById('procedures').value = target.procedures || '';
   document.getElementById('example').value = target.example || '';
@@ -397,7 +451,8 @@ function handleFormSubmit(event) {
     opDef: document.getElementById('op-def').value.trim(),
     procedures: document.getElementById('procedures').value.trim(),
     example: document.getElementById('example').value.trim(),
-    nonExample: document.getElementById('non-example').value.trim()
+    nonExample: document.getElementById('non-example').value.trim(),
+    category: document.getElementById('target-domain').value === 'skill' ? document.getElementById('target-category').value : null
   };
 
   // Preserve existing sessionData and lastStaff (audit trail) when editing
@@ -430,6 +485,7 @@ function resetFormState() {
   form.reset();
   document.getElementById('target-modal-title').textContent = 'Create New Target';
   document.getElementById('target-domain').value = 'skill';
+  updateDomainStyling();
   document.querySelector('input[name="measurement"][value="percent"]').checked = true;
   toggleDynamicFields();
   updateMasteryCriteriaFields('percent');
