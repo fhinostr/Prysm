@@ -137,6 +137,7 @@
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="reduction-behaviors" onclick="switchAssessmentTab('reduction-behaviors')">Reduction Behaviors</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="bip" onclick="switchAssessmentTab('bip')">BIP</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="caregiver-training" onclick="switchAssessmentTab('caregiver-training')">Caregiver Training</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="transition-discharge" onclick="switchAssessmentTab('transition-discharge')">Transition & Discharge</button>
               </nav>
             </div>
 
@@ -1196,6 +1197,142 @@
                     </td>
                   </tr>
                 </table>
+              </div>
+            </section>
+
+            <!-- SECTION 10: Transition & Discharge -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="transition-discharge" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Transition, Maintenance & Discharge</h2>
+              </div>
+
+              <!-- Maintenance Plan -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Maintenance Plan
+                </h3>
+                <div style="background: rgba(255,255,255,0.6); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--color-text); line-height: 1.5;">
+                  A focus on maintenance will be achieved by conducting the following: Teaching for both stimulus and response generalization and ensuring that the skill is practiced across a variety of settings, conditions, and in a variety of ways. The instructional team will choose weekly probes for 4 weeks, bi-weekly probes for 4 weeks, and monthly probes for 3 months providing maintenance opportunities for all previously mastered targets to ensure retention over time. An intermittent reinforcement schedule will be used during maintenance programming to resist extinction better than what continuous reinforcement would offer.
+                </div>
+                <div style="padding: 1rem;">
+                  <textarea class="assessment-textarea" style="min-height: 100px;"></textarea>
+                </div>
+              </div>
+
+              <!-- Generalization Plan -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Generalization Plan
+                </h3>
+                <div style="background: rgba(255,255,255,0.6); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--color-text); line-height: 1.5;">
+                  <ul style="margin: 0; padding-left: 1.25rem;">
+                    <li>List specific steps the ABA team will take to help facilitate generalization of skills learned across people (i.e., family, daycare staff, school staff, other providers), environments (i.e., home, school, community, daycare), and stimuli.</li>
+                    <li>Include a specific generalization plan if services are occurring more than 50% in a clinic setting.</li>
+                  </ul>
+                </div>
+                <div style="padding: 1rem;">
+                  <textarea class="assessment-textarea" style="min-height: 100px;"></textarea>
+                </div>
+              </div>
+
+              <!-- Transition and Fading Plan -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Transition and Fading Plan
+                </h3>
+                <div style="background: rgba(255,255,255,0.6); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--color-text); line-height: 1.5;">
+                  <ul style="margin: 0; padding-left: 1.25rem;">
+                    <li>The transition plan should address how the participant will move from the current level of service to lower intensity (hours) of service through discharge; this should be directly related to how the participant is meeting objectives and based on measurable outcomes.</li>
+                    <li>If applicable, provide a fading plan for transition services from one location of service to another.</li>
+                    <li>Include a specific titration plan from clinic setting if services are occurring more than 50% in a clinic setting.</li>
+                    <li>Provided that the benefit is only available until age 21, as the participant approaches adolescence, include steps to assist the family with transitioning to adult services.</li>
+                  </ul>
+                </div>
+                <div style="padding: 1rem;">
+                  <textarea class="assessment-textarea" style="min-height: 100px;"></textarea>
+                </div>
+              </div>
+
+              <!-- Titration / Hour Reduction Criteria -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Transition / Hour Reduction Criteria
+                </h3>
+                <div style="background: rgba(255,255,255,0.6); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--color-text); line-height: 1.5;">
+                  The decision to titrate services will be regularly evaluated based on a variety of factors and in collaboration with the treatment team. The titration criteria below provide quantifiable information relevant to the decision, however, will not be used as the only criteria in order to make the decision. When client meets criteria described below, additional concerns do not arise, parent/caregiver demonstrates ability to appropriately implement treatment plan, and all is maintained for 6-months, then titration may be considered.
+                </div>
+                <div style="padding: 1rem; overflow-x: auto;">
+                  <table class="assessment-table" style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                    <thead>
+                      <tr style="background: rgba(2, 136, 209, 0.05);">
+                        <th style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: left; font-weight: 600; width: 80px;">Phase</th>
+                        <th style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: left; font-weight: 600;">Criteria</th>
+                        <th style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: left; font-weight: 600; width: 200px;">BCBA Hour Reduction</th>
+                        <th style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: left; font-weight: 600; width: 200px;">RBT/BT Hour Reduction</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 600; text-align: center;">1</td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Meet mastery criteria for Elopement and aggression. No new reduction behaviors identified in past 3 months. Client is engaging in replacement behaviors consistently with minimal prompting.</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">No reduction</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Reduce from 20h a week to 15h a week</textarea></td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 600; text-align: center;">2</td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Maintains criteria for phase 1. Meet mastery criteria for property destructions. Parents shown fidelity with treatment of at least 70% consistently on monthly checks for 3 months. Client has mastered 25% of his replacement goals (5 goals)</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Reduce 97155 to 2.5h per week, no change to 97156</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Reduce from 15h a week to 8h a week.</textarea></td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 600; text-align: center;">3</td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Maintains criteria for phase 1 and 2. No new reduction behaviors identified. Parent and caregivers maintain fidelity with treatment at 80% or higher for at least 13 weeks, masters 75% of replacement goals (15 goals) and maintains skills for 13 weeks</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Discontinue 97155, no change to 97156</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Discontinue RBT hours</textarea></td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 600; text-align: center;">4</td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Maintain all previous criteria for at least 3 months, and masters all replacement behaviors.</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Reduce 97156 to 2h a month</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Discontinued</textarea></td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 600; text-align: center;">5</td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Maintain all previous phases for at least 3 months</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Discharge</textarea></td>
+                        <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);"><textarea class="assessment-textarea" style="min-height: 60px;">Discharge</textarea></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Discharge Criteria -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  Discharge Plan & Criteria
+                </h3>
+                <div style="background: rgba(255,255,255,0.6); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; color: var(--color-text); line-height: 1.5;">
+                  <ul style="margin: 0; padding-left: 1.25rem; margin-bottom: 0.75rem;">
+                    <li>Discharge criteria should be established when services begin and adapted throughout the duration of treatment.</li>
+                    <li>Individualize discharge criteria to be measurable and directly related to the attainment and maintenance of the participants’ goals.</li>
+                    <li>The discharge plan should include:
+                      <ul style="list-style-type: circle; padding-left: 1.25rem; margin-top: 0.25rem;">
+                        <li>Next level of care (e.g., outpatient mental health services, medication management, mainstream school, etc.)</li>
+                        <li>Link ages with other services</li>
+                        <li>How the family can contact the provider for additional assistance</li>
+                        <li>Community resources for the family</li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <p style="margin: 0.75rem 0 0 0; font-weight: 500;">Discharge Consideration Narrative Guidelines:</p>
+                  <p style="margin: 0.25rem 0 0 0; color: var(--color-text-light);">
+                    Discharge will be considered if/when the caregiver voluntarily removes the client from the program, or the client’s individual long term treatment plan goals have all been met and generalized without the need for the behavior technician, or the client has achieved adequate stabilization of maladaptive behavior and less-intensive modes of treatment are appropriate and indicated, or the client can no longer participate in ABA treatment due to medical challenges or other factors that prohibit participation, or the client has met an age appropriate score on the client’s standardized assessment tool. Appropriate follow up plans and goals will be designed to ensure progress is continuous and maintained following discharge from ABA treatment. This will include referrals to appropriate community resources.
+                  </p>
+                </div>
+                <div style="padding: 1rem;">
+                  <textarea class="assessment-textarea" style="min-height: 120px;"></textarea>
+                </div>
               </div>
             </section>
 
