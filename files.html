@@ -138,6 +138,7 @@
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="bip" onclick="switchAssessmentTab('bip')">BIP</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="caregiver-training" onclick="switchAssessmentTab('caregiver-training')">Caregiver Training</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="transition-discharge" onclick="switchAssessmentTab('transition-discharge')">Transition & Discharge</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="recommendations" onclick="switchAssessmentTab('recommendations')">Recommendations</button>
               </nav>
             </div>
 
@@ -1344,6 +1345,73 @@
                 <div style="padding: 1rem;">
                   <textarea class="assessment-textarea" style="min-height: 120px;"></textarea>
                 </div>
+              </div>
+            </section>
+
+            <!-- SECTION 11: Recommendations -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="recommendations" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Recommendations for ABA Services</h2>
+              </div>
+
+              <!-- General Recommendations Box -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <div style="background: rgba(255,255,255,0.6); padding: 1.5rem; font-size: 0.85rem; color: var(--color-text); line-height: 1.5;">
+                  <ul style="margin: 0 0 1rem 0; padding-left: 1.25rem;">
+                    <li style="margin-bottom: 0.5rem;">The maximum allowable for reassessment is 3 hours (12 units) total per authorization. Any additional hours should be requested through an addendum AFTER using the initial 12 units.</li>
+                    <li style="margin-bottom: 0.5rem;">97151 and 97152 are complementary codes. They share 12 standard units (reassessment). When requesting both codes, distribute the units accordingly.</li>
+                    <li style="margin-bottom: 0.5rem;">Supervision is typically in the range of 10-20% ratio of 1:1 direct care hours, depending on need/medical necessity. Include specific medical necessity rationale if requesting over 20%.</li>
+                    <li style="margin-bottom: 0.5rem;">H2012 is a great resource for collaboration, treatment planning, and data analysis. You are allotted a maximum of 4 hours/month of this code.</li>
+                    <li style="margin-bottom: 0.5rem;">If requesting 97154, please include medical necessity. Confirm within report if the participant is ready to learn in a group setting without direct, 1-1 RBT support. This code means that there are several children per 1 RBT.</li>
+                    <li style="margin-bottom: 0.5rem;">97157- If requesting this code, please include specific goals you will be targeting during group parent training. Do Not split the requested units into separate rows to indicate service codes with and without the GT modifier. Codes eligible for telehealth should be requested as one sum.</li>
+                    <li style="margin-bottom: 0.5rem;">If requesting 0362T or 0373T: T codes are reserved for high intensity cases where 2:1 staffing is required. Please seek out guidance on use of these codes BEFORE requesting to avoid complications with approvals.</li>
+                    <li>Delete any service codes not being requested.</li>
+                  </ul>
+                  
+                  <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                    <ul style="margin: 0; padding-left: 1.25rem;">
+                      <li>Add lines for the T codes if requesting.</li>
+                      <li>Indicate all locations of service for each code.</li>
+                      <li><strong>DO NOT modify the columns on the grids. Can add rows as needed.</strong></li>
+                      <li>Calculations per week: hours X 4 X 26 weeks</li>
+                      <li>Calculations per month: hours X 4 X 6 months</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Medical Necessity & Barriers Grid -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <table class="assessment-table" style="width: 100%; border-collapse: collapse;">
+                  <tbody>
+                    <!-- Medical Necessity -->
+                    <tr>
+                      <td class="assessment-label-cell" style="width: 35%; padding: 1.5rem; border: 1px solid rgba(0,0,0,0.1); vertical-align: top;">
+                        <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); margin: 0 0 1rem 0; text-align: center;">Medical Necessity</h3>
+                        <p style="margin-bottom: 0.75rem; font-style: italic;">Must include the medical necessity rational as it relates to this participant's core deficits of ASD and the participant's functioning level in relation to the intensity of services and the location of services.</p>
+                        <p style="margin-bottom: 0.75rem; font-style: italic;">This should be a synopsis of the participant's clinical profile that justifies the level of care being requested.</p>
+                        <p style="margin-bottom: 0.75rem; font-style: italic;">i.e.: Given the participants presentation of symptoms of ASD, how will ABA services benefit this participant at the intensity of care being recommended and at the location being recommended?</p>
+                        <p style="margin: 0; font-style: italic;">Include specific medical necessity rationale if requesting a change (increase or decrease) in any service codes.</p>
+                      </td>
+                      <td class="assessment-input-cell" style="padding: 1rem; border: 1px solid rgba(0,0,0,0.1); vertical-align: top;">
+                        <textarea class="assessment-textarea" style="min-height: 350px;"></textarea>
+                      </td>
+                    </tr>
+                    
+                    <!-- Barriers to Treatment -->
+                    <tr>
+                      <td class="assessment-label-cell" style="width: 35%; padding: 1.5rem; border: 1px solid rgba(0,0,0,0.1); vertical-align: top;">
+                        <h3 style="font-size: 1.1rem; color: var(--color-blue-dark); margin: 0 0 1rem 0; text-align: center;">Barriers to Treatment</h3>
+                        <p style="margin-bottom: 0.75rem; font-style: italic;">e.g., home environment, scheduling, location, staffing, lapses in services etc.</p>
+                        <p style="margin-bottom: 0.75rem; font-style: italic;">Include how you plan to, or already have, remediated these barriers.</p>
+                        <p style="margin: 0; font-style: italic;">If staffing is a barrier, document attempts to procure a staff member with the corresponding dates of when the attempts occurred.</p>
+                      </td>
+                      <td class="assessment-input-cell" style="padding: 1rem; border: 1px solid rgba(0,0,0,0.1); vertical-align: top;">
+                        <textarea class="assessment-textarea" style="min-height: 200px;"></textarea>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </section>
 
