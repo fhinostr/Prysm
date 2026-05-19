@@ -134,7 +134,9 @@
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="goals" onclick="switchAssessmentTab('goals')">Goals</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="skill-acquisition" onclick="switchAssessmentTab('skill-acquisition')">Skill Acquisition</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="replacement-behaviors" onclick="switchAssessmentTab('replacement-behaviors')">Replacement Behaviors</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="reduction-behaviors" onclick="switchAssessmentTab('reduction-behaviors')">Reduction Behaviors</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="bip" onclick="switchAssessmentTab('bip')">BIP</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="caregiver-training" onclick="switchAssessmentTab('caregiver-training')">Caregiver Training</button>
               </nav>
             </div>
 
@@ -835,10 +837,10 @@
               </div>
             </section>
 
-            <!-- SECTION 7: Behavior Intervention Plan -->
-            <section class="assessment-section assessment-tab-pane" data-assessment-pane="bip" style="display: none;">
+            <!-- SECTION 7: Reduction Behaviors -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="reduction-behaviors" style="display: none;">
               <div class="assessment-section-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Behavior Intervention Plan</h2>
+                <h2>Reduction Behaviors</h2>
                 <button type="button" class="glass-btn btn-sm" onclick="addNewBehavior()" style="display: flex; align-items: center; gap: 4px;">
                   <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Behavior
                 </button>
@@ -853,12 +855,7 @@
                   <tr>
                     <td class="assessment-label-cell">Function:</td>
                     <td class="assessment-input-cell">
-                      <div class="assessment-checklist">
-                        <label class="checklist-item"><input type="checkbox"> Attention</label>
-                        <label class="checklist-item"><input type="checkbox"> Automatic</label>
-                        <label class="checklist-item"><input type="checkbox"> Access to Tangible</label>
-                        <label class="checklist-item"><input type="checkbox"> Escape</label>
-                      </div>
+                      <textarea class="assessment-textarea"></textarea>
                     </td>
                   </tr>
                   <tr>
@@ -921,12 +918,7 @@
                   <tr>
                     <td class="assessment-label-cell">Function:</td>
                     <td class="assessment-input-cell">
-                      <div class="assessment-checklist">
-                        <label class="checklist-item"><input type="checkbox"> Attention</label>
-                        <label class="checklist-item"><input type="checkbox"> Automatic</label>
-                        <label class="checklist-item"><input type="checkbox"> Access to Tangible</label>
-                        <label class="checklist-item"><input type="checkbox"> Escape</label>
-                      </div>
+                      <textarea class="assessment-textarea"></textarea>
                     </td>
                   </tr>
                   <tr>
@@ -989,12 +981,7 @@
                   <tr>
                     <td class="assessment-label-cell">Function:</td>
                     <td class="assessment-input-cell">
-                      <div class="assessment-checklist">
-                        <label class="checklist-item"><input type="checkbox"> Attention</label>
-                        <label class="checklist-item"><input type="checkbox"> Automatic</label>
-                        <label class="checklist-item"><input type="checkbox"> Access to Tangible</label>
-                        <label class="checklist-item"><input type="checkbox"> Escape</label>
-                      </div>
+                      <textarea class="assessment-textarea"></textarea>
                     </td>
                   </tr>
                   <tr>
@@ -1043,6 +1030,169 @@
                     </td>
                     <td class="assessment-input-cell">
                       <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </section>
+
+            <!-- SECTION 8: Behavior Intervention Plan -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="bip" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Behavior Intervention Plan</h2>
+              </div>
+              <table class="assessment-table">
+                <tr>
+                  <td colspan="2" style="background: rgba(2, 136, 209, 0.05); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                    <ul style="margin: 0; padding-left: 1.5rem; font-size: 0.85rem; color: var(--color-text);">
+                      <li>Any behavior targeted with a goal for reduction must include a behavior plan.</li>
+                      <li>If applicable ensure to include restricted/repetitive patterns of behavior.</li>
+                      <li>Include definition of the behavior, quantitative baseline, hypothesized function of behavior, antecedent interventions, consequence strategies, replacement behaviors, and any de-escalation procedures if applicable.</li>
+                      <li>Should be continually modified and adjusted based on participant's response to intervention.</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">
+                    Behavior Assessment<br>
+                    <span class="assessment-sub-label" style="text-transform: none;">If using, include a summary of any behavior assessments (FAST, RAISD, etc.).</span>
+                  </td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Target Behavior</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Operational Definition</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Hypothesized Function</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Replacement Behavior:</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Antecedent Intervention (Proactive Strategies):</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Consequence Intervention (Reactive Strategies/ de-escalation)</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Crisis Plan Intervention</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="assessment-label-cell">Plan for Generalization</td>
+                  <td class="assessment-input-cell">
+                    <textarea class="assessment-textarea"></textarea>
+                  </td>
+                </tr>
+              </table>
+            </section>
+
+            <!-- SECTION 9: Caregiver Training -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="caregiver-training" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Parent or Caregiver Training</h2>
+              </div>
+
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <div style="position: relative; background: rgba(2, 136, 209, 0.05); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05);">
+                  <button type="button" class="glass-btn btn-sm" onclick="addAssessmentGoal(this)" style="position: absolute; right: 1rem; top: 1rem; padding: 0.25rem 0.75rem; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Add Target
+                  </button>
+                  <ul style="margin: 0; padding-left: 1.5rem; padding-right: 7rem; font-size: 0.85rem; color: var(--color-text);">
+                    <li>Parent or caregiver (i.e. family, daycare staff, school staff) training is a required component of treatment under this benefit.</li>
+                    <li>Goals should target identifying and utilizing specific ABA strategies to reduce maladaptive behaviors and promote skill acquisition.<br>1:1 meeting with BCBA or participation/observation of sessions with RBT do not meet requirements for parent or caregiver training under this ABA benefit.</li>
+                    <li>Include a narrative discussing the overall progress with implementing ABA strategies and progress toward goals.</li>
+                    <li>Include any barriers to conducting parent or caregiver training with actionable efforts to mitigate the barriers.</li>
+                    <li>If requesting 97157, include separate goals that will be addressed during group parent or caregiver training.</li>
+                    <li>If RBT/BT staffing is a barrier to providing services, best practice standards dictate parent or caregiver training should be provided to support the family.</li>
+                  </ul>
+                </div>
+                <table class="assessment-table">
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Goal Statement:<br>
+                      <span class="assessment-sub-label" style="text-transform: none;">Goals should include mastery criteria.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Baseline:<br>
+                      <span class="assessment-sub-label" style="text-transform: none;">Must be a quantitative measure. (e.g., per hour/week/month)</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Date of Introduction:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Projected Mastery:</td>
+                    <td class="assessment-input-cell">
+                      <input type="date" class="assessment-input-date">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Progress Data:
+                      <ul style="font-size: 0.75rem; color: var(--color-text-light); padding-left: 1rem; margin-top: 0.25rem; margin-bottom: 0;">
+                        <li>Measure must match baseline measure (e.g., per hour/week/month, etc.).</li>
+                        <li>Include narrative of parent/caregiver's progress with implementing ABA strategies.</li>
+                      </ul>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">
+                      Barriers<br>
+                      <span class="assessment-sub-label" style="text-transform: none;">Include specific actionable measures you completed to remediate these barriers as well as actionable steps for the next authorization period.</span>
+                    </td>
+                    <td class="assessment-input-cell">
+                      <textarea class="assessment-textarea"></textarea>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="assessment-label-cell">Graphs (optional):</td>
+                    <td class="assessment-input-cell">
+                      <div class="upload-zone glass-panel" style="border: 2px dashed rgba(1, 87, 155, 0.3); text-align: center; padding: 2rem; cursor: pointer; transition: all 0.3s ease;" onclick="this.querySelector('input').click()">
+                        <i data-lucide="image-plus" style="width: 32px; height: 32px; color: var(--color-blue); margin-bottom: 0.5rem;"></i>
+                        <h4 style="margin: 0; color: var(--color-blue-dark); font-size: 0.95rem;">Drag & Drop Graphs</h4>
+                        <p style="color: var(--color-text-light); font-size: 0.8rem; margin-top: 0.25rem;">Or click to import screenshots</p>
+                        <input type="file" multiple style="display: none;" accept="image/*">
+                      </div>
                     </td>
                   </tr>
                 </table>

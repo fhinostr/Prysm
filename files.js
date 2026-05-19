@@ -300,16 +300,16 @@ function addNewBehavior() {
     </table>
   `;
 
-  // Create BIP Domain HTML
-  const bipDomain = document.createElement('div');
-  bipDomain.className = 'assessment-domain-container';
-  bipDomain.style.cssText = 'background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);';
-  bipDomain.innerHTML = `
+  // Create Reduction Behavior Domain HTML
+  const reductionDomain = document.createElement('div');
+  reductionDomain.className = 'assessment-domain-container';
+  reductionDomain.style.cssText = 'background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);';
+  reductionDomain.innerHTML = `
     <h3 style="position: relative; font-size: 1.1rem; color: var(--color-blue-dark); text-align: center; padding: 1rem; margin: 0; background: rgba(2, 136, 209, 0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
       ${name}
     </h3>
     <table class="assessment-table">
-      <tr><td class="assessment-label-cell">Function:</td><td class="assessment-input-cell"><div class="assessment-checklist"><label class="checklist-item"><input type="checkbox"> Attention</label><label class="checklist-item"><input type="checkbox"> Automatic</label><label class="checklist-item"><input type="checkbox"> Access to Tangible</label><label class="checklist-item"><input type="checkbox"> Escape</label></div></td></tr>
+      <tr><td class="assessment-label-cell">Function:</td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
       <tr><td class="assessment-label-cell">Medical Necessity Rationale:</td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
       <tr><td class="assessment-label-cell">Goal Statement:<span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Goals should include mastery criteria.</span></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
       <tr><td class="assessment-label-cell">Baseline:<span class="assessment-sub-label" style="text-transform: none; margin-top: 0.25rem;">Must be a quantitative measure. (e.g., per hour/week/month, etc.)</span></td><td class="assessment-input-cell"><textarea class="assessment-textarea"></textarea></td></tr>
@@ -321,10 +321,10 @@ function addNewBehavior() {
 
   // Append to the respective sections
   const rbSection = document.querySelector('[data-assessment-pane="replacement-behaviors"]');
-  const bipSection = document.querySelector('[data-assessment-pane="bip"]');
+  const reductionSection = document.querySelector('[data-assessment-pane="reduction-behaviors"]');
   
   if (rbSection) rbSection.appendChild(rbDomain);
-  if (bipSection) bipSection.appendChild(bipDomain);
+  if (reductionSection) reductionSection.appendChild(reductionDomain);
   
   // Re-initialize lucide icons for the newly added buttons
   if (typeof lucide !== 'undefined' && lucide.createIcons) {
