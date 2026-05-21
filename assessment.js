@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Extract clientName parameter to auto-fill the Participant Name field
+  const urlParams = new URLSearchParams(window.location.search);
+  const clientNameParam = urlParams.get('clientName');
+  if (clientNameParam) {
+    const nameInput = document.getElementById('client-name-input');
+    if (nameInput) {
+      nameInput.value = clientNameParam;
+    }
+  }
+
   // Initialize the first tab
   switchAssessmentTab('client-info');
   
@@ -513,7 +523,7 @@ function exportPDF() {
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const dd = String(today.getDate()).padStart(2, '0');
   const yyyy = today.getFullYear();
-  const dateStr = `${mm}/${dd}/${yyyy}`;
+  const dateStr = `${mm}-${dd}-${yyyy}`;
 
   const pdfFilename = `${parsedName} Assessment Report ${dateStr}.pdf`;
 

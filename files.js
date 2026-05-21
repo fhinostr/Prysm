@@ -331,3 +331,9 @@ function addNewBehavior() {
     lucide.createIcons();
   }
 }
+
+function openAssessmentInNewTab() {
+  let clientName = document.getElementById('selected-client-name').textContent || '';
+  if (clientName === 'Document Library') clientName = '';
+  window.open(`assessment.html?clientName=${encodeURIComponent(clientName)}`, '_blank');
+}
