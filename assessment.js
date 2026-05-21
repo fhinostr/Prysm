@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nameInput) {
       nameInput.value = clientNameParam;
     }
+    // Update the page title
+    const titleEl = document.getElementById('assessment-page-title');
+    if (titleEl) {
+      const initials = getInitials(clientNameParam);
+      if (initials !== "Client") {
+        titleEl.textContent = `${initials} Assessment Report`;
+      }
+    }
   }
 
   // Initialize the first tab
@@ -502,21 +510,8 @@ function exportPDF() {
   }
   
   // Fetch participant name to construct the filename
-  const nameVal = document.getElementById('client-name-input')?.value.trim() || '';
-  let parsedName = "Client";
-  if (nameVal) {
-    const nameParts = nameVal.split(/\s+/).filter(Boolean);
-    if (nameParts.length >= 2) {
-      const first = nameParts[0];
-      const last = nameParts[nameParts.length - 1];
-      const firstChunk = first.slice(0, 2).charAt(0).toUpperCase() + first.slice(0, 2).slice(1).toLowerCase();
-      const lastChunk = last.slice(0, 2).charAt(0).toUpperCase() + last.slice(0, 2).slice(1).toLowerCase();
-      parsedName = firstChunk + lastChunk;
-    } else if (nameParts.length === 1) {
-      const single = nameParts[0];
-      parsedName = single.slice(0, 4).charAt(0).toUpperCase() + single.slice(0, 4).slice(1).toLowerCase();
-    }
-  }
+  const nameVal = document.getElementById('client-name-input')?.value || '';
+  const parsedName = getInitials(nameVal);
 
   // Get current date
   const today = new Date();
@@ -546,4 +541,23 @@ function exportPDF() {
   html2pdf().set(opt).from(printWrapper).save().then(() => {
     document.body.removeChild(printWrapper);
   });
+}
+
+// Helper to generate initials (e.g. "John Doe" -> "JoDo")
+function getInitials(nameVal) {
+  let parsedName = "Client";
+  if (nameVal && nameVal.trim()) {
+    const nameParts = nameVal.trim().split(/\s+/).filter(Boolean);
+    if (nameParts.length >= 2) {
+      const first = nameParts[0];
+      const last = nameParts[nameParts.length - 1];
+      const firstChunk = first.slice(0, 2).charAt(0).toUpperCase() + first.slice(0, 2).slice(1).toLowerCase();
+      const lastChunk = last.slice(0, 2).charAt(0).toUpperCase() + last.slice(0, 2).slice(1).toLowerCase();
+      parsedName = firstChunk + lastChunk;
+    } else if (nameParts.length === 1) {
+      const single = nameParts[0];
+      parsedName = single.slice(0, 4).charAt(0).toUpperCase() + single.slice(0, 4).slice(1).toLowerCase();
+    }
+  }
+  return parsedName;
 }
