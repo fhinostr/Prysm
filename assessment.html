@@ -33,6 +33,8 @@
       display: inline-flex;
       flex-wrap: nowrap;
       min-width: 100%;
+      max-width: none !important;
+      justify-content: flex-start !important;
     }
     .assessment-nav .view-toggle-link {
       flex: 0 0 calc(100cqi / 6);
@@ -44,6 +46,12 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      border-right: 1px solid rgba(0, 0, 0, 0.05); /* Divider box */
+      position: relative;
+      z-index: 2;
+    }
+    .assessment-nav .view-toggle-link:last-child {
+      border-right: none;
     }
     .completion-dot {
       display: inline-block;
