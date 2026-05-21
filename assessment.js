@@ -491,6 +491,32 @@ function exportPDF() {
     parent.replaceChild(sigDiv, signatureWidget);
   }
   
+  // Fetch participant name to construct the filename
+  const nameVal = document.getElementById('client-name-input')?.value.trim() || '';
+  let parsedName = "Client";
+  if (nameVal) {
+    const nameParts = nameVal.split(/\s+/).filter(Boolean);
+    if (nameParts.length >= 2) {
+      const first = nameParts[0];
+      const last = nameParts[nameParts.length - 1];
+      const firstChunk = first.slice(0, 2).charAt(0).toUpperCase() + first.slice(0, 2).slice(1).toLowerCase();
+      const lastChunk = last.slice(0, 2).charAt(0).toUpperCase() + last.slice(0, 2).slice(1).toLowerCase();
+      parsedName = firstChunk + lastChunk;
+    } else if (nameParts.length === 1) {
+      const single = nameParts[0];
+      parsedName = single.slice(0, 4).charAt(0).toUpperCase() + single.slice(0, 4).slice(1).toLowerCase();
+    }
+  }
+
+  // Get current date
+  const today = new Date();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const yyyy = today.getFullYear();
+  const dateStr = `${mm}-${dd}-${yyyy}`;
+
+  const pdfFilename = `${parsedName}(${dateStr}) Assessment.pdf`;
+
   // Set up printable wrapper container
   const printWrapper = document.createElement('div');
   printWrapper.style.padding = '2rem';
@@ -500,7 +526,7 @@ function exportPDF() {
   
   const opt = {
     margin:       [0.5, 0.5, 0.5, 0.5],
-    filename:     'Prysm_Clinical_Assessment_Report.pdf',
+    filename:     pdfFilename,
     image:        { type: 'jpeg', quality: 0.98 },
     html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
