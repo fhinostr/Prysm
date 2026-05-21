@@ -139,6 +139,8 @@
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="caregiver-training" onclick="switchAssessmentTab('caregiver-training')">Caregiver Training</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="transition-discharge" onclick="switchAssessmentTab('transition-discharge')">Transition & Discharge</button>
                 <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="recommendations" onclick="switchAssessmentTab('recommendations')">Recommendations</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="provider-info" onclick="switchAssessmentTab('provider-info')">Provider Info</button>
+                <button type="button" class="view-toggle-link assessment-tab-btn" data-assessment-tab="telehealth-checklist" onclick="switchAssessmentTab('telehealth-checklist')">Telehealth</button>
               </nav>
             </div>
 
@@ -1638,6 +1640,262 @@
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </section>
+
+            <!-- SECTION 12: Provider Information -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="provider-info" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Provider Information</h2>
+              </div>
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <table class="assessment-table" style="width: 100%; border-collapse: collapse;">
+                  <tbody>
+                    <tr>
+                      <td class="assessment-label-cell" style="width: 30%; font-weight: 600;">Provider Name:</td>
+                      <td class="assessment-input-cell"><textarea class="assessment-textarea" style="min-height: 40px;"></textarea></td>
+                    </tr>
+                    <tr>
+                      <td class="assessment-label-cell" style="font-weight: 600;">Provider Phone Number:</td>
+                      <td class="assessment-input-cell"><textarea class="assessment-textarea" style="min-height: 40px;"></textarea></td>
+                    </tr>
+                    <tr>
+                      <td class="assessment-label-cell" style="font-weight: 600;">Provider Email:</td>
+                      <td class="assessment-input-cell"><textarea class="assessment-textarea" style="min-height: 40px;"></textarea></td>
+                    </tr>
+                    <tr>
+                      <td class="assessment-label-cell" style="font-weight: 600;">Provider Address</td>
+                      <td class="assessment-input-cell"><textarea class="assessment-textarea" style="min-height: 40px;"></textarea></td>
+                    </tr>
+                    <tr>
+                      <td class="assessment-label-cell" style="font-weight: 600;">Provider Credentials</td>
+                      <td class="assessment-input-cell"><textarea class="assessment-textarea" style="min-height: 40px;"></textarea></td>
+                    </tr>
+                    <tr>
+                      <td class="assessment-label-cell" style="font-weight: 600;">Provider Signature:</td>
+                      <td class="assessment-input-cell"><textarea class="assessment-textarea" style="min-height: 120px;"></textarea></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- SECTION 13: Telehealth Checklist -->
+            <section class="assessment-section assessment-tab-pane" data-assessment-pane="telehealth-checklist" style="display: none;">
+              <div class="assessment-section-header">
+                <h2>Telehealth Readiness Checklist</h2>
+              </div>
+
+              <!-- Top Info -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <table class="assessment-table" style="width: 100%; border-collapse: collapse;">
+                  <tbody>
+                    <tr>
+                      <td class="assessment-label-cell" style="width: 15%;">Date:</td>
+                      <td class="assessment-input-cell"><input type="date" class="assessment-input-date" style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; width: 200px;"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Checklist -->
+              <div class="assessment-domain-container" style="background: rgba(255,255,255,0.4); border-top: 1px solid rgba(0,0,0,0.1);">
+                <table class="assessment-table" style="width: 100%; border-collapse: collapse;">
+                  <thead>
+                    <tr style="background: rgba(2, 136, 209, 0.05);">
+                      <th colspan="2" style="padding: 1rem; border: 1px solid rgba(0,0,0,0.1); text-align: center; font-size: 1.25rem; font-weight: 700; color: var(--color-blue-dark);">
+                        Telehealth Readiness Checklist
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Header Info Rows -->
+                    <tr>
+                      <td colspan="2" style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1);">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                          <span style="font-weight: 600;">Date completed:</span>
+                          <input type="date" class="assessment-input-date" style="width: 200px; padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px;">
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1); width: 50%;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                          <span style="font-weight: 600;">Participant Name:</span>
+                          <textarea class="assessment-textarea" style="min-height: 30px; padding: 0.25rem; flex-grow: 1; border: none; border-bottom: 1px solid rgba(0,0,0,0.2); background: transparent;"></textarea>
+                        </div>
+                      </td>
+                      <td style="padding: 0.5rem; border: 1px solid rgba(0,0,0,0.1); width: 50%;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                          <span style="font-weight: 600;">BCBA Name:</span>
+                          <textarea class="assessment-textarea" style="min-height: 30px; padding: 0.25rem; flex-grow: 1; border: none; border-bottom: 1px solid rgba(0,0,0,0.2); background: transparent;"></textarea>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <!-- Section: Personnel Education/Qualifications -->
+                    <tr style="background: rgba(0,0,0,0.02);">
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Personnel Education/Qualifications</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center; width: 15%;">Yes / No</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Did each practitioner (BCBA/RBT/BT) attend training on technology related to telehealth (hardware, software, camera)?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_1" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_1" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Did each practitioner (BCBA/RBT/BT) attend training or obtain supervision related to telehealth-specific ABA interventions?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_2" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_2" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+
+                    <!-- Section: Technology and Data Confidentiality -->
+                    <tr style="background: rgba(0,0,0,0.02);">
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Technology and Data Confidentiality</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Yes / No</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Do each of the practitioners (BCBA/RBT/BT) have the necessary equipment to provider telehealth services per COMAR10.09.49 (appropriate internet capabilities, two-way HIPAA compliant platform, ability to alter resolution, focus, and zoom)?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_3" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_3" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Do the parents/caregivers have the necessary equipment to receive telehealth services?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_4" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_4" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Is there a process in place in the event technological issues arise during telehealth services?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_5" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_5" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Has the practitioner explained the risks related to use of technology for telehealth services?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_6" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_6" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+
+                    <!-- Section: Implementation and Evaluation -->
+                    <tr style="background: rgba(0,0,0,0.02);">
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Implementation and Evaluation</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Yes / No</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Does the practitioner have monitoring tools in place to evaluate the implementation of telehealth services?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_7" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_7" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Does the practitioner have monitoring tools in place to evaluate the effectiveness of telehealth services related to the participant's progress or lack of progress?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_8" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_8" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+
+                    <!-- Section: Environmental Evaluation -->
+                    <tr style="background: rgba(0,0,0,0.02);">
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Environmental Evaluation</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Yes / No</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Is the participant's environment set up to accommodate telehealth services (i.e., clean, private, free of distractions)?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_9" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_9" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Is there a process in place to ensure the participant's environment remains telehealth ready?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_10" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_10" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Is the BCBA's environment safe to conduct telehealth services (free of distraction, private)?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_11" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_11" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+
+                    <!-- Section: Capabilities of Participant/Parent -->
+                    <tr style="background: rgba(0,0,0,0.02);">
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Capabilities of Participant/Parent</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Yes / No</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Is the participant able to see the practitioner on the screen without displaying interfering behaviors that would cause the practitioner to block the two way camera?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_12" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_12" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Is the participant able to follow directions given by parents/caregivers without in-person supports?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_13" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_13" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Are the parents/caregivers able to follow technical instructions given by the practitioner?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_14" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_14" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+
+                    <!-- Section: Standard of Care Considerations and Consent -->
+                    <tr style="background: rgba(0,0,0,0.02);">
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Standard of Care Considerations and Consent</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); font-weight: 700; text-align: center;">Yes / No</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Has the practitioner taken into account any cultural considerations when proposing telehealth services?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_15" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_15" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Is the parent/caregiver interested in telehealth services and signed consent for telehealth services?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_16" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_16" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Does the consent form include information related to the risks and benefits of telehealth services including confidentiality?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_17" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_17" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1);">Does the consent form include the ability to opt out of telehealth services?</td>
+                      <td style="padding: 0.75rem; border: 1px solid rgba(0,0,0,0.1); text-align: center;">
+                        <label style="margin-right: 15px; cursor: pointer;"><input type="radio" name="telehealth_18" value="yes" style="transform: scale(1.2); margin-right: 4px;"> Yes</label>
+                        <label style="cursor: pointer;"><input type="radio" name="telehealth_18" value="no" style="transform: scale(1.2); margin-right: 4px;"> No</label>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </section>
 
