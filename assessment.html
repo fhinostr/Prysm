@@ -18,6 +18,13 @@
       -ms-overflow-style: none;
       border-radius: 16px; /* Match standard view-toggle radius */
       container-type: inline-size;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.4),
+        0 8px 32px 0 rgba(31, 38, 135, 0.05);
     }
     .assessment-tabs-container::-webkit-scrollbar {
       display: none;
@@ -34,6 +41,27 @@
       overflow: hidden;
       text-overflow: ellipsis;
       padding: 0.7rem 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .completion-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-left: 6px;
+      vertical-align: middle;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .completion-dot.incomplete {
+      background-color: #ff9800; /* Amber for pending/incomplete */
+      box-shadow: 0 0 6px rgba(255, 152, 0, 0.8);
+    }
+    .completion-dot.completed {
+      background-color: #4caf50; /* Green for completed */
+      box-shadow: 0 0 6px rgba(76, 175, 80, 0.8);
     }
   </style>
 </head>
@@ -64,7 +92,7 @@
       </div>
 
       <!-- Assessment Sub-Navigation -->
-      <div class="subnav-shell" style="margin-bottom: 1.5rem; padding: 0;">
+      <div class="subnav-shell" style="margin-bottom: 1.5rem; padding: 0; display: block !important; justify-content: flex-start !important;">
         <div class="assessment-tabs-container">
           <nav class="view-toggle assessment-nav" aria-label="Assessment Sections">
             <button type="button" class="view-toggle-link active assessment-tab-btn" data-assessment-tab="client-info" onclick="switchAssessmentTab('client-info')">Client Info</button>

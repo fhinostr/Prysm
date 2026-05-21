@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.initializeToggleBars) {
     window.initializeToggleBars();
   }
+
+  // Run dynamic completion checking
+  checkCompletion();
+
+  // Listen to inputs dynamically
+  document.addEventListener('input', checkCompletion);
+  document.addEventListener('change', checkCompletion);
 });
 
 function switchAssessmentTab(tabId) {
@@ -54,6 +61,9 @@ function addAssessmentGoal(btn) {
   if (typeof lucide !== 'undefined' && lucide.createIcons) {
     lucide.createIcons();
   }
+
+  // Trigger completion status check
+  checkCompletion();
 }
 
 function addNewBehavior() {
@@ -113,4 +123,79 @@ function addNewBehavior() {
   if (typeof lucide !== 'undefined' && lucide.createIcons) {
     lucide.createIcons();
   }
+
+  // Trigger completion status check
+  checkCompletion();
+}
+
+function checkCompletion() {
+  const panes = document.querySelectorAll('.assessment-tab-pane');
+  panes.forEach(pane => {
+    const tabId = pane.dataset.assessmentPane;
+    const button = document.querySelector(`.assessment-tab-btn[data-assessment-tab="${tabId}"]`);
+    if (!button) return;
+
+    let dot = button.querySelector('.completion-dot');
+    if (!dot) {
+      dot = document.createElement('span');
+      dot.className = 'completion-dot';
+      button.appendChild(dot);
+    }
+
+    const textareas = pane.querySelectorAll('textarea');
+    const textInputs = pane.querySelectorAll('input[type="text"], input[type="date"], input[type="time"]');
+    const checkboxGroups = {};
+    const radioGroups = {};
+
+    pane.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      const name = cb.name || cb.closest('div')?.className || 'default-cb';
+      if (!checkboxGroups[name]) checkboxGroups[name] = [];
+      checkboxGroups[name].push(cb);
+    });
+
+    pane.querySelectorAll('input[type="radio"]').forEach(rad => {
+      const name = rad.name || 'default-rad';
+      if (!radioGroups[name]) radioGroups[name] = [];
+      radioGroups[name].push(rad);
+    });
+
+    let isComplete = true;
+
+    // Check if any textarea is empty
+    textareas.forEach(ta => {
+      if (!ta.value.trim()) isComplete = false;
+    });
+
+    // Check if any text/date/time input is empty
+    textInputs.forEach(inp => {
+      if (!inp.value.trim()) isComplete = false;
+    });
+
+    // Check if at least one checkbox is checked in each group
+    for (const groupName in checkboxGroups) {
+      const group = checkboxGroups[groupName];
+      const oneChecked = group.some(cb => cb.checked);
+      if (!oneChecked) isComplete = false;
+    }
+
+    // Check if at least one radio is selected in each group
+    for (const groupName in radioGroups) {
+      const group = radioGroups[groupName];
+      const oneSelected = group.some(rad => rad.checked);
+      if (!oneSelected) isComplete = false;
+    }
+
+    // If no fields at all (or if pane is completely empty of inputs), it's considered complete/optional
+    if (textareas.length === 0 && textInputs.length === 0 && Object.keys(checkboxGroups).length === 0 && Object.keys(radioGroups).length === 0) {
+      isComplete = true;
+    }
+
+    if (isComplete) {
+      dot.className = 'completion-dot completed';
+      dot.title = 'Completed';
+    } else {
+      dot.className = 'completion-dot incomplete';
+      dot.title = 'Incomplete / Pending';
+    }
+  });
 }
