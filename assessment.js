@@ -513,9 +513,9 @@ function exportPDF() {
   const mm = String(today.getMonth() + 1).padStart(2, '0');
   const dd = String(today.getDate()).padStart(2, '0');
   const yyyy = today.getFullYear();
-  const dateStr = `${mm}-${dd}-${yyyy}`;
+  const dateStr = `${mm}/${dd}/${yyyy}`;
 
-  const pdfFilename = `${parsedName}(${dateStr}) Assessment.pdf`;
+  const pdfFilename = `${parsedName} Assessment Report ${dateStr}.pdf`;
 
   // Set up printable wrapper container
   const printWrapper = document.createElement('div');
