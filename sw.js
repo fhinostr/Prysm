@@ -2,7 +2,7 @@
 // PRYSM ABA LMS — Service Worker v13 (Network-First)
 // Always fetches from network first to ensure instant updates without clearing cache.
 // ═══════════════════════════════════════════════════════════════
-const CACHE_VERSION = 'v13';
+const CACHE_VERSION = 'v14';
 const CACHE_NAME = `aba-lms-cache-${CACHE_VERSION}`;
 
 // Files that should NEVER be served from cache (always network-first)
