@@ -49,12 +49,75 @@
       <article class="client-list-card glass-panel">
         <div class="client-list-header">
           <h2>Client List</h2>
-          <span class="badge" id="client-count-badge">0 Clients</span>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="badge" id="client-count-badge">0 Clients</span>
+            <button class="glass-btn btn-sm" id="btn-add-client" onclick="openCreateClientModal()" data-role-only="bcba" style="font-size: 0.82rem; padding: 0.4rem 0.75rem;">
+              <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+              New Client
+            </button>
+          </div>
         </div>
         <div id="client-list"></div>
       </article>
     </section>
   </main>
+
+  <!-- Create Client Modal -->
+  <div class="modal-overlay" id="create-client-overlay" style="display: none;">
+    <div class="glass-modal" style="width: 90%; max-width: 480px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="position: relative; padding: 1.5rem; flex-shrink: 0;">
+        <h2>Create New Client</h2>
+        <p>Enter the clinical and demographic details below.</p>
+        <button class="btn-icon" onclick="closeCreateClientModal()" aria-label="Close" style="position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; cursor: pointer; color: var(--color-text-light);">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <form id="create-client-form" onsubmit="handleCreateClient(event)" class="modal-body scrollable-content" style="padding: 1.5rem; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <label for="client-name" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">Full Name *</label>
+          <input type="text" id="client-name" class="glass-input" placeholder="e.g. Lucas Smith" required>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <label for="client-dob" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">Date of Birth *</label>
+          <input type="date" id="client-dob" class="glass-input" required>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <label for="client-caregiver" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">Caregiver Name & Relationship</label>
+          <input type="text" id="client-caregiver" class="glass-input" placeholder="e.g. Jane Smith — Mother">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <label for="client-phone" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">Phone Number</label>
+          <input type="tel" id="client-phone" class="glass-input" placeholder="e.g. (555) 019-2834">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <label for="client-diagnosis" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">Diagnosis</label>
+          <select id="client-diagnosis" class="glass-select">
+            <option value="ASD Level 1">ASD Level 1</option>
+            <option value="ASD Level 2" selected>ASD Level 2</option>
+            <option value="ASD Level 3">ASD Level 3</option>
+            <option value="Other">Other / Neurodevelopmental</option>
+          </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+          <label for="client-clinical-id" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">Clinical ID (Optional)</label>
+          <input type="text" id="client-clinical-id" class="glass-input" placeholder="e.g. CLN-2026-004 (auto-generated if empty)">
+        </div>
+
+        <div id="create-client-error" style="color: var(--color-red); font-size: 0.85rem; display: none; padding: 0.5rem; border-radius: 8px; background: rgba(239, 68, 68, 0.1); margin-top: 0.25rem;"></div>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; justify-content: flex-end;">
+          <button type="button" class="glass-btn" onclick="closeCreateClientModal()" style="background: transparent; padding: 0.6rem 1rem; font-size: 0.9rem;">Cancel</button>
+          <button type="submit" id="btn-submit-client" class="glass-btn" style="background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white; border: none; padding: 0.6rem 1.25rem; font-size: 0.9rem;">Create Client</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 
   <!-- Supabase Auth Integration -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
