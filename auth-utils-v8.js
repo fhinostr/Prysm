@@ -40,6 +40,47 @@ window.PrysmAuth = {
   },
 
   /**
+   * Performs OAuth SSO login.
+   */
+  async loginWithOAuth(provider) {
+    try {
+      const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: window.location.origin + window.location.pathname.replace('login.html', 'session-book.html')
+        }
+      });
+      if (error) throw error;
+      return data;
+    } catch (err) {
+      console.error('OAuth Login Error:', err);
+      throw err;
+    }
+  },
+
+  /**
+   * Performs SAML SSO login for a given company domain.
+   */
+  async loginWithSSODomain(domain) {
+    try {
+      const { data, error } = await window.supabaseClient.auth.signInWithSSO({
+        domain: domain,
+        options: {
+          redirectTo: window.location.origin + window.location.pathname.replace('login.html', 'session-book.html')
+        }
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+      return data;
+    } catch (err) {
+      console.error('SAML SSO Login Error:', err);
+      throw err;
+    }
+  },
+
+  /**
    * Fetches the user profile or creates it if missing (for demo ease).
    * @param {object} user - The Supabase auth user object.
    * @returns {Promise<object>}

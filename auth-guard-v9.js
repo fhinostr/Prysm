@@ -421,6 +421,21 @@ function showLoginModal(errorMsg = '') {
         <button type="submit" class="prysm-modal-submit" id="modal-login-btn">
           Sign In
         </button>
+
+        <div style="margin-top: 1.25rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 1rem;">
+          <p style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.75rem; text-align: center;">Or continue with SSO</p>
+          <div style="display: flex; gap: 0.5rem; justify-content: center;">
+            <button type="button" onclick="handleModalOAuth('azure')" style="flex: 1; padding: 0.6rem; border-radius: 12px; border: 1.5px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); cursor: pointer; font-weight: 500; font-size: 0.85rem; color: #01579b; transition: background 0.2s;">Microsoft</button>
+            <button type="button" onclick="handleModalOAuth('google')" style="flex: 1; padding: 0.6rem; border-radius: 12px; border: 1.5px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.7); cursor: pointer; font-weight: 500; font-size: 0.85rem; color: #01579b; transition: background 0.2s;">Google</button>
+          </div>
+          <div style="text-align: center; margin-top: 0.75rem;">
+            <button type="button" onclick="toggleModalSSODomain()" style="background: none; border: none; color: #01579b; font-size: 0.8rem; font-weight: 500; cursor: pointer; text-decoration: underline;">Use Company SSO (SAML)</button>
+          </div>
+          <div id="modal-sso-domain-container" style="display: none; margin-top: 0.75rem; text-align: left;">
+            <input type="text" id="modal-sso-domain" class="prysm-modal-input" placeholder="Domain (e.g. company.com)" style="margin-bottom: 0.5rem;">
+            <button type="button" class="prysm-modal-submit" onclick="handleModalDomainSSO()" style="margin-top: 0;">Sign In with SSO</button>
+          </div>
+        </div>
       </form>
 
       <div class="prysm-modal-security">
@@ -463,4 +478,38 @@ function showLoginModal(errorMsg = '') {
       errBox.classList.add('visible');
     }
   });
+
+  // ─── Modal SSO Handlers ─────────────────────────────────────────
+  window.handleModalOAuth = async function(provider) {
+    const btn = document.getElementById('modal-login-btn');
+    btn.disabled = true;
+    btn.textContent = 'Redirecting...';
+    try {
+      await window.PrysmAuth.loginWithOAuth(provider);
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+      alert('Failed to initialize SSO: ' + err.message);
+    }
+  };
+
+  window.toggleModalSSODomain = function() {
+    const container = document.getElementById('modal-sso-domain-container');
+    container.style.display = container.style.display === 'none' ? 'block' : 'none';
+  };
+
+  window.handleModalDomainSSO = async function() {
+    const domain = document.getElementById('modal-sso-domain').value.trim();
+    if (!domain) return alert('Please enter a company domain.');
+    const btn = document.getElementById('modal-login-btn');
+    btn.disabled = true;
+    btn.textContent = 'Redirecting...';
+    try {
+      await window.PrysmAuth.loginWithSSODomain(domain);
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+      alert('Failed to initialize SSO for domain: ' + err.message);
+    }
+  };
 }
