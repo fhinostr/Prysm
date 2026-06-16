@@ -793,6 +793,26 @@ function triggerBulkUpload() {
 function extractAssessmentData(text) {
   const data = JSON.parse(JSON.stringify(MIGRATION_ASSESSMENTS['john-doe']));
   
+  // Clear mock data and set flags to avoid hallucinations like "john"
+  function clearMockData(obj) {
+    for (let key in obj) {
+      if (typeof obj[key] === 'string') {
+        if (key.toLowerCase().includes('date') || key.toLowerCase() === 'dob' || key.toLowerCase().includes('time') || key.toLowerCase().includes('start') || key.toLowerCase().includes('end')) {
+          obj[key] = ''; // Keep date/time fields empty to avoid input validation issues
+        } else {
+          obj[key] = '🟠 FLAG FOR REVIEW';
+        }
+      } else if (typeof obj[key] === 'number') {
+        obj[key] = 0;
+      } else if (Array.isArray(obj[key])) {
+        obj[key] = []; 
+      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+        clearMockData(obj[key]);
+      }
+    }
+  }
+  clearMockData(data);
+  
   const dobMatch = text.match(/(?:DOB|Date of Birth):\s*([\d\/\-]+)/i);
   if (dobMatch) data.clientInfo.dob = dobMatch[1].trim();
   
@@ -812,12 +832,12 @@ function extractAssessmentData(text) {
   if (narrativeMatch) {
     let extractedNarrative = narrativeMatch[0].replace(/(?:Goals|Target Behaviors|Recommendations)$/i, '').trim();
     if (extractedNarrative.length > 50) data.narrative.clinicalNarrative = extractedNarrative.substring(0, 500) + '...';
-  } else {
-    data.narrative.clinicalNarrative = `Extracted from document:\n\n${text.substring(0, 500)}...`;
   }
   
   const goalMatch = text.match(/Goal(?:s| Statement)?:\s*([\s\S]*?)(?:\n\n|\n[A-Z]|$)/i);
   if (goalMatch) {
+    // If we only have an array of goals, we might need to recreate the structure if we cleared it
+    // Wait, we cleared string values, but the object structure of data.skillAcquisition.langComm is intact.
     data.skillAcquisition.langComm.goalStatement = goalMatch[1].trim().substring(0, 200);
   }
 
