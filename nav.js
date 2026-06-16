@@ -128,7 +128,7 @@ function registerServiceWorker() {
 
     window.addEventListener('load', () => {
       // Cache-busted SW registration with updated version
-      navigator.serviceWorker.register('sw.js?v=15')
+      navigator.serviceWorker.register('sw.js?v=16')
         .then(registration => {
           console.log('ServiceWorker registered:', registration.scope);
           

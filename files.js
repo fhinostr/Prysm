@@ -1,6 +1,16 @@
 // --- View State Management ---
 
 let selectedClientId = '';
+let importType = 'treatment';
+
+function setImportType(type) {
+  importType = type;
+  const treatmentBtn = document.getElementById('import-type-treatment');
+  const assessmentBtn = document.getElementById('import-type-assessment');
+  if (treatmentBtn) treatmentBtn.classList.toggle('active', type === 'treatment');
+  if (assessmentBtn) assessmentBtn.classList.toggle('active', type === 'assessment');
+  renderDraftMigrations(selectedClientId);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   renderClientList();
@@ -211,6 +221,150 @@ const MIGRATION_TARGETS = {
   ]
 };
 
+const MIGRATION_ASSESSMENTS = {
+  'john-doe': {
+    clientInfo: {
+      dob: '2018-05-12',
+      initialAssessmentDate: '2025-01-15',
+      reassessmentDate: '2026-06-15',
+      parentName: 'Jane Doe',
+      parentPhone: '(555) 012-3456',
+      parentEmail: 'jane.doe@example.com'
+    },
+    biopsychosocial: {
+      familyStructure: 'John lives with his biological mother and father in a suburban home. He has an older sister (age 9) who is typically developing. The primary language spoken at home is English.',
+      medications: 'None currently prescribed.',
+      medicalHistory: 'Born at 39 weeks via uncomplicated vaginal delivery. Reached physical developmental milestones (crawling, walking) within normal limits. History of chronic ear infections at age 2, resolved with tympanostomy tubes. No seizure activity reported.',
+      gradeIndex: 2, // 1st Grade
+      gradeText: '1st',
+      schoolTypeIndex: 0, // Public school
+      schoolTypeText: 'Public school',
+      schoolHoursStart: '08:30',
+      schoolHoursEnd: '15:00',
+      academicSchedule: 'Language Arts (reading and phonics): 09:00 - 10:30, Mathematics: 11:00 - 12:00, Social Studies/Science: 13:00 - 13:45, Recess & Lunch: 12:00 - 13:00, Guided Social Play: 14:00 - 14:30.',
+      schoolHoursPerWeek: '32.5 hours',
+      abaProvider: 'Behavioral Milestones Clinic',
+      abaStartDate: '2024-03-01',
+      abaEndDate: '2025-05-15',
+      abaOutcomes: 'John acquired a basic manding repertoire consisting of 15 single word requests. He also improved cooperation with transitions and daily living routines, such as hand washing, with gestural cues.',
+      mentalHealthServices: 'N/A - no other mental health services or hospitalizations.',
+      otherServices: 'Speech Therapy: 1 session per week, 1 hour overall. Occupational Therapy: 1 session per week, 1 hour overall.',
+      coordinationOfCare: 'Regular monthly meetings with Speech Therapist (Sarah Vance) and OT (Mark L.) to coordinate visual prompts and language strategies.',
+      majorLifeChanges: 'Family moved to a new neighborhood in December 2024; client transitioned to a new school in January 2025.'
+    },
+    narrative: {
+      observationDate: '2026-06-10',
+      clinicalNarrative: 'Observer monitored John in his home environment for 2 hours. John spent the majority of the session playing alone with toy trains and building blocks. When he wanted juice, he walked to the refrigerator, pulled Jane by the hand, and pointed. If Jane prompted him to request, he said "juice" with low voice volume. John engaged in hand flapping and high-pitched vocalizations when excited. He resisted clean-up demands by crying and lying on the floor, but complied after a visual schedule was presented.',
+      langStrengths: 'Able to vocally name 40+ common household items and animals when shown pictures. Receptively identifies primary colors and shapes. Responds to basic, one-step commands.',
+      langChallenges: 'Does not spontaneously initiate verbal conversation. Rarely uses multi-word phrases. Struggles with intraverbal tasks (e.g., cannot complete common sentences or answer "what/who/where" questions).',
+      langSeverity: 1, // Moderate
+      socialStrengths: 'Enjoys cooperative tickling games and physical play with his father. Shows interest in watching his older sister play.',
+      socialChallenges: 'Does not initiate play with peers or sustain parallel play beyond 2 minutes. Limits eye contact to brief moments (under 2 seconds) during high motivation.',
+      socialSeverity: 1, // Moderate
+      adaptiveStrengths: 'Spoon-feeds independently during meal times. Daytime toilet trained. Can pull up pants with light assistance.',
+      adaptiveChallenges: 'Requires hand-over-hand assistance for buttoning, zipping, and tying shoes. Needs physical guidance to turn faucets off.',
+      adaptiveSeverity: 1, // Moderate
+      challengingBehaviors: 'Engages in tantrums (screaming, dropping) when access to preferred items is denied or when demand is presented. Average duration: 5 minutes.',
+      challengingSeverity: 1, // Moderate
+      standardizedAssessment: 'VB-MAPP milestones assessment was conducted. Scores indicate a strong Level 1 profile with emerging Level 2 milestones in manding and visual-perceptual skills. Significant deficits remain in listener responding, play, and social skills.'
+    }
+  },
+  'ethan-brooks': {
+    clientInfo: {
+      dob: '2017-08-22',
+      initialAssessmentDate: '2024-11-10',
+      reassessmentDate: '2026-06-12',
+      parentName: 'Sarah Brooks',
+      parentPhone: '(555) 456-7890',
+      parentEmail: 'sbrooks@example.org'
+    },
+    biopsychosocial: {
+      familyStructure: 'Ethan resides with his mother and maternal grandmother. He is an only child. His father resides out of state and has visitation every other weekend.',
+      medications: 'Melatonin (3mg) at bedtime for sleep management.',
+      medicalHistory: 'Born at 37 weeks via scheduled C-section. Early developmental history significant for speech delays (first words at age 3). General physical health is good; no food allergies or dietary restrictions.',
+      gradeIndex: 3, // 2nd Grade
+      gradeText: '2nd',
+      schoolTypeIndex: 0, // Public school
+      schoolTypeText: 'Public school',
+      schoolHoursStart: '08:15',
+      schoolHoursEnd: '14:45',
+      academicSchedule: 'Special Education Classroom. Structured Reading: 08:30 - 09:30, Mathematics: 09:45 - 10:45, Speech-Language Therapy: 11:00 - 11:30 (Tues/Thurs), Lunch/Recess: 11:30 - 12:30, Motor Skills: 13:00 - 13:45.',
+      schoolHoursPerWeek: '32.5 hours',
+      abaProvider: 'Hope ABA Center',
+      abaStartDate: '2023-06-15',
+      abaEndDate: '2024-10-30',
+      abaOutcomes: 'Ethan successfully reduced self-injurious head tapping and learned to utilize a picture exchange communication system (PECS) for 8 high-preference food items.',
+      mentalHealthServices: 'N/A - no other mental health services or hospitalizations.',
+      otherServices: 'Speech Therapy: 2 sessions per week, 1 hour overall. Occupational Therapy: 1 session per week, 1 hour overall.',
+      coordinationOfCare: 'Regular progress updates shared between speech therapist and ABA team to align on communication vocabulary.',
+      majorLifeChanges: 'N/A'
+    },
+    narrative: {
+      observationDate: '2026-06-08',
+      clinicalNarrative: 'Ethan was observed in his classroom setting. During structured desk work, he required frequent verbal and gestural prompts to stay on task. During free play, he lined up cars by color and resisted peer attempts to join his play space. When a peer touched his car, Ethan screamed and pushed the peer. In home observation, Ethan cooperated well with his mother, but exhibited severe resistance (screaming, dropping) when transitioned away from the iPad.',
+      langStrengths: 'Excellent receptive language skills; points to complex actions and scenes in books. Can follow 2-step instructions when visual support is provided.',
+      langChallenges: 'Exhibits high rates of immediate echolalia (repeating questions instead of answering). Vocalizations are mostly non-functional unless highly motivated.',
+      langSeverity: 1, // Moderate
+      socialStrengths: 'Smiles and waves when greeted by familiar instructors. Will sit next to peers during circle time.',
+      socialChallenges: 'Does not respond to peer initiations. Avoids eye contact when asked a direct question. Does not engage in joint attention.',
+      socialSeverity: 2, // Severe
+      adaptiveStrengths: 'Able to dress himself with loose clothing (sweatpants, t-shirt). Feeds himself with fork and spoon. Daytime toilet trained.',
+      adaptiveChallenges: 'Requires physical assistance with shoes and buttons. Refuses to wash hands without physical prompts. Does not blow nose independently.',
+      adaptiveSeverity: 1, // Moderate
+      challengingBehaviors: 'Engages in physical aggression (pushing, scratching) when peers interfere with repetitive play or preferred items. Tantrums occur during transitions.',
+      challengingSeverity: 1, // Moderate
+      standardizedAssessment: 'AFLS (Assessment of Functional Living Skills) and VB-MAPP conducted. Scoring indicates significant deficits in social/communication fields but strong progress in basic self-help domains.'
+    }
+  },
+  'mia-hernandez': {
+    clientInfo: {
+      dob: '2019-11-03',
+      initialAssessmentDate: '2025-05-20',
+      reassessmentDate: '2026-06-14',
+      parentName: 'Carlos Hernandez',
+      parentPhone: '(555) 987-6543',
+      parentEmail: 'carlos.h@hernandezfamily.net'
+    },
+    biopsychosocial: {
+      familyStructure: 'Mia lives with her parents and two younger brothers (ages 2 and 6 months) in a single-family home. The family is bilingual (Spanish/English). Mia is exposed to Spanish at home and English at daycare.',
+      medications: 'None currently prescribed.',
+      medicalHistory: 'Uncomplicated pregnancy and delivery. Diagnosed with Autism Spectrum Disorder at age 2.5. Mild sensory sensitivities to loud noises (vacuum cleaner, sirens). Normal hearing and vision.',
+      gradeIndex: 1, // Kindergarten
+      gradeText: 'K',
+      schoolTypeIndex: 1, // Private school
+      schoolTypeText: 'Private school',
+      schoolHoursStart: '09:00',
+      schoolHoursEnd: '13:00',
+      academicSchedule: 'Daycare/Pre-K structure. Circle Time: 09:15 - 09:45, Tabletop activities (coloring, puzzles): 10:00 - 10:45, Outdoor Play: 11:00 - 12:00, Lunch: 12:00 - 12:30, Storytime: 12:30 - 13:00.',
+      schoolHoursPerWeek: '20 hours',
+      abaProvider: 'N/A',
+      abaStartDate: '',
+      abaEndDate: '',
+      abaOutcomes: 'No prior formal ABA history. Mia received speech therapy for 6 months (ended in early 2025).',
+      mentalHealthServices: 'N/A',
+      otherServices: 'Speech Therapy: 1 session per week, 1 hour overall.',
+      coordinationOfCare: 'Care coordination with pediatrician regarding milestone updates and daycare placement.',
+      majorLifeChanges: 'Welcomed a new baby brother in late 2025.'
+    },
+    narrative: {
+      observationDate: '2026-06-09',
+      clinicalNarrative: 'Mia was observed during tabletop work. She sat for 10 minutes playing with a sensory puzzle, demonstrating good fine motor control. She communicates using Spanish/English hybrid vocalizations of 2-3 words (e.g., "quiero agua", "more play"). When prompted to transition to circle time, she whimpered but walked to the rug when shown a token board. During outdoor play, she ran near peers but did not interact.',
+      langStrengths: 'Uses 2-3 word vocal combinations. Strong bilingual receptive understanding. Labels common foods and toys in both Spanish and English.',
+      langChallenges: 'Exhibits pronoun reversals (using "you" instead of "I"). Speaks with a quiet, flat intonation. Struggles with conversation and answering questions.',
+      langSeverity: 1, // Moderate
+      socialStrengths: 'Sustained eye contact during face-to-face play. Approaches peers and sits near them. Shows toys to adults to share interest.',
+      socialChallenges: 'Does not vocalize to peers. Does not understand rules of cooperative games (e.g. tag, hide-and-seek). Rejects peer toys.',
+      socialSeverity: 1, // Moderate
+      adaptiveStrengths: 'Drinks from an open cup without spilling. Wipes face with a napkin. Can unzip her jacket.',
+      adaptiveChallenges: 'Requires assistance with buttoning, snapping pants, and hand washing steps (requires reminders to use soap). Not fully night-time trained.',
+      adaptiveSeverity: 0, // Mild
+      challengingBehaviors: 'Engages in whining, crying, and vocal protests during transitions or when denied access. Non-aggressive. Sensory avoidance noted during loud sounds.',
+      challengingSeverity: 0, // Mild
+      standardizedAssessment: 'Vineland-3 Adaptive Behavior Scales and VB-MAPP administered. Mia scores in the moderately low range for communication and social skills, with adequate scores in daily living skills.'
+    }
+  }
+};
+
 function renderDraftMigrations(clientId) {
   const draftList = document.getElementById('draft-migrations-list');
   if (!draftList) return;
@@ -221,18 +375,34 @@ function renderDraftMigrations(clientId) {
   let fileName = '';
   let detailText = '';
   
-  if (clientId === 'ethan-brooks') {
-    fileName = 'Ethan_Brooks_Intake_&_Treatment_Plan_2025.pdf';
-    detailText = 'Extracted: 2 Goals, 2 Targets';
-  } else if (clientId === 'john-doe') {
-    fileName = 'John_Doe_Legacy_Plan_2025.pdf';
-    detailText = 'Extracted: 2 Goals, 2 Targets';
-  } else if (clientId === 'mia-hernandez') {
-    fileName = 'Mia_Hernandez_Treatment_Plan_2025.docx';
-    detailText = 'Extracted: 2 Goals, 2 Targets';
+  if (importType === 'assessment') {
+    if (clientId === 'ethan-brooks') {
+      fileName = 'Ethan_Brooks_Assessment_Report_2025.pdf';
+      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
+    } else if (clientId === 'john-doe') {
+      fileName = 'John_Doe_Initial_Assessment_Report_2025.pdf';
+      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
+    } else if (clientId === 'mia-hernandez') {
+      fileName = 'Mia_Hernandez_Assessment_Evaluation_2025.docx';
+      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
+    } else {
+      fileName = `${clientName.replace(/\s+/g, '_')}_Assessment.pdf`;
+      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
+    }
   } else {
-    fileName = `${clientName.replace(/\s+/g, '_')}_Intake.pdf`;
-    detailText = 'Extracted: 1 Goal, 2 Targets';
+    if (clientId === 'ethan-brooks') {
+      fileName = 'Ethan_Brooks_Intake_&_Treatment_Plan_2025.pdf';
+      detailText = 'Extracted: 2 Goals, 2 Targets';
+    } else if (clientId === 'john-doe') {
+      fileName = 'John_Doe_Legacy_Plan_2025.pdf';
+      detailText = 'Extracted: 2 Goals, 2 Targets';
+    } else if (clientId === 'mia-hernandez') {
+      fileName = 'Mia_Hernandez_Treatment_Plan_2025.docx';
+      detailText = 'Extracted: 2 Goals, 2 Targets';
+    } else {
+      fileName = `${clientName.replace(/\s+/g, '_')}_Intake.pdf`;
+      detailText = 'Extracted: 1 Goal, 2 Targets';
+    }
   }
 
   draftList.innerHTML = `
@@ -262,7 +432,7 @@ function handleFileUpload(event) {
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <i data-lucide="loader-2" class="lucide-loader-2" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem; animation: spin 2s linear infinite;"></i>
       <h3 style="color: var(--color-blue-dark);">AI is analyzing ${files.length} document(s)...</h3>
-      <p style="color: var(--color-text-light);">Extracting targets, baselines, and mastery criteria.</p>
+      <p style="color: var(--color-text-light);">${importType === 'assessment' ? 'Extracting client details, biopsychosocial history, and clinical observations.' : 'Extracting targets, baselines, and mastery criteria.'}</p>
     </div>
   `;
   lucide.createIcons();
@@ -287,7 +457,7 @@ function handleFileUpload(event) {
     newDraft.innerHTML = `
       <div>
         <strong>${files[0].name}</strong>
-        <span style="color: var(--color-blue-dark); font-weight: 500;">Extracted: 2 Goals, 2 Targets</span>
+        <span style="color: var(--color-blue-dark); font-weight: 500;">${importType === 'assessment' ? 'Extracted: Client Info, Biopsychosocial, Clinical Observation' : 'Extracted: 2 Goals, 2 Targets'}</span>
       </div>
       <button class="glass-btn btn-sm" onclick="openReviewModal('${selectedClientId || 'ethan-brooks'}')">Review & Commit</button>
     `;
@@ -308,6 +478,71 @@ function openReviewModal(clientId) {
   const clientDob = client ? client.dob : '—';
   const clientDiag = client ? client.diagnosis : 'ASD Level 2';
   
+  if (importType === 'assessment') {
+    const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
+    const severities = ['Mild', 'Moderate', 'Severe'];
+    
+    let mockDataHtml = `
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+          <i data-lucide="user" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Client & Family Details
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(2, 136, 209, 0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(2, 136, 209, 0.08); font-size: 0.9rem;">
+          <div><strong>Name:</strong> ${escapeHtml(clientName)}</div>
+          <div><strong>DOB:</strong> ${escapeHtml(data.clientInfo.dob)}</div>
+          <div><strong>Diagnosis:</strong> ${escapeHtml(clientDiag)}</div>
+          <div><strong>Assessment Date:</strong> ${escapeHtml(data.clientInfo.reassessmentDate)}</div>
+          <div><strong>Parent/Guardian:</strong> ${escapeHtml(data.clientInfo.parentName)}</div>
+          <div><strong>Phone:</strong> ${escapeHtml(data.clientInfo.parentPhone)}</div>
+          <div><strong>Email:</strong> ${escapeHtml(data.clientInfo.parentEmail)}</div>
+          <div><strong>Source File:</strong> ${escapeHtml(clientName.replace(/\s+/g, '_'))}_Assessment_2025.pdf</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+          <i data-lucide="activity" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Biopsychosocial History
+        </h3>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
+          <div><strong>Family Structure:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.familyStructure)}</span></div>
+          <div><strong>Medical History & Medications:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.medicalHistory)} (Medications: ${escapeHtml(data.biopsychosocial.medications)})</span></div>
+          <div><strong>School Setting:</strong> <span style="color: var(--color-text);">Grade: ${escapeHtml(data.biopsychosocial.gradeText)} | ${escapeHtml(data.biopsychosocial.schoolTypeText)} (${escapeHtml(data.biopsychosocial.schoolHoursStart)} - ${escapeHtml(data.biopsychosocial.schoolHoursEnd)})</span></div>
+          <div><strong>Previous ABA Services:</strong> <span style="color: var(--color-text);">Provider: ${escapeHtml(data.biopsychosocial.abaProvider)} (${escapeHtml(data.biopsychosocial.abaStartDate)} to ${escapeHtml(data.biopsychosocial.abaEndDate)}) - ${escapeHtml(data.biopsychosocial.abaOutcomes)}</span></div>
+          <div><strong>Other Services:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.otherServices)}</span></div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+          <i data-lucide="clipboard" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Observation & Clinical Narrative
+        </h3>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
+          <div><strong>Direct Observation (${escapeHtml(data.narrative.observationDate)}):</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.clinicalNarrative)}</span></div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.25rem;">
+            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+              <strong>Language:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.langSeverity]}</span>
+            </div>
+            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+              <strong>Social Skills:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.socialSeverity]}</span>
+            </div>
+            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+              <strong>Adaptive Self-Care:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.adaptiveSeverity]}</span>
+            </div>
+            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+              <strong>Challenging Behaviors:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.challengingSeverity]}</span>
+            </div>
+          </div>
+          <div><strong>Standardized Assessment Info:</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.standardizedAssessment)}</span></div>
+        </div>
+      </div>
+    `;
+    
+    content.innerHTML = mockDataHtml;
+    lucide.createIcons();
+    modal.style.display = 'flex';
+    return;
+  }
+
   const targets = MIGRATION_TARGETS[clientId] || [
     {
       name: 'Functional Communication Training',
@@ -379,6 +614,35 @@ async function commitMigration() {
   lucide.createIcons();
 
   const clientId = selectedClientId || 'ethan-brooks';
+
+  if (importType === 'assessment') {
+    const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
+    localStorage.setItem('aba-assessment-data-' + clientId, JSON.stringify(data));
+    
+    // Also save the clientName in the program data so everything syncs up perfectly
+    if (typeof loadProgramData === 'function' && typeof saveProgramData === 'function') {
+      const client = typeof getClientById === 'function' ? getClientById(clientId) : null;
+      const program = loadProgramData();
+      if (client) {
+        program.clientName = client.name;
+        saveProgramData(program);
+      }
+    }
+
+    setTimeout(() => {
+      closeReviewModal();
+      btn.innerHTML = originalText;
+      alert(`Success! The legacy assessment report details have been successfully imported and mapped to the template.`);
+      
+      // Remove the committed item from the draft list
+      const draftList = document.getElementById('draft-migrations-list');
+      if (draftList && draftList.children.length > 0) {
+          draftList.removeChild(draftList.children[0]);
+      }
+    }, 1500);
+    return;
+  }
+
   const targetsToImport = MIGRATION_TARGETS[clientId] || [
     {
       name: 'Functional Communication Training',

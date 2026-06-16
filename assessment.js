@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.initializeToggleBars();
   }
 
+  // Load assessment data if stored in localStorage
+  loadAssessmentData();
+
   // Run dynamic completion checking
   checkCompletion();
 
@@ -32,6 +35,141 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('input', checkCompletion);
   document.addEventListener('change', checkCompletion);
 });
+
+function loadAssessmentData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const clientNameParam = urlParams.get('clientName');
+  if (!clientNameParam) return;
+
+  const clients = typeof getClientProfiles === 'function' ? getClientProfiles() : [];
+  const client = clients.find(c => c.name.toLowerCase() === clientNameParam.toLowerCase());
+  const clientId = client ? client.id : null;
+  if (!clientId) return;
+
+  const storedData = localStorage.getItem('aba-assessment-data-' + clientId);
+  if (!storedData) return;
+
+  try {
+    const data = JSON.parse(storedData);
+    populateAssessmentFields(data);
+  } catch (e) {
+    console.error('Failed to parse assessment data from localStorage:', e);
+  }
+}
+
+function populateAssessmentFields(data) {
+  if (!data) return;
+
+  // 1. Client Info tab
+  const clientInfoPane = document.querySelector('[data-assessment-pane="client-info"]');
+  if (clientInfoPane && data.clientInfo) {
+    const textareas = clientInfoPane.querySelectorAll('textarea');
+    if (textareas.length >= 4) {
+      if (textareas[0]) textareas[0].value = data.clientInfo.clientName || document.getElementById('client-name-input')?.value || '';
+      if (textareas[1]) textareas[1].value = data.clientInfo.parentName || '';
+      if (textareas[2]) textareas[2].value = data.clientInfo.parentPhone || '';
+      if (textareas[3]) textareas[3].value = data.clientInfo.parentEmail || '';
+    }
+    const dates = clientInfoPane.querySelectorAll('input[type="date"]');
+    if (dates.length >= 3) {
+      if (dates[0]) dates[0].value = data.clientInfo.dob || '';
+      if (dates[1]) dates[1].value = data.clientInfo.initialAssessmentDate || '';
+      if (dates[2]) dates[2].value = data.clientInfo.reassessmentDate || '';
+    }
+  }
+
+  // 2. Biopsychosocial tab
+  const bpsPane = document.querySelector('[data-assessment-pane="biopsychosocial"]');
+  if (bpsPane && data.biopsychosocial) {
+    const textareas = bpsPane.querySelectorAll('textarea');
+    const b = data.biopsychosocial;
+    const vals = [
+      b.familyStructure,
+      b.medications,
+      b.medicalHistory,
+      b.academicSchedule,
+      b.schoolHoursPerWeek,
+      b.abaProvider,
+      b.abaOutcomes,
+      b.mentalHealthServices,
+      b.otherServices,
+      b.coordinationOfCare,
+      b.majorLifeChanges
+    ];
+    vals.forEach((val, idx) => {
+      if (textareas[idx]) textareas[idx].value = val || '';
+    });
+
+    const dates = bpsPane.querySelectorAll('input[type="date"]');
+    if (dates.length >= 2) {
+      if (dates[0]) dates[0].value = b.abaStartDate || '';
+      if (dates[1]) dates[1].value = b.abaEndDate || '';
+    }
+
+    const times = bpsPane.querySelectorAll('input[type="time"]');
+    if (times.length >= 2) {
+      if (times[0]) times[0].value = b.schoolHoursStart || '';
+      if (times[1]) times[1].value = b.schoolHoursEnd || '';
+    }
+
+    const gradeCheckboxes = bpsPane.querySelectorAll('input[type="checkbox"]');
+    if (b.gradeIndex !== undefined && gradeCheckboxes[b.gradeIndex]) {
+      gradeCheckboxes[b.gradeIndex].checked = true;
+    }
+
+    const schoolTypeRadios = bpsPane.querySelectorAll('input[type="radio"][name="school_type"]');
+    if (b.schoolTypeIndex !== undefined && schoolTypeRadios[b.schoolTypeIndex]) {
+      schoolTypeRadios[b.schoolTypeIndex].checked = true;
+    }
+  }
+
+  // 3. Narrative tab
+  const narrativePane = document.querySelector('[data-assessment-pane="narrative"]');
+  if (narrativePane && data.narrative) {
+    const textareas = narrativePane.querySelectorAll('textarea');
+    const n = data.narrative;
+    const vals = [
+      n.clinicalNarrative,
+      n.langStrengths,
+      n.langChallenges,
+      n.socialStrengths,
+      n.socialChallenges,
+      n.adaptiveStrengths,
+      n.adaptiveChallenges,
+      n.challengingBehaviors,
+      n.standardizedAssessment
+    ];
+    vals.forEach((val, idx) => {
+      if (textareas[idx]) textareas[idx].value = val || '';
+    });
+
+    const dates = narrativePane.querySelectorAll('input[type="date"]');
+    if (dates.length >= 1 && dates[0]) {
+      dates[0].value = n.observationDate || '';
+    }
+
+    const langRadios = narrativePane.querySelectorAll('input[type="radio"][name="lang_severity"]');
+    if (n.langSeverity !== undefined && langRadios[n.langSeverity]) {
+      langRadios[n.langSeverity].checked = true;
+    }
+
+    const socialRadios = narrativePane.querySelectorAll('input[type="radio"][name="social_severity"]');
+    if (n.socialSeverity !== undefined && socialRadios[n.socialSeverity]) {
+      socialRadios[n.socialSeverity].checked = true;
+    }
+
+    const adaptiveRadios = narrativePane.querySelectorAll('input[type="radio"][name="adaptive_severity"]');
+    if (n.adaptiveSeverity !== undefined && adaptiveRadios[n.adaptiveSeverity]) {
+      adaptiveRadios[n.adaptiveSeverity].checked = true;
+    }
+
+    const challengingRadios = narrativePane.querySelectorAll('input[type="radio"][name="challenging_severity"]');
+    if (n.challengingSeverity !== undefined && challengingRadios[n.challengingSeverity]) {
+      challengingRadios[n.challengingSeverity].checked = true;
+    }
+  }
+}
+
 
 function switchAssessmentTab(tabId) {
   document.querySelectorAll('.assessment-tab-btn').forEach(button => {
