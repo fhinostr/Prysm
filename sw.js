@@ -25,6 +25,8 @@ const STATIC_ASSETS = [
   './plan.html',
   './client-hub.html',
   './get-started.html',
+  './assessment.html',
+  './assessment.js',
   './style.css',
   './nav.js',
   './app.js',

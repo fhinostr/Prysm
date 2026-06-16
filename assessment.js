@@ -168,6 +168,275 @@ function populateAssessmentFields(data) {
       challengingRadios[n.challengingSeverity].checked = true;
     }
   }
+
+  // 4. Goals tab
+  const goalsPane = document.querySelector('[data-assessment-pane="goals"]');
+  if (goalsPane && data.goals) {
+    const textareas = goalsPane.querySelectorAll('textarea');
+    if (textareas.length >= 7) {
+      if (textareas[0]) textareas[0].value = data.goals.totalGoals || '';
+      if (textareas[1]) textareas[1].value = data.goals.goalsMastered || '';
+      if (textareas[2]) textareas[2].value = data.goals.goalsInProgress || '';
+      if (textareas[3]) textareas[3].value = data.goals.goalsOnHold || '';
+      if (textareas[4]) textareas[4].value = data.goals.goalsDiscontinued || '';
+      if (textareas[5]) textareas[5].value = data.goals.goalsNew || '';
+      if (textareas[6]) textareas[6].value = data.goals.responseToTreatment || '';
+    }
+  }
+
+  // 5. Skill Acquisition tab
+  const skillPane = document.querySelector('[data-assessment-pane="skill-acquisition"]');
+  if (skillPane && data.skillAcquisition) {
+    const domains = skillPane.querySelectorAll('.assessment-domain-container');
+    const mapping = [
+      { container: domains[0], data: data.skillAcquisition.langComm },
+      { container: domains[1], data: data.skillAcquisition.social },
+      { container: domains[2], data: data.skillAcquisition.adaptive }
+    ];
+    mapping.forEach(m => {
+      if (m.container && m.data) {
+        const textareas = m.container.querySelectorAll('textarea');
+        if (textareas.length >= 5) {
+          if (textareas[0]) textareas[0].value = m.data.medicalNecessity || '';
+          if (textareas[1]) textareas[1].value = m.data.goalStatement || '';
+          if (textareas[2]) textareas[2].value = m.data.baseline || '';
+          if (textareas[3]) textareas[3].value = m.data.progressData || '';
+          if (textareas[4]) textareas[4].value = m.data.barriers || '';
+        }
+        const dates = m.container.querySelectorAll('input[type="date"]');
+        if (dates.length >= 2) {
+          if (dates[0]) dates[0].value = m.data.dateIntro || '';
+          if (dates[1]) dates[1].value = m.data.projectedMastery || '';
+        }
+      }
+    });
+  }
+
+  // 6. Replacement Behaviors tab
+  const replacementPane = document.querySelector('[data-assessment-pane="replacement-behaviors"]');
+  if (replacementPane && data.replacementBehaviors) {
+    const domains = replacementPane.querySelectorAll('.assessment-domain-container');
+    const mapping = [
+      { container: domains[0], data: data.replacementBehaviors.aggression },
+      { container: domains[1], data: data.replacementBehaviors.elopement },
+      { container: domains[2], data: data.replacementBehaviors.propertyDestruction }
+    ];
+    mapping.forEach(m => {
+      if (m.container && m.data) {
+        const textareas = m.container.querySelectorAll('textarea');
+        if (textareas.length >= 5) {
+          if (textareas[0]) textareas[0].value = m.data.medicalNecessity || '';
+          if (textareas[1]) textareas[1].value = m.data.goalStatement || '';
+          if (textareas[2]) textareas[2].value = m.data.baseline || '';
+          if (textareas[3]) textareas[3].value = m.data.progressData || '';
+          if (textareas[4]) textareas[4].value = m.data.barriers || '';
+        }
+        const dates = m.container.querySelectorAll('input[type="date"]');
+        if (dates.length >= 2) {
+          if (dates[0]) dates[0].value = m.data.dateIntro || '';
+          if (dates[1]) dates[1].value = m.data.projectedMastery || '';
+        }
+      }
+    });
+  }
+
+  // 7. Reduction Behaviors tab
+  const reductionPane = document.querySelector('[data-assessment-pane="reduction-behaviors"]');
+  if (reductionPane && data.reductionBehaviors) {
+    const domains = reductionPane.querySelectorAll('.assessment-domain-container');
+    const mapping = [
+      { container: domains[0], data: data.reductionBehaviors.aggression },
+      { container: domains[1], data: data.reductionBehaviors.elopement },
+      { container: domains[2], data: data.reductionBehaviors.propertyDestruction }
+    ];
+    mapping.forEach(m => {
+      if (m.container && m.data) {
+        const textareas = m.container.querySelectorAll('textarea');
+        if (textareas.length >= 4) {
+          if (textareas[0]) textareas[0].value = m.data.goalStatement || '';
+          if (textareas[1]) textareas[1].value = m.data.baseline || '';
+          if (textareas[2]) textareas[2].value = m.data.progressData || '';
+          if (textareas[3]) textareas[3].value = m.data.barriers || '';
+        }
+        const dates = m.container.querySelectorAll('input[type="date"]');
+        if (dates.length >= 2) {
+          if (dates[0]) dates[0].value = m.data.dateIntro || '';
+          if (dates[1]) dates[1].value = m.data.projectedMastery || '';
+        }
+      }
+    });
+  }
+
+  // 8. BIP tab
+  const bipPane = document.querySelector('[data-assessment-pane="bip"]');
+  if (bipPane && data.bip) {
+    const textareas = bipPane.querySelectorAll('textarea');
+    if (textareas.length >= 10) {
+      if (textareas[0]) textareas[0].value = data.bip.behaviorAssessment || '';
+      if (textareas[1]) textareas[1].value = data.bip.targetBehavior || '';
+      if (textareas[2]) textareas[2].value = data.bip.operationalDefinition || '';
+      if (textareas[3]) textareas[3].value = data.bip.hypothesizedFunction || '';
+      if (textareas[4]) textareas[4].value = data.bip.replacementBehavior || '';
+      if (textareas[5]) textareas[5].value = data.bip.antecedentIntervention || '';
+      if (textareas[6]) textareas[6].value = data.bip.consequenceProcedures || '';
+      if (textareas[7]) textareas[7].value = data.bip.deescalationProcedures || '';
+      if (textareas[8]) textareas[8].value = data.bip.crisisPlan || '';
+      if (textareas[9]) textareas[9].value = data.bip.generalizationPlan || '';
+    }
+  }
+
+  // 9. Caregiver Training tab
+  const caregiverPane = document.querySelector('[data-assessment-pane="caregiver-training"]');
+  if (caregiverPane && data.caregiverTraining) {
+    const textareas = caregiverPane.querySelectorAll('textarea');
+    if (textareas.length >= 4) {
+      if (textareas[0]) textareas[0].value = data.caregiverTraining.goalStatement || '';
+      if (textareas[1]) textareas[1].value = data.caregiverTraining.baseline || '';
+      if (textareas[2]) textareas[2].value = data.caregiverTraining.progressData || '';
+      if (textareas[3]) textareas[3].value = data.caregiverTraining.barriers || '';
+    }
+    const dates = caregiverPane.querySelectorAll('input[type="date"]');
+    if (dates.length >= 2) {
+      if (dates[0]) dates[0].value = data.caregiverTraining.dateIntro || '';
+      if (dates[1]) dates[1].value = data.caregiverTraining.projectedMastery || '';
+    }
+  }
+
+  // 10. Transition & Discharge tab
+  const tdPane = document.querySelector('[data-assessment-pane="transition-discharge"]');
+  if (tdPane && data.transitionDischarge) {
+    const textareas = tdPane.querySelectorAll('textarea');
+    if (textareas.length >= 20) {
+      if (textareas[0]) textareas[0].value = data.transitionDischarge.maintenancePlan || '';
+      if (textareas[1]) textareas[1].value = data.transitionDischarge.generalizationPlan || '';
+      if (textareas[2]) textareas[2].value = data.transitionDischarge.transitionFadingPlan || '';
+      
+      // Titration table
+      const titration = data.transitionDischarge.titrationTable || [];
+      for (let i = 0; i < 5; i++) {
+        const rowData = titration[i] || { criteria: '', bcbaReduction: '', rbtReduction: '' };
+        if (textareas[3 + i * 3]) textareas[3 + i * 3].value = rowData.criteria || '';
+        if (textareas[4 + i * 3]) textareas[4 + i * 3].value = rowData.bcbaReduction || '';
+        if (textareas[5 + i * 3]) textareas[5 + i * 3].value = rowData.rbtReduction || '';
+      }
+
+      if (textareas[18]) textareas[18].value = data.transitionDischarge.dischargeCriteria || '';
+      if (textareas[19]) textareas[19].value = data.transitionDischarge.crisisPlan || '';
+    }
+  }
+
+  // 11. Recommendations tab
+  const recsPane = document.querySelector('[data-assessment-pane="recommendations"]');
+  if (recsPane && data.recommendations) {
+    const textareas = recsPane.querySelectorAll('textarea');
+    if (textareas.length >= 86) {
+      // 1. Necessity & Barriers
+      if (textareas[0]) textareas[0].value = data.recommendations.medicalNecessity || '';
+      if (textareas[1]) textareas[1].value = data.recommendations.barriers || '';
+
+      // 2. Requested CPT Codes (Codes 97151 - 97158)
+      const cptCodes = ['97151', '97152', '97153', '97154', '97155', '97156', '97157', '97158'];
+      cptCodes.forEach((code, idx) => {
+        const key = 'CPT' + code;
+        const info = data.recommendations[key] || { hours: '', units: '', pos: '' };
+        if (textareas[2 + idx * 3]) textareas[2 + idx * 3].value = info.hours || '';
+        if (textareas[3 + idx * 3]) textareas[3 + idx * 3].value = info.units || '';
+        if (textareas[4 + idx * 3]) textareas[4 + idx * 3].value = info.pos || '';
+      });
+
+      // 3. Prior Utilization (Codes 97153 - 97158)
+      const priorCodes = ['97153', '97154', '97155', '97156', '97157', '97158'];
+      priorCodes.forEach((code, idx) => {
+        const key = 'prior' + code;
+        const info = data.recommendations[key] || { units: '', pos: '', barrier: '' };
+        if (textareas[26 + idx * 3]) textareas[26 + idx * 3].value = info.units || '';
+        if (textareas[27 + idx * 3]) textareas[27 + idx * 3].value = info.pos || '';
+        if (textareas[28 + idx * 3]) textareas[28 + idx * 3].value = info.barrier || '';
+      });
+
+      // 4. Anticipated Schedule (Codes 97153 - 97158)
+      const schedCodes = ['97153', '97154', '97155', '97156', '97157', '97158'];
+      const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      schedCodes.forEach((code, codeIdx) => {
+        const key = 'sched' + code;
+        const info = data.recommendations[key] || {};
+        days.forEach((day, dayIdx) => {
+          if (textareas[44 + codeIdx * 7 + dayIdx]) {
+            textareas[44 + codeIdx * 7 + dayIdx].value = info[day] || '';
+          }
+        });
+      });
+    }
+  }
+
+  // 12. Provider Info tab
+  const providerPane = document.querySelector('[data-assessment-pane="provider-info"]');
+  if (providerPane && data.providerInfo) {
+    const textareas = providerPane.querySelectorAll('textarea');
+    if (textareas.length >= 5) {
+      if (textareas[0]) textareas[0].value = data.providerInfo.name || '';
+      if (textareas[1]) textareas[1].value = data.providerInfo.phone || '';
+      if (textareas[2]) textareas[2].value = data.providerInfo.email || '';
+      if (textareas[3]) textareas[3].value = data.providerInfo.address || '';
+      if (textareas[4]) textareas[4].value = data.providerInfo.credentials || '';
+    }
+    const sigInput = document.getElementById('sig-type-input');
+    if (sigInput) {
+      sigInput.value = data.providerInfo.signature || '';
+      const preview = document.getElementById('sig-typed-preview');
+      if (preview) {
+        preview.textContent = data.providerInfo.signature || 'Your Signature Preview';
+      }
+      const sigData = document.getElementById('signature-data');
+      if (sigData) {
+        sigData.value = data.providerInfo.signature || '';
+      }
+    }
+  }
+
+  // 13. Telehealth Checklist tab
+  const telehealthPane = document.querySelector('[data-assessment-pane="telehealth-checklist"]');
+  if (telehealthPane && data.telehealthChecklist) {
+    const textareas = telehealthPane.querySelectorAll('textarea');
+    if (textareas.length >= 4) {
+      if (textareas[0]) textareas[0].value = data.telehealthChecklist.participantName || '';
+      if (textareas[1]) textareas[1].value = data.telehealthChecklist.bcbaName || '';
+      if (textareas[2] && (data.replacementBehaviors?.aggression || data.reductionBehaviors?.aggression)) {
+        textareas[2].value = 'Therapist will guide parent to implement response block and ensure a safe environment during severe behaviors.';
+      }
+      if (textareas[3]) textareas[3].value = 'In the event of technolgical issues, the BCBA/RBT will contact the caregiver via phone call to troubleshoot or reschedule the session.';
+    }
+    const dates = telehealthPane.querySelectorAll('input[type="date"]');
+    if (dates.length >= 2) {
+      if (dates[0]) dates[0].value = data.telehealthChecklist.date || '';
+      if (dates[1]) dates[1].value = data.telehealthChecklist.dateCompleted || '';
+    }
+    // Radio buttons checklist clinical defaults
+    const defaults = {
+      telehealth_1: 'yes',
+      telehealth_3: 'yes',
+      telehealth_7: (data.replacementBehaviors?.aggression || data.reductionBehaviors?.aggression) ? 'yes' : 'no',
+      telehealth_weapon: 'no',
+      telehealth_stature: 'no',
+      telehealth_12: 'yes',
+      telehealth_13: 'yes',
+      telehealth_8: 'yes',
+      telehealth_9: 'yes',
+      telehealth_firearms: 'no',
+      telehealth_pool: 'no',
+      telehealth_14: 'yes',
+      telehealth_15: 'yes',
+      telehealth_16: 'yes',
+      telehealth_17: 'yes'
+    };
+    for (const name in defaults) {
+      const val = defaults[name];
+      const radio = telehealthPane.querySelector(`input[type="radio"][name="${name}"][value="${val}"]`);
+      if (radio) {
+        radio.checked = true;
+      }
+    }
+  }
 }
 
 
@@ -287,6 +556,7 @@ function addNewBehavior() {
 }
 
 function checkCompletion() {
+  let allComplete = true;
   const panes = document.querySelectorAll('.assessment-tab-pane');
   panes.forEach(pane => {
     const tabId = pane.dataset.assessmentPane;

@@ -186,20 +186,10 @@
             </div>
           </div>
           
-          <!-- Document Type Selection -->
-          <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
-            <button type="button" class="glass-btn active" id="import-type-treatment" onclick="setImportType('treatment')" style="padding: 0.6rem 1.2rem; font-size: 0.88rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-              <i data-lucide="folder-kanban" style="width: 15px; height: 15px;"></i> Treatment Plan
-            </button>
-            <button type="button" class="glass-btn" id="import-type-assessment" onclick="setImportType('assessment')" style="padding: 0.6rem 1.2rem; font-size: 0.88rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
-              <i data-lucide="clipboard-list" style="width: 15px; height: 15px;"></i> Assessment Plan
-            </button>
-          </div>
-
           <div class="upload-zone glass-panel" id="migration-upload-zone" style="border: 2px dashed rgba(1, 87, 155, 0.3); text-align: center; padding: 3rem 2rem; margin-bottom: 2rem; cursor: pointer; transition: all 0.3s ease;">
             <i data-lucide="file-up" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem;"></i>
-            <h3>Drag & Drop Files Here</h3>
-            <p style="color: var(--color-text-light); margin-bottom: 1.5rem;">Supports PDF, DOCX, and scanned images from legacy platforms.</p>
+            <h3>Drag & Drop Legacy Assessment Plan Here</h3>
+            <p style="color: var(--color-text-light); margin-bottom: 1.5rem;">Supports legacy Assessment Plan PDFs, DOCX, and scanned reports.</p>
             <input type="file" id="migration-file-input" multiple style="display: none;" accept=".pdf,.doc,.docx,image/*" onchange="handleFileUpload(event)">
             <button class="glass-btn" onclick="document.getElementById('migration-file-input').click()">Browse Files</button>
           </div>

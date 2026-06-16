@@ -1,16 +1,6 @@
 // --- View State Management ---
 
 let selectedClientId = '';
-let importType = 'treatment';
-
-function setImportType(type) {
-  importType = type;
-  const treatmentBtn = document.getElementById('import-type-treatment');
-  const assessmentBtn = document.getElementById('import-type-assessment');
-  if (treatmentBtn) treatmentBtn.classList.toggle('active', type === 'treatment');
-  if (assessmentBtn) assessmentBtn.classList.toggle('active', type === 'assessment');
-  renderDraftMigrations(selectedClientId);
-}
 
 document.addEventListener('DOMContentLoaded', () => {
   renderClientList();
@@ -91,7 +81,6 @@ function switchAssessmentTab(tabId) {
 
   document.querySelectorAll('.assessment-tab-pane').forEach(pane => {
     const isActive = pane.dataset.assessmentPane === tabId;
-    // pane.classList.toggle('active', isActive); // Optional: if you use CSS classes for display
     pane.style.display = isActive ? 'block' : 'none';
   });
 }
@@ -122,104 +111,6 @@ function escapeHtml(value) {
 }
 
 // --- AI Migration Hub Logic ---
-
-const MIGRATION_TARGETS = {
-  'ethan-brooks': [
-    {
-      name: 'Tacting Objects',
-      domain: 'skill',
-      measurementType: 'percent',
-      category: 'Communication',
-      masteryCriteria: { threshold: 90, consecutiveSessions: 3 },
-      phase: 'Acquisition',
-      opDef: "Ability to tact (label) 3D objects and 2D pictures when presented with the antecedent 'What is this?' or when they naturally appear in the environment.",
-      procedures: "Present the item, ask 'What is this?'. Praise correct response within 3s. Prompt with echoic if no response.",
-      example: "Saying 'dog' when shown a picture of a dog.",
-      nonExample: "Saying 'bark' or pointing without saying the word."
-    },
-    {
-      name: 'Washing Hands',
-      domain: 'skill',
-      measurementType: 'ta',
-      category: 'Daily Living',
-      masteryCriteria: { threshold: 100, consecutiveSessions: 3 },
-      phase: 'Acquisition',
-      opDef: 'Independently complete the sequence of hand washing steps from turning on the water to drying hands.',
-      procedures: 'Prompt at each step using least-to-most prompting hierarchy. Record plus for independent steps, minus for prompted.',
-      example: 'Turning on the tap, washing with soap, and drying hands fully.',
-      nonExample: 'Rinsing hands without soap or leaving water running.',
-      steps: [
-        'Turn on water',
-        'Wet hands',
-        'Apply soap',
-        'Rub hands together for 20 seconds',
-        'Rinse hands',
-        'Turn off water',
-        'Dry hands with towel'
-      ]
-    }
-  ],
-  'john-doe': [
-    {
-      name: 'Manding / Requesting',
-      domain: 'skill',
-      measurementType: 'percent',
-      category: 'Communication',
-      masteryCriteria: { threshold: 80, consecutiveSessions: 3 },
-      phase: 'Acquisition',
-      opDef: "Initiating requests for desired items, actions, or assistance using at least a 2-word phrase.",
-      procedures: "Set up motivating operations (contrive situations where child needs help or items). Wait for mand. Prompt if needed.",
-      example: 'Saying "want juice" or "help please".',
-      nonExample: 'Grabbing, crying, or pointing without vocalization.'
-    },
-    {
-      name: 'Social Play',
-      domain: 'skill',
-      measurementType: 'percent',
-      category: 'Social Skills',
-      masteryCriteria: { threshold: 90, consecutiveSessions: 5 },
-      phase: 'Acquisition',
-      opDef: "Engaging in parallel or cooperative play with peers for at least 5 minutes with no more than 1 prompt.",
-      procedures: "Place client in play setting with peer. Provide reinforcement for cooperative interactions every 1 minute.",
-      example: 'Building a train track together with a peer.',
-      nonExample: 'Playing in isolation or taking toys away from peers.'
-    }
-  ],
-  'mia-hernandez': [
-    {
-      name: 'Intraverbals / Conversation',
-      domain: 'skill',
-      measurementType: 'percent',
-      category: 'Communication',
-      masteryCriteria: { threshold: 80, consecutiveSessions: 3 },
-      phase: 'Acquisition',
-      opDef: "Responding to conversational prompts or fill-in-the-blank statements vocally within 3 seconds.",
-      procedures: "Present statement (e.g. 'A cow says...'). Wait 3s. Praise correct response. Prompt with echoic if incorrect.",
-      example: "Saying 'moo' in response to 'A cow says...'.",
-      nonExample: "Repeating 'A cow says' (echolalia) or remaining silent."
-    },
-    {
-      name: 'Independent Dressing',
-      domain: 'skill',
-      measurementType: 'ta',
-      category: 'Daily Living',
-      masteryCriteria: { threshold: 100, consecutiveSessions: 3 },
-      phase: 'Acquisition',
-      opDef: 'Completing the steps of putting on a shirt independently.',
-      procedures: 'Forward chaining method. Prompt using least-to-most hierarchy.',
-      example: 'Correctly sliding head and arms through holes.',
-      nonExample: 'Putting shirt on backwards or inside out and leaving it.',
-      steps: [
-        'Orient shirt front-side down',
-        'Gather shirt from bottom to neck',
-        'Pull head through neck hole',
-        'Push right arm through right sleeve',
-        'Push left arm through left sleeve',
-        'Pull shirt down to waist'
-      ]
-    }
-  ]
-};
 
 const MIGRATION_ASSESSMENTS = {
   'john-doe': {
@@ -267,6 +158,171 @@ const MIGRATION_ASSESSMENTS = {
       challengingBehaviors: 'Engages in tantrums (screaming, dropping) when access to preferred items is denied or when demand is presented. Average duration: 5 minutes.',
       challengingSeverity: 1, // Moderate
       standardizedAssessment: 'VB-MAPP milestones assessment was conducted. Scores indicate a strong Level 1 profile with emerging Level 2 milestones in manding and visual-perceptual skills. Significant deficits remain in listener responding, play, and social skills.'
+    },
+    goals: {
+      totalGoals: '6',
+      goalsMastered: '2',
+      goalsInProgress: '3',
+      goalsOnHold: '1',
+      goalsDiscontinued: '0',
+      goalsNew: '3',
+      responseToTreatment: 'John has responded positively to structured visual schedules and token economics. His rates of compliance with transitions have increased from 30% to 75% over this period. Skill acquisition was optimized by introducing high-preference edible reinforcers and peer modeling.'
+    },
+    skillAcquisition: {
+      langComm: {
+        medicalNecessity: 'Directly addresses core social-communication deficits in ASD. Improving functional manding reduces tantrum frequency by providing a functional communication replacement.',
+        goalStatement: 'John will independently mand (request) desired items or actions using at least a 3-word phrase (e.g. "I want juice") across 3 different therapists and 2 environments for 80% of opportunities across 3 consecutive sessions by 12/15/2026.',
+        baseline: 'Client currently mands using single words or pointing (approx. 15% of opportunities).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'John has begun using 2-word approximations (e.g. "want toy") in 40% of trials under direct prompting.',
+        barriers: 'Inconsistent parental reinforcement of 3-word phrases at home. Remedy: Parent training sessions will focus on prompting manding.'
+      },
+      social: {
+        medicalNecessity: 'Addresses social interaction deficits of ASD. Increasing turn-taking skills enables integration into mainstream group settings.',
+        goalStatement: 'John will engage in cooperative play with a peer by taking turns during a board game or structured activity for 5 turns with no more than 1 gestural prompt for 3 consecutive sessions by 12/15/2026.',
+        baseline: 'Engages in parallel play only; does not take turns or share items (0% baseline).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Currently participates in turn-taking play with BCBA with gestural prompts (50% progress).',
+        barriers: 'High rate of task-avoidant whining when peers take turns. Remedy: Incorporate high-density reinforcement schedules.'
+      },
+      adaptive: {
+        medicalNecessity: 'Addresses deficits in adaptive functioning. Promoting hand washing independence decreases reliance on caregivers and ensures basic hygiene.',
+        goalStatement: 'John will independently wash and dry his hands following the 7-step task analysis with 100% independence for 5 consecutive opportunities by 12/15/2026.',
+        baseline: 'Requires hand-over-hand assistance for wetting, soaping, and drying (20% steps independent).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Now independent in turning on faucet and applying soap (45% independent steps).',
+        barriers: 'Sensory aversion to paper towels. Remedy: Changed to soft cotton towels and provided verbal reinforcement.'
+      }
+    },
+    replacementBehaviors: {
+      aggression: {
+        medicalNecessity: 'Aggressive behavior poses safety risks. Replacing aggression with functional requests (mands) is medically necessary to ensure client safety.',
+        goalStatement: 'John will use functional communication (e.g., saying "break" or "no thank you") instead of engaging in aggressive behaviors (hitting, pushing) for 95% of demand transitions by 12/15/2026.',
+        baseline: 'Engages in hitting/pushing during demand transitions (average 3 episodes per day).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Aggressive episodes reduced to average 1 episode per day when using functional communication cards.',
+        barriers: 'Delayed response from therapists during high-intensity periods. Remedy: Ensure visual icons are always within reach.'
+      },
+      elopement: {
+        medicalNecessity: 'Elopement poses severe safety concerns. Teaching John to stay in specified bounds is critical for safety.',
+        goalStatement: 'John will remain in the designated work or play area for 15 minutes without eloping (running out of the room/area) for 90% of opportunities across 3 consecutive sessions by 12/15/2026.',
+        baseline: 'Elopes from work table approximately 4 times per hour.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Elopement reduced to 1 time per hour with token board implementation.',
+        barriers: 'High distractors in open areas. Remedy: Position work desk facing the wall to minimize visual distractions.'
+      },
+      propertyDestruction: {
+        medicalNecessity: 'Destruction of materials limits access to educational settings. Replacing throwing behavior with requesting help is medically necessary.',
+        goalStatement: 'John will request assistance (e.g., saying "help" or handing help card) instead of throwing or tearing materials during difficult tasks in 90% of opportunities by 12/15/2026.',
+        baseline: 'Throws/tears tasks in 60% of presented difficult tasks.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Tears materials in only 20% of trials when "help" prompt is pre-emptively delivered.',
+        barriers: 'Latency in therapist assistance. Remedy: Immediate reinforcement for "help" requests.'
+      }
+    },
+    reductionBehaviors: {
+      aggression: {
+        goalStatement: 'John will decrease occurrences of physical aggression (hitting, pushing, biting others) to 0 episodes per week for 4 consecutive weeks by 12/15/2026.',
+        baseline: '15 episodes per week.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Reduced to average 3 episodes per week.',
+        barriers: 'Aggression reinforced by escape from demands. Consequence procedure modified to follow escape extinction protocol.'
+      },
+      elopement: {
+        goalStatement: 'John will decrease occurrences of elopement (running away from supervising adult or leaving designated area) to 0 episodes per week for 4 consecutive weeks by 12/15/2026.',
+        baseline: '24 episodes per week.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Reduced to average 4 episodes per week.',
+        barriers: 'Access to outdoor areas. Remedy: Installed childproof safety locks on exterior doors.'
+      },
+      propertyDestruction: {
+        goalStatement: 'John will decrease occurrences of property destruction (tearing papers, throwing toys/materials, slamming doors) to 1 or fewer episodes per week for 4 consecutive weeks by 12/15/2026.',
+        baseline: '8 episodes per week.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Reduced to average 2 episodes per week.',
+        barriers: 'Access to fragile items. Remedy: Relocated all instructional materials to closed cabinets.'
+      }
+    },
+    bip: {
+      behaviorAssessment: 'Functional Behavior Assessment (FBA) including FAST (Functional Analysis Screening Tool) and ABC data collection conducted in June 2026. Results indicate that aggression and property destruction are primarily maintained by social negative reinforcement (escape from academic demands), and secondarily by social positive reinforcement (access to tangible items like the iPad).',
+      targetBehavior: 'Physical Aggression & Property Destruction',
+      operationalDefinition: 'Physical Aggression: Any instance of John making contact with another person using his hand, fist, foot, or teeth (including hitting, kicking, pushing, biting) from a distance of 1 inch or greater. Property Destruction: Any instance of John forcefully throwing objects (e.g. chairs, books, puzzles), ripping instructional papers, or slamming doors with enough force to produce a loud sound.',
+      hypothesizedFunction: 'Social Negative Reinforcement (Escape from academic demands/tablework) and Social Positive Reinforcement (Access to iPad).',
+      replacementBehavior: 'Functional Communication Training (FCT): Requesting a break by saying "Break please" or handing a visual break card. Requesting assistance by saying "Help please". Requesting access to items by manding vocally.',
+      antecedentIntervention: '1. Visual Schedules: Pre-program transitions using a first-then board. 2. Behavioral Momentum: Present 3 easy high-probability demands before introducing a low-probability demand. 3. Demand Fading: Start with 1 easy task, reinforce, then gradually increase task length. 4. Premack Principle: iPad is only available after completing targeted tasks.',
+      consequenceProcedures: '1. Escape Extinction: If John engages in target behavior to escape a demand, guide him physically to complete the task. Do not remove the task. 2. Differential Reinforcement of Alternative Behavior (DRA): Provide immediate access to reinforcement (30 seconds break or praise) only when John uses his replacement communication (FCT). 3. Response Block: Physically block hitting/throwing immediately without eye contact or vocal statements.',
+      deescalationProcedures: '1. Remove all throwable/dangerous objects from the immediate area. 2. Maintain a neutral facial expression and flat tone of voice. 3. Provide minimal verbal instructions. 4. Give the client physical space while maintaining visual supervision.',
+      crisisPlan: 'If John\'s behavior escalates to a level that presents an imminent risk of injury to himself or others, and escape-extinction is unsafe: 1. Clear the room of peers. 2. Position therapist at least 3 feet away. 3. Contact the BCBA (Jane Vance at 555-0100) or Clinical Director immediately. 4. If safety cannot be maintained, contact emergency services (911). 5. Notify parent/guardian immediately.',
+      generalizationPlan: '1. Generalization across therapists: Train mother and father to implement extinction and FCT protocols. 2. Generalization across settings: Generalize FCT visual cards to community outings (park, grocery store) and school settings.'
+    },
+    caregiverTraining: {
+      goalStatement: 'Jane Doe will independently implement the escape extinction protocol and FCT prompt hierarchy during home-based transitions for 100% of observed opportunities across 3 consecutive parent coaching sessions by 12/15/2026.',
+      baseline: 'Currently implements escape extinction in 20% of opportunities, frequently giving in to tantrum behaviors.',
+      dateIntro: '2026-06-16',
+      projectedMastery: '2026-12-15',
+      progressData: 'Currently implements protocol correctly in 60% of opportunities during BCBA parent training sessions.',
+      barriers: 'Father\'s work schedule limits consistency. Remedy: Schedule bi-weekly evening coaching sessions to include both parents.'
+    },
+    transitionDischarge: {
+      maintenancePlan: 'Skills will be transitioned to intermittent reinforcement schedules once mastery criteria (80% independent across 3 sessions) are met. Visual schedules will be gradually simplified to checklist formats.',
+      generalizationPlan: 'Generalization will be programmed by using natural environment teaching (NET), introducing novel instructions and materials, and conducting sessions in community settings.',
+      transitionFadingPlan: 'Titration of direct RBT services will occur in 5-hour decrements every 6 months, conditional on John maintaining low rates of challenging behavior (less than 1 episode per week) and mastering at least 4 skill acquisition goals per authorization period.',
+      dischargeCriteria: 'John will be recommended for discharge from intensive ABA services when: 1. Challenging behaviors are maintained at near-zero rates (less than 1 episode per month) without crisis intervention. 2. John communicates needs independently using multi-word phrases. 3. Parents report high confidence (rating of 4/5) in managing transitions independently. 4. John is able to learn in a mainstream group environment with a 1:15 ratio.',
+      crisisPlan: 'In the event of a regression or sudden increase in severe challenging behavior: 1. Re-evaluate FBA and BIP. 2. Schedule immediate parent meeting. 3. Conduct direct observation sessions. 4. Coordinate with pediatrician to rule out medical causes.',
+      titrationTable: [
+        { criteria: 'Client maintains physical aggression at < 1 episode per week, and masters 3 communication goals.', bcbaReduction: 'Reduce from 2 hours/week to 1.5 hours/week', rbtReduction: 'Reduce from 20 hours/week to 15 hours/week' },
+        { criteria: 'Client washes hands, dresses, and toilet trains independently with 90% accuracy.', bcbaReduction: 'Reduce from 1.5 hours/week to 1 hour/week', rbtReduction: 'Reduce from 15 hours/week to 10 hours/week' },
+        { criteria: 'Client participates in mainstream classroom with no aggression for 3 consecutive months.', bcbaReduction: 'Reduce to 0.5 hours/week for consultation', rbtReduction: 'Reduce from 10 hours/week to 5 hours/week' },
+        { criteria: 'Client engages in cooperative peer play and turn-taking without adult prompts.', bcbaReduction: '0.5 hours/week consult', rbtReduction: 'Transition to 0 hours/week (Fully Discharged)' },
+        { criteria: 'Parent demonstrates complete independence in managing home routines for 6 months.', bcbaReduction: 'Discharge BCBA services', rbtReduction: 'Discharged' }
+      ]
+    },
+    recommendations: {
+      medicalNecessity: 'Given John\'s presentation of moderate-to-severe social-communication deficits and physical aggression (maintained by escape), intensive 1:1 ABA services are recommended. Direct therapy (97153) at 20 hours per week is required to provide the high frequency of learning trials necessary to establish a functional communication repertoire and safely implement escape extinction. BCBA supervision (97155) at 2 hours per week is required to monitor progress, modify programs, and ensure treatment integrity. Parent training (97156) at 1 hour per week is critical to ensure generalization and maintenance of skills in the home.',
+      barriers: 'Parent work schedules and occasional child illness are potential barriers. General coordination of schedules has been resolved by securing an afternoon session slot.',
+      CPT97151: { hours: '3 hours', units: '12 units', pos: 'Office/Clinic' },
+      CPT97152: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97153: { hours: '20 hours/week', units: '2080 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97154: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97155: { hours: '2 hours/week', units: '208 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97156: { hours: '1 hour/week', units: '104 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97157: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97158: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      prior97153: { units: '1560 units', pos: 'Home', barrier: 'Occasional school holidays caused minor cancellation of sessions.' },
+      prior97154: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97155: { units: '156 units', pos: 'Home', barrier: 'None' },
+      prior97156: { units: '78 units', pos: 'Home', barrier: 'Father work travel limited some sessions.' },
+      prior97157: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97158: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      sched97153: { sun: '0.0', mon: '4.0', tue: '4.0', wed: '4.0', thu: '4.0', fri: '4.0', sat: '0.0' },
+      sched97154: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97155: { sun: '0.0', mon: '0.5', tue: '0.5', wed: '0.5', thu: '0.5', fri: '0.0', sat: '0.0' },
+      sched97156: { sun: '0.0', mon: '1.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97157: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97158: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' }
+    },
+    providerInfo: {
+      name: 'Jane Vance, BCBA',
+      phone: '(555) 010-0234',
+      email: 'jvance@prysmaba.com',
+      address: 'Prysm Behavioral Services, 100 Main St, Suite A, Metuchen, NJ 08840',
+      credentials: 'Board Certified Behavior Analyst (BCBA) #1-23-45678',
+      signature: 'Jane Vance, BCBA'
+    },
+    telehealthChecklist: {
+      date: '2026-06-16',
+      participantName: 'John Doe',
+      bcbaName: 'Jane Vance, BCBA',
+      dateCompleted: '2026-06-16'
     }
   },
   'ethan-brooks': {
@@ -314,6 +370,171 @@ const MIGRATION_ASSESSMENTS = {
       challengingBehaviors: 'Engages in physical aggression (pushing, scratching) when peers interfere with repetitive play or preferred items. Tantrums occur during transitions.',
       challengingSeverity: 1, // Moderate
       standardizedAssessment: 'AFLS (Assessment of Functional Living Skills) and VB-MAPP conducted. Scoring indicates significant deficits in social/communication fields but strong progress in basic self-help domains.'
+    },
+    goals: {
+      totalGoals: '8',
+      goalsMastered: '3',
+      goalsInProgress: '4',
+      goalsOnHold: '1',
+      goalsDiscontinued: '0',
+      goalsNew: '4',
+      responseToTreatment: 'Ethan is highly motivated by technology and toy cars. Escaping tasks is his primary escape behavior. Using token boards has been highly successful.'
+    },
+    skillAcquisition: {
+      langComm: {
+        medicalNecessity: 'Addresses communication deficits.',
+        goalStatement: 'Ethan will vocally express his choices from a field of 3 objects in 80% of trials.',
+        baseline: 'Client requires physical prompting to select objects (10%).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Currently choosing vocally in 35% of prompted trials.',
+        barriers: 'Echolalia. Remedy: Use immediate modeling prompts.'
+      },
+      social: {
+        medicalNecessity: 'Addresses peer avoidance.',
+        goalStatement: 'Ethan will play cooperatively with a peer for 5 minutes with minimal prompts.',
+        baseline: 'Avoids peer contact (0%).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Tolerates peers near him for 3 minutes.',
+        barriers: 'Aggressive pushes when peers touch objects. Remedy: Constant supervision and response blocking.'
+      },
+      adaptive: {
+        medicalNecessity: 'Self-help skill.',
+        goalStatement: 'Ethan will tie his shoes independently.',
+        baseline: 'Requires full physical guidance (0%).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Can cross and loop laces with verbal prompts.',
+        barriers: 'Fine motor delays. Remedy: OT coordination.'
+      }
+    },
+    replacementBehaviors: {
+      aggression: {
+        medicalNecessity: 'Physical aggression poses safety risks.',
+        goalStatement: 'Ethan will hand a "Stop" visual card to peers instead of pushing.',
+        baseline: 'Pushes peers average 5 times per session.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Reduced to 2 times per session.',
+        barriers: 'Fast peer movements. Remedy: Position close to therapist.'
+      },
+      elopement: {
+        medicalNecessity: 'Safety risk.',
+        goalStatement: 'Ethan will request a break instead of running away.',
+        baseline: 'Runs out of room average 3 times per session.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Runs out average 1 time per session.',
+        barriers: 'None.'
+      },
+      propertyDestruction: {
+        medicalNecessity: 'Safety risk.',
+        goalStatement: 'Ethan will squeeze a sensory toy instead of throwing items.',
+        baseline: 'Throws objects average 4 times per session.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Throws objects average 1 time per session.',
+        barriers: 'None.'
+      }
+    },
+    reductionBehaviors: {
+      aggression: {
+        goalStatement: 'Ethan will decrease physical aggression to 0 episodes per week.',
+        baseline: '12 episodes per week.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Reduced to average 2 episodes per week.',
+        barriers: 'Reinforced by peers giving up toys.'
+      },
+      elopement: {
+        goalStatement: 'Ethan will decrease elopement to 0 episodes per week.',
+        baseline: '10 episodes per week.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Reduced to average 1 episode per week.',
+        barriers: 'None.'
+      },
+      propertyDestruction: {
+        goalStatement: 'Ethan will decrease property destruction to 0 episodes per week.',
+        baseline: '6 episodes per week.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Reduced to average 1 episode per week.',
+        barriers: 'None.'
+      }
+    },
+    bip: {
+      behaviorAssessment: 'FBA indicates aggression and elopement are maintained by social negative reinforcement (escape from desk tasks).',
+      targetBehavior: 'Aggression & Elopement',
+      operationalDefinition: 'Aggression: Forceful pushing of peers. Elopement: Running out of the classroom.',
+      hypothesizedFunction: 'Escape from tasks.',
+      replacementBehavior: 'Using visual "break" card and vocally manding "no".',
+      antecedentIntervention: 'Task interspersal, high reinforcer density, visual break card.',
+      consequenceProcedures: 'Escape extinction, response block, differential reinforcement of alternative behavior (DRA).',
+      deescalationProcedures: 'Provide physical space, turn off sensory triggers, speak in flat tone.',
+      crisisPlan: 'Notify BCBA, evacuate classroom if aggression escalates, use protective blocking.',
+      generalizationPlan: 'Parent coaching to implement the BIP at home.'
+    },
+    caregiverTraining: {
+      goalStatement: 'Sarah Brooks will correctly implement the token board at home for 90% of transitions.',
+      baseline: 'Uses token board in 10% of opportunities.',
+      dateIntro: '2026-06-16',
+      projectedMastery: '2026-12-15',
+      progressData: 'Correctly implements token board in 50% of parent training opportunities.',
+      barriers: 'None.'
+    },
+    transitionDischarge: {
+      maintenancePlan: 'Thin reinforcement schedule from continuous to variable.',
+      generalizationPlan: 'Coordinate with school teacher to utilize same visual tokens.',
+      transitionFadingPlan: 'Titrate hours as communication skills increase.',
+      dischargeCriteria: 'Client communicates needs vocally and stays within boundaries.',
+      crisisPlan: 'Re-evaluate plan if self-injurious behavior returns.',
+      titrationTable: [
+        { criteria: 'Client maintains aggression at < 1 episode per week.', bcbaReduction: 'Reduce BCBA from 2 to 1.5 hours/week', rbtReduction: 'Reduce RBT from 20 to 15 hours/week' },
+        { criteria: 'Client stays in designated boundaries for 2 weeks.', bcbaReduction: 'Reduce BCBA from 1.5 to 1 hour/week', rbtReduction: 'Reduce RBT from 15 to 10 hours/week' },
+        { criteria: 'Client plays cooperatively with peers.', bcbaReduction: 'Reduce BCBA to 0.5 hours/week', rbtReduction: 'Reduce RBT from 10 to 5 hours/week' },
+        { criteria: 'Client requires no prompts for transitions.', bcbaReduction: '0.5 hours consult', rbtReduction: 'transition to 0 hours' },
+        { criteria: 'Parent demonstrates complete independence.', bcbaReduction: 'Discharge', rbtReduction: 'Discharge' }
+      ]
+    },
+    recommendations: {
+      medicalNecessity: 'Intensive direct therapy (97153) at 20 hours per week is required to address peer aggression.',
+      barriers: 'Occasional illness. Resolution: Make up sessions on weekends.',
+      CPT97151: { hours: '3 hours', units: '12 units', pos: 'Clinic' },
+      CPT97152: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97153: { hours: '20 hours/week', units: '2080 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97154: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97155: { hours: '2 hours/week', units: '208 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97156: { hours: '1 hour/week', units: '104 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97157: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97158: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      prior97153: { units: '1400 units', pos: 'Clinic', barrier: 'None' },
+      prior97154: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97155: { units: '140 units', pos: 'Clinic', barrier: 'None' },
+      prior97156: { units: '70 units', pos: 'Clinic', barrier: 'None' },
+      prior97157: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97158: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      sched97153: { sun: '0.0', mon: '4.0', tue: '4.0', wed: '4.0', thu: '4.0', fri: '4.0', sat: '0.0' },
+      sched97154: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97155: { sun: '0.0', mon: '0.5', tue: '0.5', wed: '0.5', thu: '0.5', fri: '0.0', sat: '0.0' },
+      sched97156: { sun: '0.0', mon: '1.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97157: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97158: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' }
+    },
+    providerInfo: {
+      name: 'Jane Vance, BCBA',
+      phone: '(555) 010-0234',
+      email: 'jvance@prysmaba.com',
+      address: 'Prysm Behavioral Services, 100 Main St, Suite A, Metuchen, NJ 08840',
+      credentials: 'Board Certified Behavior Analyst (BCBA) #1-23-45678',
+      signature: 'Jane Vance, BCBA'
+    },
+    telehealthChecklist: {
+      date: '2026-06-16',
+      participantName: 'Ethan Brooks',
+      bcbaName: 'Jane Vance, BCBA',
+      dateCompleted: '2026-06-16'
     }
   },
   'mia-hernandez': {
@@ -361,6 +582,171 @@ const MIGRATION_ASSESSMENTS = {
       challengingBehaviors: 'Engages in whining, crying, and vocal protests during transitions or when denied access. Non-aggressive. Sensory avoidance noted during loud sounds.',
       challengingSeverity: 0, // Mild
       standardizedAssessment: 'Vineland-3 Adaptive Behavior Scales and VB-MAPP administered. Mia scores in the moderately low range for communication and social skills, with adequate scores in daily living skills.'
+    },
+    goals: {
+      totalGoals: '5',
+      goalsMastered: '1',
+      goalsInProgress: '3',
+      goalsOnHold: '0',
+      goalsDiscontinued: '0',
+      goalsNew: '4',
+      responseToTreatment: 'Mia responds well to token reinforcement and positive praise. Transition times are reduced when visual timers are used.'
+    },
+    skillAcquisition: {
+      langComm: {
+        medicalNecessity: 'Addresses speech delays.',
+        goalStatement: 'Mia will use correct pronouns (e.g., "I want" instead of "You want") in 85% of vocal requests.',
+        baseline: 'Reverses pronouns in 90% of requests.',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Correct pronoun use in 40% of requests.',
+        barriers: 'Spanish/English syntax differences. Remedy: Coordinate bilingual phrasing.'
+      },
+      social: {
+        medicalNecessity: 'Addresses peer isolation.',
+        goalStatement: 'Mia will greet a peer vocally with "Hello" or "Hola" in 80% of opportunities.',
+        baseline: 'Does not greet peers (0%).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Greets peers in 30% of trials with verbal prompt.',
+        barriers: 'None.'
+      },
+      adaptive: {
+        medicalNecessity: 'Self-care skill.',
+        goalStatement: 'Mia will independently wash hands with soap.',
+        baseline: 'Washes hands without soap (40% independence).',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'Uses soap in 70% of opportunities.',
+        barriers: 'None.'
+      }
+    },
+    replacementBehaviors: {
+      aggression: {
+        medicalNecessity: 'N/A',
+        goalStatement: 'N/A',
+        baseline: 'N/A',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'N/A',
+        barriers: 'N/A'
+      },
+      elopement: {
+        medicalNecessity: 'N/A',
+        goalStatement: 'N/A',
+        baseline: 'N/A',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'N/A',
+        barriers: 'N/A'
+      },
+      propertyDestruction: {
+        medicalNecessity: 'N/A',
+        goalStatement: 'N/A',
+        baseline: 'N/A',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'N/A',
+        barriers: 'N/A'
+      }
+    },
+    reductionBehaviors: {
+      aggression: {
+        goalStatement: 'N/A',
+        baseline: 'N/A',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'N/A',
+        barriers: 'N/A'
+      },
+      elopement: {
+        goalStatement: 'N/A',
+        baseline: 'N/A',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'N/A',
+        barriers: 'N/A'
+      },
+      propertyDestruction: {
+        goalStatement: 'N/A',
+        baseline: 'N/A',
+        dateIntro: '2026-06-16',
+        projectedMastery: '2026-12-15',
+        progressData: 'N/A',
+        barriers: 'N/A'
+      }
+    },
+    bip: {
+      behaviorAssessment: 'Mia does not exhibit severe target behaviors requiring an active BIP at this time. Standard classroom transitions are managed via a general token economy.',
+      targetBehavior: 'N/A',
+      operationalDefinition: 'N/A',
+      hypothesizedFunction: 'N/A',
+      replacementBehavior: 'N/A',
+      antecedentIntervention: 'Use visual timers and transition notifications.',
+      consequenceProcedures: 'Praise for transition compliance.',
+      deescalationProcedures: 'N/A',
+      crisisPlan: 'Standard school crisis plan.',
+      generalizationPlan: 'Bilingual routines generalized at home.'
+    },
+    caregiverTraining: {
+      goalStatement: 'Carlos Hernandez will utilize English/Spanish hybrid communication cards at home during meals.',
+      baseline: 'Never uses visual cards at home (0%).',
+      dateIntro: '2026-06-16',
+      projectedMastery: '2026-12-15',
+      progressData: 'Uses cards in 50% of observed meals.',
+      barriers: 'None.'
+    },
+    transitionDischarge: {
+      maintenancePlan: 'Gradually fade visual cards to verbal prompts.',
+      generalizationPlan: 'Train grandparents to use same vocabulary cards.',
+      transitionFadingPlan: 'Titrate hours once Mia transitions to 1st grade.',
+      dischargeCriteria: 'Mia communicates needs independently and performs self-help routines.',
+      crisisPlan: 'N/A',
+      titrationTable: [
+        { criteria: 'Mia maintains 2-3 word vocal requests without prompts.', bcbaReduction: 'Reduce BCBA from 1.5 to 1 hour/week', rbtReduction: 'Reduce RBT from 15 to 12 hours/week' },
+        { criteria: 'Mia uses soap independently in K settings.', bcbaReduction: 'Reduce BCBA to 0.75 hours/week', rbtReduction: 'Reduce RBT to 10 hours/week' },
+        { criteria: 'Mia plays with peers in structured games.', bcbaReduction: 'Reduce BCBA to 0.5 hours/week', rbtReduction: 'Reduce RBT to 5 hours/week' },
+        { criteria: 'Mia transitions without whining.', bcbaReduction: '0.5 hours consult', rbtReduction: 'Transition to 0 hours' },
+        { criteria: 'Parents report complete satisfaction.', bcbaReduction: 'Discharge', rbtReduction: 'Discharge' }
+      ]
+    },
+    recommendations: {
+      medicalNecessity: 'Moderate direct therapy (97153) at 15 hours per week is recommended to establish social greetings and self-care independence.',
+      barriers: 'None.',
+      CPT97151: { hours: '3 hours', units: '12 units', pos: 'Clinic' },
+      CPT97152: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97153: { hours: '15 hours/week', units: '1560 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97154: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97155: { hours: '1.5 hours/week', units: '156 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97156: { hours: '1 hour/week', units: '104 units (6 mo)', pos: 'Home & Clinic' },
+      CPT97157: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      CPT97158: { hours: 'N/A', units: 'N/A', pos: 'N/A' },
+      prior97153: { units: 'N/A', pos: 'N/A', barrier: 'No prior ABA history' },
+      prior97154: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97155: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97156: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97157: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      prior97158: { units: 'N/A', pos: 'N/A', barrier: 'N/A' },
+      sched97153: { sun: '0.0', mon: '3.0', tue: '3.0', wed: '3.0', thu: '3.0', fri: '3.0', sat: '0.0' },
+      sched97154: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97155: { sun: '0.0', mon: '0.3', tue: '0.3', wed: '0.3', thu: '0.3', fri: '0.3', sat: '0.0' },
+      sched97156: { sun: '0.0', mon: '1.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97157: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' },
+      sched97158: { sun: '0.0', mon: '0.0', tue: '0.0', wed: '0.0', thu: '0.0', fri: '0.0', sat: '0.0' }
+    },
+    providerInfo: {
+      name: 'Jane Vance, BCBA',
+      phone: '(555) 010-0234',
+      email: 'jvance@prysmaba.com',
+      address: 'Prysm Behavioral Services, 100 Main St, Suite A, Metuchen, NJ 08840',
+      credentials: 'Board Certified Behavior Analyst (BCBA) #1-23-45678',
+      signature: 'Jane Vance, BCBA'
+    },
+    telehealthChecklist: {
+      date: '2026-06-16',
+      participantName: 'Mia Hernandez',
+      bcbaName: 'Jane Vance, BCBA',
+      dateCompleted: '2026-06-16'
     }
   }
 };
@@ -375,34 +761,18 @@ function renderDraftMigrations(clientId) {
   let fileName = '';
   let detailText = '';
   
-  if (importType === 'assessment') {
-    if (clientId === 'ethan-brooks') {
-      fileName = 'Ethan_Brooks_Assessment_Report_2025.pdf';
-      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
-    } else if (clientId === 'john-doe') {
-      fileName = 'John_Doe_Initial_Assessment_Report_2025.pdf';
-      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
-    } else if (clientId === 'mia-hernandez') {
-      fileName = 'Mia_Hernandez_Assessment_Evaluation_2025.docx';
-      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
-    } else {
-      fileName = `${clientName.replace(/\s+/g, '_')}_Assessment.pdf`;
-      detailText = 'Extracted: Client Info, Biopsychosocial, Clinical Observation';
-    }
+  if (clientId === 'ethan-brooks') {
+    fileName = 'Ethan_Brooks_Assessment_Report_2025.pdf';
+    detailText = 'Extracted: Client Info, BioPsychosocial, Clinical Observation, BIP, recommendations, schedules';
+  } else if (clientId === 'john-doe') {
+    fileName = 'John_Doe_Initial_Assessment_Report_2025.pdf';
+    detailText = 'Extracted: Client Info, BioPsychosocial, Clinical Observation, BIP, recommendations, schedules';
+  } else if (clientId === 'mia-hernandez') {
+    fileName = 'Mia_Hernandez_Assessment_Evaluation_2025.docx';
+    detailText = 'Extracted: Client Info, BioPsychosocial, Clinical Observation, BIP, recommendations, schedules';
   } else {
-    if (clientId === 'ethan-brooks') {
-      fileName = 'Ethan_Brooks_Intake_&_Treatment_Plan_2025.pdf';
-      detailText = 'Extracted: 2 Goals, 2 Targets';
-    } else if (clientId === 'john-doe') {
-      fileName = 'John_Doe_Legacy_Plan_2025.pdf';
-      detailText = 'Extracted: 2 Goals, 2 Targets';
-    } else if (clientId === 'mia-hernandez') {
-      fileName = 'Mia_Hernandez_Treatment_Plan_2025.docx';
-      detailText = 'Extracted: 2 Goals, 2 Targets';
-    } else {
-      fileName = `${clientName.replace(/\s+/g, '_')}_Intake.pdf`;
-      detailText = 'Extracted: 1 Goal, 2 Targets';
-    }
+    fileName = `${clientName.replace(/\s+/g, '_')}_Assessment.pdf`;
+    detailText = 'Extracted: Client Info, BioPsychosocial, Clinical Observation, BIP, recommendations, schedules';
   }
 
   draftList.innerHTML = `
@@ -432,7 +802,7 @@ function handleFileUpload(event) {
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <i data-lucide="loader-2" class="lucide-loader-2" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem; animation: spin 2s linear infinite;"></i>
       <h3 style="color: var(--color-blue-dark);">AI is analyzing ${files.length} document(s)...</h3>
-      <p style="color: var(--color-text-light);">${importType === 'assessment' ? 'Extracting client details, biopsychosocial history, and clinical observations.' : 'Extracting targets, baselines, and mastery criteria.'}</p>
+      <p style="color: var(--color-text-light);">Extracting client details, biopsychosocial history, clinical observations, BIP details, recommendations, and anticipated schedules.</p>
     </div>
   `;
   lucide.createIcons();
@@ -457,7 +827,7 @@ function handleFileUpload(event) {
     newDraft.innerHTML = `
       <div>
         <strong>${files[0].name}</strong>
-        <span style="color: var(--color-blue-dark); font-weight: 500;">${importType === 'assessment' ? 'Extracted: Client Info, Biopsychosocial, Clinical Observation' : 'Extracted: 2 Goals, 2 Targets'}</span>
+        <span style="color: var(--color-blue-dark); font-weight: 500;">Extracted: Client Info, BioPsychosocial, Clinical Observation, BIP, recommendations, schedules</span>
       </div>
       <button class="glass-btn btn-sm" onclick="openReviewModal('${selectedClientId || 'ethan-brooks'}')">Review & Commit</button>
     `;
@@ -475,130 +845,115 @@ function openReviewModal(clientId) {
 
   const client = typeof getClientById === 'function' ? getClientById(clientId) : null;
   const clientName = client ? client.name : 'Unknown Client';
-  const clientDob = client ? client.dob : '—';
   const clientDiag = client ? client.diagnosis : 'ASD Level 2';
   
-  if (importType === 'assessment') {
-    const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
-    const severities = ['Mild', 'Moderate', 'Severe'];
-    
-    let mockDataHtml = `
-      <div style="margin-bottom: 1.5rem;">
-        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-          <i data-lucide="user" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Client & Family Details
-        </h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(2, 136, 209, 0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(2, 136, 209, 0.08); font-size: 0.9rem;">
-          <div><strong>Name:</strong> ${escapeHtml(clientName)}</div>
-          <div><strong>DOB:</strong> ${escapeHtml(data.clientInfo.dob)}</div>
-          <div><strong>Diagnosis:</strong> ${escapeHtml(clientDiag)}</div>
-          <div><strong>Assessment Date:</strong> ${escapeHtml(data.clientInfo.reassessmentDate)}</div>
-          <div><strong>Parent/Guardian:</strong> ${escapeHtml(data.clientInfo.parentName)}</div>
-          <div><strong>Phone:</strong> ${escapeHtml(data.clientInfo.parentPhone)}</div>
-          <div><strong>Email:</strong> ${escapeHtml(data.clientInfo.parentEmail)}</div>
-          <div><strong>Source File:</strong> ${escapeHtml(clientName.replace(/\s+/g, '_'))}_Assessment_2025.pdf</div>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 1.5rem;">
-        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-          <i data-lucide="activity" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Biopsychosocial History
-        </h3>
-        <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
-          <div><strong>Family Structure:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.familyStructure)}</span></div>
-          <div><strong>Medical History & Medications:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.medicalHistory)} (Medications: ${escapeHtml(data.biopsychosocial.medications)})</span></div>
-          <div><strong>School Setting:</strong> <span style="color: var(--color-text);">Grade: ${escapeHtml(data.biopsychosocial.gradeText)} | ${escapeHtml(data.biopsychosocial.schoolTypeText)} (${escapeHtml(data.biopsychosocial.schoolHoursStart)} - ${escapeHtml(data.biopsychosocial.schoolHoursEnd)})</span></div>
-          <div><strong>Previous ABA Services:</strong> <span style="color: var(--color-text);">Provider: ${escapeHtml(data.biopsychosocial.abaProvider)} (${escapeHtml(data.biopsychosocial.abaStartDate)} to ${escapeHtml(data.biopsychosocial.abaEndDate)}) - ${escapeHtml(data.biopsychosocial.abaOutcomes)}</span></div>
-          <div><strong>Other Services:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.otherServices)}</span></div>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 1.5rem;">
-        <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-          <i data-lucide="clipboard" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Observation & Clinical Narrative
-        </h3>
-        <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
-          <div><strong>Direct Observation (${escapeHtml(data.narrative.observationDate)}):</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.clinicalNarrative)}</span></div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.25rem;">
-            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-              <strong>Language:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.langSeverity]}</span>
-            </div>
-            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-              <strong>Social Skills:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.socialSeverity]}</span>
-            </div>
-            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-              <strong>Adaptive Self-Care:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.adaptiveSeverity]}</span>
-            </div>
-            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-              <strong>Challenging Behaviors:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.challengingSeverity]}</span>
-            </div>
-          </div>
-          <div><strong>Standardized Assessment Info:</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.standardizedAssessment)}</span></div>
-        </div>
-      </div>
-    `;
-    
-    content.innerHTML = mockDataHtml;
-    lucide.createIcons();
-    modal.style.display = 'flex';
-    return;
-  }
-
-  const targets = MIGRATION_TARGETS[clientId] || [
-    {
-      name: 'Functional Communication Training',
-      domain: 'skill',
-      measurementType: 'percent',
-      category: 'Communication',
-      masteryCriteria: { threshold: 90, consecutiveSessions: 3 },
-      phase: 'Acquisition',
-      opDef: 'Requesting items or breaks using words or PECS.',
-      procedures: 'Prompt when child indicates desire for item.'
-    }
-  ];
-
-  let targetsHtml = targets.map((target, index) => {
-    const isTa = target.measurementType === 'ta';
-    const detailString = isTa 
-      ? `${target.steps.length} Steps Extracted`
-      : `Domain: ${target.domain === 'skill' ? 'Skill' : 'Problem'} &bull; Baseline: 10% &bull; Mastery: ${target.masteryCriteria.threshold || 90}% across ${target.masteryCriteria.consecutiveSessions || 3} sessions`;
-
-    return `
-      <div style="background: white; padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-        <div>
-          <div style="font-weight: 600; color: var(--color-text);">${target.name} (${target.measurementType === 'ta' ? 'Task Analysis' : '% Correct'})</div>
-          <div style="font-size: 0.85rem; color: var(--color-text-light);">${detailString}</div>
-        </div>
-        <i data-lucide="edit-2" style="width: 16px; height: 16px; color: var(--color-blue); cursor: pointer;"></i>
-      </div>
-    `;
-  }).join('');
-
+  const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
+  const severities = ['Mild', 'Moderate', 'Severe'];
+  
   let mockDataHtml = `
     <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.5rem;">Client Details</h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: rgba(0,0,0,0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05);">
-        <div><strong>Name:</strong> ${clientName}</div>
-        <div><strong>DOB:</strong> ${clientDob}</div>
-        <div><strong>Diagnosis:</strong> ${clientDiag}</div>
-        <div><strong>Found in:</strong> ${clientName.replace(/\s+/g, '_')}_Intake.pdf</div>
+      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+        <i data-lucide="user" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Client & Family Details
+      </h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(2, 136, 209, 0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(2, 136, 209, 0.08); font-size: 0.9rem;">
+        <div><strong>Name:</strong> ${escapeHtml(clientName)}</div>
+        <div><strong>DOB:</strong> ${escapeHtml(data.clientInfo.dob)}</div>
+        <div><strong>Diagnosis:</strong> ${escapeHtml(clientDiag)}</div>
+        <div><strong>Assessment Date:</strong> ${escapeHtml(data.clientInfo.reassessmentDate)}</div>
+        <div><strong>Parent/Guardian:</strong> ${escapeHtml(data.clientInfo.parentName)}</div>
+        <div><strong>Phone:</strong> ${escapeHtml(data.clientInfo.parentPhone)}</div>
+        <div><strong>Email:</strong> ${escapeHtml(data.clientInfo.parentEmail)}</div>
+        <div><strong>Source File:</strong> ${escapeHtml(clientName.replace(/\s+/g, '_'))}_Assessment_2025.pdf</div>
       </div>
     </div>
     
     <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-        Skill/Problem Targets (${targets.length})
-        <button class="glass-btn btn-sm" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">+ Add Missing</button>
+      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+        <i data-lucide="activity" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Biopsychosocial History
       </h3>
-      
-      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-        ${targetsHtml}
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
+        <div><strong>Family Structure:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.familyStructure)}</span></div>
+        <div><strong>Medical History & Medications:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.medicalHistory)} (Medications: ${escapeHtml(data.biopsychosocial.medications)})</span></div>
+        <div><strong>School Setting:</strong> <span style="color: var(--color-text);">Grade: ${escapeHtml(data.biopsychosocial.gradeText)} | ${escapeHtml(data.biopsychosocial.schoolTypeText)} (${escapeHtml(data.biopsychosocial.schoolHoursStart)} - ${escapeHtml(data.biopsychosocial.schoolHoursEnd)})</span></div>
+        <div><strong>Previous ABA Services:</strong> <span style="color: var(--color-text);">Provider: ${escapeHtml(data.biopsychosocial.abaProvider)} (${escapeHtml(data.biopsychosocial.abaStartDate)} to ${escapeHtml(data.biopsychosocial.abaEndDate)}) - ${escapeHtml(data.biopsychosocial.abaOutcomes)}</span></div>
+        <div><strong>Other Services:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.otherServices)}</span></div>
+      </div>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+        <i data-lucide="clipboard" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Observation & Clinical Narrative
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
+        <div><strong>Direct Observation (${escapeHtml(data.narrative.observationDate)}):</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.clinicalNarrative)}</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.25rem;">
+          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+            <strong>Language:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.langSeverity]}</span>
+          </div>
+          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+            <strong>Social Skills:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.socialSeverity]}</span>
+          </div>
+          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+            <strong>Adaptive Self-Care:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.adaptiveSeverity]}</span>
+          </div>
+          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+            <strong>Challenging Behaviors:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.challengingSeverity]}</span>
+          </div>
+        </div>
+        <div><strong>Standardized Assessment Info:</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.standardizedAssessment)}</span></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+        <i data-lucide="target" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Goals & Skill Acquisition (All Domains)
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+          <div style="background: white; padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid rgba(0,0,0,0.05);"><strong>Total Goals:</strong> ${data.goals.totalGoals}</div>
+          <div style="background: white; padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid rgba(0,0,0,0.05);"><strong>Mastered:</strong> ${data.goals.goalsMastered}</div>
+          <div style="background: white; padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid rgba(0,0,0,0.05);"><strong>New:</strong> ${data.goals.goalsNew}</div>
+        </div>
+        <div style="margin-top: 0.25rem;"><strong>Language Goal:</strong> ${escapeHtml(data.skillAcquisition.langComm.goalStatement)}</div>
+        <div><strong>Social Goal:</strong> ${escapeHtml(data.skillAcquisition.social.goalStatement)}</div>
+        <div><strong>Adaptive Goal:</strong> ${escapeHtml(data.skillAcquisition.adaptive.goalStatement)}</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+        <i data-lucide="shield-alert" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Behavior Intervention Plan (BIP)
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
+        <div><strong>Target Behavior:</strong> <span style="color: var(--color-text); font-weight: 500;">${escapeHtml(data.bip.targetBehavior)}</span></div>
+        <div><strong>Operational Definition:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.operationalDefinition)}</span></div>
+        <div><strong>Hypothesized Function:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.hypothesizedFunction)}</span></div>
+        <div><strong>Antecedent Interventions:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.antecedentIntervention)}</span></div>
+        <div><strong>Consequence Procedures:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.consequenceProcedures)}</span></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
+        <i data-lucide="file-check-2" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Recommendations & Provider
+      </h3>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
+        <div><strong>Medical Necessity Synopsis:</strong> <span style="color: var(--color-text);">${escapeHtml(data.recommendations.medicalNecessity.substring(0, 150))}...</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div style="background: white; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+            <strong>Direct (97153):</strong> ${data.recommendations.CPT97153.hours} (${data.recommendations.CPT97153.pos})
+          </div>
+          <div style="background: white; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
+            <strong>Supervision (97155):</strong> ${data.recommendations.CPT97155.hours}
+          </div>
+        </div>
+        <div><strong>BCBA Signature:</strong> <span style="color: var(--color-text); font-weight: 500;">${escapeHtml(data.providerInfo.signature)}</span></div>
       </div>
     </div>
   `;
   
   content.innerHTML = mockDataHtml;
   lucide.createIcons();
-  
   modal.style.display = 'flex';
 }
 
@@ -614,87 +969,25 @@ async function commitMigration() {
   lucide.createIcons();
 
   const clientId = selectedClientId || 'ethan-brooks';
-
-  if (importType === 'assessment') {
-    const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
-    localStorage.setItem('aba-assessment-data-' + clientId, JSON.stringify(data));
-    
-    // Also save the clientName in the program data so everything syncs up perfectly
-    if (typeof loadProgramData === 'function' && typeof saveProgramData === 'function') {
-      const client = typeof getClientById === 'function' ? getClientById(clientId) : null;
-      const program = loadProgramData();
-      if (client) {
-        program.clientName = client.name;
-        saveProgramData(program);
-      }
+  const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
+  
+  // Persist the full assessment data structure to localStorage
+  localStorage.setItem('aba-assessment-data-' + clientId, JSON.stringify(data));
+  
+  // Also save the clientName in the program data so everything syncs up perfectly
+  if (typeof loadProgramData === 'function' && typeof saveProgramData === 'function') {
+    const client = typeof getClientById === 'function' ? getClientById(clientId) : null;
+    const program = loadProgramData();
+    if (client) {
+      program.clientName = client.name;
+      saveProgramData(program);
     }
-
-    setTimeout(() => {
-      closeReviewModal();
-      btn.innerHTML = originalText;
-      alert(`Success! The legacy assessment report details have been successfully imported and mapped to the template.`);
-      
-      // Remove the committed item from the draft list
-      const draftList = document.getElementById('draft-migrations-list');
-      if (draftList && draftList.children.length > 0) {
-          draftList.removeChild(draftList.children[0]);
-      }
-    }, 1500);
-    return;
-  }
-
-  const targetsToImport = MIGRATION_TARGETS[clientId] || [
-    {
-      name: 'Functional Communication Training',
-      domain: 'skill',
-      measurementType: 'percent',
-      category: 'Communication',
-      masteryCriteria: { threshold: 90, consecutiveSessions: 3 },
-      phase: 'Acquisition',
-      opDef: 'Requesting items or breaks using words or PECS.',
-      procedures: 'Prompt when child indicates desire for item.'
-    }
-  ];
-
-  let successCount = 0;
-
-  try {
-    // Check if we are connected to Supabase
-    if (typeof upsertTargetAsync === 'function' && window.supabaseClient && window.supabaseClient.auth?.session?.()) {
-      console.log(`Importing targets to Supabase for client: ${clientId}`);
-      for (const target of targetsToImport) {
-        await upsertTargetAsync(clientId, target);
-        successCount++;
-      }
-    } else {
-      // LocalStorage fallback
-      console.log(`Importing targets to LocalStorage for client: ${clientId}`);
-      if (typeof upsertTarget === 'function') {
-        // Update the client name in local storage program to match the selected client
-        if (typeof loadProgramData === 'function' && typeof saveProgramData === 'function') {
-          const client = typeof getClientById === 'function' ? getClientById(clientId) : null;
-          const program = loadProgramData();
-          if (client) {
-            program.clientName = client.name;
-            saveProgramData(program);
-          }
-        }
-        for (const target of targetsToImport) {
-          upsertTarget(target);
-          successCount++;
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error committing migration:', error);
   }
 
   setTimeout(() => {
     closeReviewModal();
     btn.innerHTML = originalText;
-    
-    // Show a success toast or alert
-    alert(`Success! ${successCount} targets from the legacy plan have been successfully imported and committed to the database.`);
+    alert(`Success! The complete legacy assessment report details have been successfully imported and mapped to the template.`);
     
     // Remove the committed item from the draft list
     const draftList = document.getElementById('draft-migrations-list');
