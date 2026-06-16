@@ -813,32 +813,60 @@ function extractAssessmentData(text) {
   }
   clearMockData(data);
   
-  const dobMatch = text.match(/(?:DOB|Date of Birth):\s*([\d\/\-]+)/i);
+  // 1. DOB Match (Relaxed colon requirement)
+  const dobMatch = text.match(/(?:DOB|Date of Birth)[\s:]*([\d]{1,2}[\/\-][\d]{1,2}[\/\-][\d]{2,4})/i);
   if (dobMatch) data.clientInfo.dob = dobMatch[1].trim();
   
-  const assessmentDateMatch = text.match(/(?:Assessment Date|Date of Assessment):\s*([\d\/\-]+)/i);
+  // 2. Assessment Date
+  const assessmentDateMatch = text.match(/(?:Assessment Date|Date of Assessment|Date of Initial Assessment|Date of Current Reassessment)[\s:]*([\d]{1,2}[\/\-][\d]{1,2}[\/\-][\d]{2,4})/i);
   if (assessmentDateMatch) data.clientInfo.reassessmentDate = assessmentDateMatch[1].trim();
 
-  const parentMatch = text.match(/(?:Parent|Guardian|Mother|Father)(?:'s Name| Name)?:\s*([A-Za-z\s]+?)(?:\n|$)/i);
-  if (parentMatch) data.clientInfo.parentName = parentMatch[1].trim();
-
-  const bioMatch = text.match(/(?:Biopsychosocial|Background|Family Structure)[\s\S]*?(?:Goals|Assessment|Narrative|Behaviors)/i);
-  if (bioMatch) {
-    let extractedBio = bioMatch[0].replace(/(?:Goals|Assessment|Narrative|Behaviors)$/i, '').trim();
-    if (extractedBio.length > 50) data.biopsychosocial.familyStructure = extractedBio.substring(0, 300) + '...';
+  // 3. Parent/Guardian Name
+  const parentMatch = text.match(/(?:Parent|Guardian|Mother|Father)(?:'s)?\s*(?:Contact|Name)?[\s:]*([A-Za-z\s]{3,40}?)(?:\n|Phone|Email|$)/i);
+  if (parentMatch) {
+    const pName = parentMatch[1].trim();
+    if (pName.length > 2 && !pName.toLowerCase().includes('name')) {
+      data.clientInfo.parentName = pName;
+    }
   }
 
-  const narrativeMatch = text.match(/(?:Observation|Clinical Narrative)[\s\S]*?(?:Goals|Target Behaviors|Recommendations)/i);
+  // 4. Biopsychosocial / Family Structure
+  const bioMatch = text.match(/(?:Biopsychosocial(?: Information)?|Current Family Structure)[\s\S]{10,600}?(?:Medications|Medical History|School Placement|Narrative|History of)/i);
+  if (bioMatch) {
+    let extractedBio = bioMatch[0].replace(/(?:Medications|Medical History|School Placement|Narrative|History of)$/i, '').trim();
+    extractedBio = extractedBio.replace(/(?:Biopsychosocial(?: Information)?|Current Family Structure)/ig, '').trim();
+    if (extractedBio.length > 10) {
+      data.biopsychosocial.familyStructure = extractedBio.substring(0, 300) + (extractedBio.length > 300 ? '...' : '');
+    }
+  }
+
+  // 5. Clinical Narrative / Observation
+  const narrativeMatch = text.match(/(?:Clinical Narrative|Direct Observation|Observation)[\s\S]{10,800}?(?:Language\/Communication|Social Skills|Adaptive|Challenging Behaviors|Goals)/i);
   if (narrativeMatch) {
-    let extractedNarrative = narrativeMatch[0].replace(/(?:Goals|Target Behaviors|Recommendations)$/i, '').trim();
-    if (extractedNarrative.length > 50) data.narrative.clinicalNarrative = extractedNarrative.substring(0, 500) + '...';
+    let extractedNarrative = narrativeMatch[0].replace(/(?:Language\/Communication|Social Skills|Adaptive|Challenging Behaviors|Goals)$/i, '').trim();
+    extractedNarrative = extractedNarrative.replace(/(?:Clinical Narrative|Direct Observation|Observation)/ig, '').trim();
+    extractedNarrative = extractedNarrative.replace(/Date of Observation:\s*[\d\/\-]+/i, '').trim();
+    if (extractedNarrative.length > 10) {
+      data.narrative.clinicalNarrative = extractedNarrative.substring(0, 500) + (extractedNarrative.length > 500 ? '...' : '');
+    }
   }
   
-  const goalMatch = text.match(/Goal(?:s| Statement)?:\s*([\s\S]*?)(?:\n\n|\n[A-Z]|$)/i);
+  // 6. Goals - Lang/Comm
+  const goalMatch = text.match(/(?:Goal Statement|Goal)[\s:]+([\s\S]{10,300}?)(?:Baseline|Medical Necessity|Date|Projected|$)/i);
   if (goalMatch) {
-    // If we only have an array of goals, we might need to recreate the structure if we cleared it
-    // Wait, we cleared string values, but the object structure of data.skillAcquisition.langComm is intact.
-    data.skillAcquisition.langComm.goalStatement = goalMatch[1].trim().substring(0, 200);
+    data.skillAcquisition.langComm.goalStatement = goalMatch[1].trim();
+  }
+
+  // 7. Baseline
+  const baselineMatch = text.match(/(?:Baseline)[\s:]+([\s\S]{5,200}?)(?:Date|Projected|Goal|Medical Necessity|$)/i);
+  if (baselineMatch) {
+    data.skillAcquisition.langComm.baseline = baselineMatch[1].trim();
+  }
+
+  // 8. Medical Necessity
+  const medMatch = text.match(/(?:Medical Necessity(?: Rationale)?)[\s:]+([\s\S]{10,300}?)(?:Goal Statement|Baseline|Date|$)/i);
+  if (medMatch) {
+    data.skillAcquisition.langComm.medicalNecessity = medMatch[1].trim();
   }
 
   return data;
