@@ -790,24 +790,58 @@ function triggerBulkUpload() {
   document.getElementById('migration-file-input').click();
 }
 
-function handleFileUpload(event) {
+function extractAssessmentData(text) {
+  const data = JSON.parse(JSON.stringify(MIGRATION_ASSESSMENTS['john-doe']));
+  
+  const dobMatch = text.match(/(?:DOB|Date of Birth):\s*([\d\/\-]+)/i);
+  if (dobMatch) data.clientInfo.dob = dobMatch[1].trim();
+  
+  const assessmentDateMatch = text.match(/(?:Assessment Date|Date of Assessment):\s*([\d\/\-]+)/i);
+  if (assessmentDateMatch) data.clientInfo.reassessmentDate = assessmentDateMatch[1].trim();
+
+  const parentMatch = text.match(/(?:Parent|Guardian|Mother|Father)(?:'s Name| Name)?:\s*([A-Za-z\s]+?)(?:\n|$)/i);
+  if (parentMatch) data.clientInfo.parentName = parentMatch[1].trim();
+
+  const bioMatch = text.match(/(?:Biopsychosocial|Background|Family Structure)[\s\S]*?(?:Goals|Assessment|Narrative|Behaviors)/i);
+  if (bioMatch) {
+    let extractedBio = bioMatch[0].replace(/(?:Goals|Assessment|Narrative|Behaviors)$/i, '').trim();
+    if (extractedBio.length > 50) data.biopsychosocial.familyStructure = extractedBio.substring(0, 300) + '...';
+  }
+
+  const narrativeMatch = text.match(/(?:Observation|Clinical Narrative)[\s\S]*?(?:Goals|Target Behaviors|Recommendations)/i);
+  if (narrativeMatch) {
+    let extractedNarrative = narrativeMatch[0].replace(/(?:Goals|Target Behaviors|Recommendations)$/i, '').trim();
+    if (extractedNarrative.length > 50) data.narrative.clinicalNarrative = extractedNarrative.substring(0, 500) + '...';
+  } else {
+    data.narrative.clinicalNarrative = `Extracted from document:\n\n${text.substring(0, 500)}...`;
+  }
+  
+  const goalMatch = text.match(/Goal(?:s| Statement)?:\s*([\s\S]*?)(?:\n\n|\n[A-Z]|$)/i);
+  if (goalMatch) {
+    data.skillAcquisition.langComm.goalStatement = goalMatch[1].trim().substring(0, 200);
+  }
+
+  return data;
+}
+
+async function handleFileUpload(event) {
   const files = event.target.files;
   if (!files || files.length === 0) return;
   
   const uploadZone = document.getElementById('migration-upload-zone');
   const originalHtml = uploadZone.innerHTML;
   
-  // Simulate AI parsing loading state
+  const file = files[0];
+  
   uploadZone.innerHTML = `
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <i data-lucide="loader-2" class="lucide-loader-2" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem; animation: spin 2s linear infinite;"></i>
-      <h3 style="color: var(--color-blue-dark);">AI is analyzing ${files.length} document(s)...</h3>
-      <p style="color: var(--color-text-light);">Extracting client details, biopsychosocial history, clinical observations, BIP details, recommendations, and anticipated schedules.</p>
+      <h3 style="color: var(--color-blue-dark);">AI is analyzing ${file.name}...</h3>
+      <p style="color: var(--color-text-light);">Extracting content and mapping to assessment template...</p>
     </div>
   `;
   lucide.createIcons();
   
-  // Adding spin animation if not exists
   if (!document.getElementById('spin-anim')) {
     const style = document.createElement('style');
     style.id = 'spin-anim';
@@ -815,27 +849,52 @@ function handleFileUpload(event) {
     document.head.appendChild(style);
   }
 
-  setTimeout(() => {
+  try {
+    let extractedText = '';
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    
+    if (file.type === 'application/pdf' || fileExtension === 'pdf') {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        extractedText += textContent.items.map(s => s.str).join(' ') + '\n';
+      }
+    } else if (fileExtension === 'docx') {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+      extractedText = result.value;
+    } else {
+      extractedText = await file.text();
+    }
+    
+    window.pendingMigrationData = extractAssessmentData(extractedText);
+    
     uploadZone.innerHTML = originalHtml;
     lucide.createIcons();
     
-    // Add new draft to list
     const draftList = document.getElementById('draft-migrations-list');
     const newDraft = document.createElement('div');
     newDraft.className = 'file-row';
     newDraft.style.borderLeft = '4px solid var(--color-turquoise)';
     newDraft.innerHTML = `
       <div>
-        <strong>${files[0].name}</strong>
-        <span style="color: var(--color-blue-dark); font-weight: 500;">Extracted: Client Info, BioPsychosocial, Clinical Observation, BIP, recommendations, schedules</span>
+        <strong>${file.name}</strong>
+        <span style="color: var(--color-blue-dark); font-weight: 500;">Dynamic extraction complete</span>
       </div>
       <button class="glass-btn btn-sm" onclick="openReviewModal('${selectedClientId || 'ethan-brooks'}')">Review & Commit</button>
     `;
     draftList.prepend(newDraft);
     
-    // Reset file input
-    event.target.value = '';
-  }, 2500);
+  } catch (error) {
+    console.error('Extraction error:', error);
+    alert('Error extracting text from document. Please ensure it is a valid PDF, DOCX, or text file.');
+    uploadZone.innerHTML = originalHtml;
+    lucide.createIcons();
+  }
+  
+  event.target.value = '';
 }
 
 function openReviewModal(clientId) {
@@ -847,7 +906,7 @@ function openReviewModal(clientId) {
   const clientName = client ? client.name : 'Unknown Client';
   const clientDiag = client ? client.diagnosis : 'ASD Level 2';
   
-  const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
+  const data = window.pendingMigrationData ? window.pendingMigrationData : (MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe']);
   const severities = ['Mild', 'Moderate', 'Severe'];
   
   let mockDataHtml = `
@@ -969,7 +1028,7 @@ async function commitMigration() {
   lucide.createIcons();
 
   const clientId = selectedClientId || 'ethan-brooks';
-  const data = MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe'];
+  const data = window.pendingMigrationData ? window.pendingMigrationData : (MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe']);
   
   // Persist the full assessment data structure to localStorage
   localStorage.setItem('aba-assessment-data-' + clientId, JSON.stringify(data));
@@ -989,6 +1048,8 @@ async function commitMigration() {
     btn.innerHTML = originalText;
     alert(`Success! The complete legacy assessment report details have been successfully imported and mapped to the template.`);
     
+    window.pendingMigrationData = null; // Clear out extracted data
+
     // Remove the committed item from the draft list
     const draftList = document.getElementById('draft-migrations-list');
     if (draftList && draftList.children.length > 0) {
