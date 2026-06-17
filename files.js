@@ -813,60 +813,77 @@ function extractAssessmentData(text) {
   }
   clearMockData(data);
   
-  // 1. DOB Match (Relaxed colon requirement)
-  const dobMatch = text.match(/(?:DOB|Date of Birth)[\s:]*([\d]{1,2}[\/\-][\d]{1,2}[\/\-][\d]{2,4})/i);
-  if (dobMatch) data.clientInfo.dob = dobMatch[1].trim();
-  
+  const textLower = text.toLowerCase();
+
+  // Helper to extract a chunk of text after a keyword
+  function extractChunk(keywords, length) {
+    for (let kw of keywords) {
+      let idx = textLower.indexOf(kw.toLowerCase());
+      if (idx !== -1) {
+        // Find the start of actual content (skip the keyword itself and some spaces/colons)
+        let contentStart = idx + kw.length;
+        while (contentStart < text.length && (text[contentStart] === ' ' || text[contentStart] === ':' || text[contentStart] === '\\n' || text[contentStart] === '\\r')) {
+          contentStart++;
+        }
+        let chunk = text.substring(contentStart, contentStart + length).trim();
+        if (chunk.length > 5) return chunk;
+      }
+    }
+    return null;
+  }
+
+  // 1. DOB
+  const dobChunk = extractChunk(['dob', 'date of birth', 'birth date'], 20);
+  if (dobChunk) {
+    const dMatch = dobChunk.match(/([A-Za-z0-9\/\-,\s]{6,15})/);
+    if (dMatch) data.clientInfo.dob = dMatch[1].trim();
+  }
+
   // 2. Assessment Date
-  const assessmentDateMatch = text.match(/(?:Assessment Date|Date of Assessment|Date of Initial Assessment|Date of Current Reassessment)[\s:]*([\d]{1,2}[\/\-][\d]{1,2}[\/\-][\d]{2,4})/i);
-  if (assessmentDateMatch) data.clientInfo.reassessmentDate = assessmentDateMatch[1].trim();
+  const assDateChunk = extractChunk(['assessment date', 'date of assessment', 'date of initial assessment', 'date of current reassessment'], 20);
+  if (assDateChunk) {
+    const dMatch = assDateChunk.match(/([A-Za-z0-9\/\-,\s]{6,15})/);
+    if (dMatch) data.clientInfo.reassessmentDate = dMatch[1].trim();
+  }
 
   // 3. Parent/Guardian Name
-  const parentMatch = text.match(/(?:Parent|Guardian|Mother|Father)(?:'s)?\s*(?:Contact|Name)?[\s:]*([A-Za-z\s]{3,40}?)(?:\n|Phone|Email|$)/i);
-  if (parentMatch) {
-    const pName = parentMatch[1].trim();
-    if (pName.length > 2 && !pName.toLowerCase().includes('name')) {
-      data.clientInfo.parentName = pName;
+  const parentChunk = extractChunk(['parent name', 'guardian name', 'mother name', 'father name', 'parent:', 'guardian:', 'mother:', 'father:', "parent's name"], 30);
+  if (parentChunk) {
+    const pMatch = parentChunk.match(/([A-Za-z\s]{3,30})/);
+    if (pMatch && !pMatch[1].toLowerCase().includes('phone') && !pMatch[1].toLowerCase().includes('email')) {
+      data.clientInfo.parentName = pMatch[1].trim();
     }
   }
 
   // 4. Biopsychosocial / Family Structure
-  const bioMatch = text.match(/(?:Biopsychosocial(?: Information)?|Current Family Structure)[\s\S]{10,600}?(?:Medications|Medical History|School Placement|Narrative|History of)/i);
-  if (bioMatch) {
-    let extractedBio = bioMatch[0].replace(/(?:Medications|Medical History|School Placement|Narrative|History of)$/i, '').trim();
-    extractedBio = extractedBio.replace(/(?:Biopsychosocial(?: Information)?|Current Family Structure)/ig, '').trim();
-    if (extractedBio.length > 10) {
-      data.biopsychosocial.familyStructure = extractedBio.substring(0, 300) + (extractedBio.length > 300 ? '...' : '');
-    }
+  const bioChunk = extractChunk(['biopsychosocial', 'family structure', 'background information'], 400);
+  if (bioChunk) {
+    data.biopsychosocial.familyStructure = bioChunk.substring(0, 300) + (bioChunk.length > 300 ? '...' : '');
   }
 
   // 5. Clinical Narrative / Observation
-  const narrativeMatch = text.match(/(?:Clinical Narrative|Direct Observation|Observation)[\s\S]{10,800}?(?:Language\/Communication|Social Skills|Adaptive|Challenging Behaviors|Goals)/i);
-  if (narrativeMatch) {
-    let extractedNarrative = narrativeMatch[0].replace(/(?:Language\/Communication|Social Skills|Adaptive|Challenging Behaviors|Goals)$/i, '').trim();
-    extractedNarrative = extractedNarrative.replace(/(?:Clinical Narrative|Direct Observation|Observation)/ig, '').trim();
-    extractedNarrative = extractedNarrative.replace(/Date of Observation:\s*[\d\/\-]+/i, '').trim();
-    if (extractedNarrative.length > 10) {
-      data.narrative.clinicalNarrative = extractedNarrative.substring(0, 500) + (extractedNarrative.length > 500 ? '...' : '');
-    }
+  const narChunk = extractChunk(['clinical narrative', 'direct observation', 'observation:', 'narrative:'], 600);
+  if (narChunk) {
+    let cleanNar = narChunk.replace(/Date of Observation:?\s*[\d\/\-]+/ig, '').trim();
+    data.narrative.clinicalNarrative = cleanNar.substring(0, 500) + (cleanNar.length > 500 ? '...' : '');
   }
-  
+
   // 6. Goals - Lang/Comm
-  const goalMatch = text.match(/(?:Goal Statement|Goal)[\s:]+([\s\S]{10,300}?)(?:Baseline|Medical Necessity|Date|Projected|$)/i);
-  if (goalMatch) {
-    data.skillAcquisition.langComm.goalStatement = goalMatch[1].trim();
+  const goalChunk = extractChunk(['goal statement', 'goal:'], 300);
+  if (goalChunk) {
+    data.skillAcquisition.langComm.goalStatement = goalChunk.trim();
   }
 
   // 7. Baseline
-  const baselineMatch = text.match(/(?:Baseline)[\s:]+([\s\S]{5,200}?)(?:Date|Projected|Goal|Medical Necessity|$)/i);
-  if (baselineMatch) {
-    data.skillAcquisition.langComm.baseline = baselineMatch[1].trim();
+  const baselineChunk = extractChunk(['baseline'], 200);
+  if (baselineChunk) {
+    data.skillAcquisition.langComm.baseline = baselineChunk.trim();
   }
 
   // 8. Medical Necessity
-  const medMatch = text.match(/(?:Medical Necessity(?: Rationale)?)[\s:]+([\s\S]{10,300}?)(?:Goal Statement|Baseline|Date|$)/i);
-  if (medMatch) {
-    data.skillAcquisition.langComm.medicalNecessity = medMatch[1].trim();
+  const medChunk = extractChunk(['medical necessity'], 300);
+  if (medChunk) {
+    data.skillAcquisition.langComm.medicalNecessity = medChunk.trim();
   }
 
   return data;
