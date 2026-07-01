@@ -9,7 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('client-files-view').style.display !== 'none') {
     switchFilesTab('assessments');
   }
+  
+  // Load Gemini API Key
+  const keyInput = document.getElementById('gemini-api-key');
+  if (keyInput) {
+    keyInput.value = localStorage.getItem('gemini_api_key') || '';
+  }
 });
+
+function saveGeminiKey(val) {
+  localStorage.setItem('gemini_api_key', val.trim());
+}
 
 function renderClientList() {
   const listContainer = document.getElementById('client-list');
@@ -889,6 +899,205 @@ function extractAssessmentData(text) {
   return data;
 }
 
+async function callGeminiExtract(text, apiKey) {
+  const model = 'gemini-1.5-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  
+  const systemInstructions = `You are an expert clinical data migration assistant specializing in Applied Behavior Analysis (ABA) assessments. 
+Your task is to analyze the unstructured legacy assessment text provided and extract the information into a structured JSON format that matches the target schema.
+
+### EXTRACTION GUIDELINES (NOT RIGID):
+1. Legacy assessments vary wildly in their section headers and vocabulary. Do NOT look for exact word matches. Instead, look for semantically similar sections:
+   - For dob: Look for "DOB", "Date of Birth", "Birthdate", "Born on", "Age" (to infer year), etc.
+   - For reassessmentDate: Look for "Assessment Date", "Date of Assessment", "Evaluation Date", "Current Reassessment", "Review Date", etc.
+   - For parentName: Look for "Parent/Guardian", "Mother", "Father", "Caregiver", "Contact Name", etc.
+   - For familyStructure: Look for "Biopsychosocial", "Family History", "Home Environment", "Living Situation", "Family Structure", "Background", etc.
+   - For clinicalNarrative: Look for "Clinical Narrative", "Direct Observation", "Observer Notes", "Session Behavior", "Behavioral Observations", "Evaluation Summary", etc.
+   - For goals: Look for "Goals", "Objectives", "Skill Acquisition", "Target Skills", "Future Milestones", etc.
+   - For baseline: Look for "Baseline", "Current Level", "Pre-treatment level", "Starting rate", etc.
+   - For medicalNecessity: Look for "Medical Necessity Rationale", "Clinical Rationale", "Necessity", "Reason for service", etc.
+
+2. SAFETY NET & HALLUCINATION PREVENTION:
+   - If a text or string field cannot be found or inferred from the text, you MUST populate it with the exact string: "🟠 FLAG FOR REVIEW".
+   - Do NOT make up names, dates, or stories.
+   - For dates or times that are missing, leave them as an empty string "".
+   - For numbers that are missing, set them to 0.
+   - For arrays that are missing, set them to [].
+
+3. OUTPUT FORMAT:
+   - Output ONLY valid, parseable JSON.
+   - Do NOT wrap the output in markdown code blocks. Do not include any intro or outro text.
+
+### TARGET JSON SCHEMA:
+{
+  "clientInfo": {
+    "dob": "YYYY-MM-DD or empty string",
+    "initialAssessmentDate": "YYYY-MM-DD or empty string",
+    "reassessmentDate": "YYYY-MM-DD or empty string",
+    "parentName": "Name or '🟠 FLAG FOR REVIEW'",
+    "parentPhone": "Phone or '🟠 FLAG FOR REVIEW'",
+    "parentEmail": "Email or '🟠 FLAG FOR REVIEW'"
+  },
+  "biopsychosocial": {
+    "familyStructure": "Extract home life, parents, siblings, language or '🟠 FLAG FOR REVIEW'",
+    "medications": "Extract medications or '🟠 FLAG FOR REVIEW'",
+    "medicalHistory": "Extract medical history or '🟠 FLAG FOR REVIEW'",
+    "gradeIndex": 0,
+    "gradeText": "Extract grade level (e.g., '1st', 'Kindergarten') or '🟠 FLAG FOR REVIEW'",
+    "schoolTypeIndex": 0,
+    "schoolTypeText": "Extract school setting (e.g., 'Public school', 'Private school') or '🟠 FLAG FOR REVIEW'",
+    "schoolHoursStart": "HH:MM or empty string",
+    "schoolHoursEnd": "HH:MM or empty string",
+    "academicSchedule": "Extract class schedule or '🟠 FLAG FOR REVIEW'",
+    "schoolHoursPerWeek": "Extract total hours or '🟠 FLAG FOR REVIEW'",
+    "abaProvider": "Extract prior provider or '🟠 FLAG FOR REVIEW'",
+    "abaStartDate": "YYYY-MM-DD or empty string",
+    "abaEndDate": "YYYY-MM-DD or empty string",
+    "abaOutcomes": "Extract prior outcomes or '🟠 FLAG FOR REVIEW'",
+    "mentalHealthServices": "Extract mental health services or '🟠 FLAG FOR REVIEW'",
+    "otherServices": "Extract OT/ST/PT services or '🟠 FLAG FOR REVIEW'",
+    "coordinationOfCare": "Extract care coordination details or '🟠 FLAG FOR REVIEW'",
+    "majorLifeChanges": "Extract major life changes or '🟠 FLAG FOR REVIEW'"
+  },
+  "narrative": {
+    "observationDate": "YYYY-MM-DD or empty string",
+    "clinicalNarrative": "Extract direct observation narrative or '🟠 FLAG FOR REVIEW'",
+    "langStrengths": "Extract language strengths or '🟠 FLAG FOR REVIEW'",
+    "langChallenges": "Extract language challenges or '🟠 FLAG FOR REVIEW'",
+    "langSeverity": 0,
+    "socialStrengths": "Extract social strengths or '🟠 FLAG FOR REVIEW'",
+    "socialChallenges": "Extract social challenges or '🟠 FLAG FOR REVIEW'",
+    "socialSeverity": 0,
+    "adaptiveStrengths": "Extract adaptive/self-care strengths or '🟠 FLAG FOR REVIEW'",
+    "adaptiveChallenges": "Extract adaptive/self-care challenges or '🟠 FLAG FOR REVIEW'",
+    "adaptiveSeverity": 0,
+    "challengingBehaviors": "Extract challenging behaviors summary or '🟠 FLAG FOR REVIEW'",
+    "challengingSeverity": 0,
+    "standardizedAssessment": "Extract assessment results (e.g. VB-MAPP, PEAK, ABLLS-R) or '🟠 FLAG FOR REVIEW'"
+  },
+  "goals": {
+    "totalGoals": "Number of goals as string, e.g. '6' or '0'",
+    "goalsMastered": "Number of mastered goals as string, e.g. '2' or '0'",
+    "goalsInProgress": "Number of in-progress goals as string or '0'",
+    "goalsOnHold": "Number of on-hold goals as string or '0'",
+    "goalsDiscontinued": "Number of discontinued goals as string or '0'",
+    "goalsNew": "Number of new goals as string or '0'",
+    "responseToTreatment": "Extract response to treatment narrative or '🟠 FLAG FOR REVIEW'"
+  },
+  "skillAcquisition": {
+    "langComm": {
+      "medicalNecessity": "Extract medical necessity rationale for language or '🟠 FLAG FOR REVIEW'",
+      "goalStatement": "Extract the specific language goal statement or '🟠 FLAG FOR REVIEW'",
+      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
+      "dateIntro": "YYYY-MM-DD or empty string",
+      "projectedMastery": "YYYY-MM-DD or empty string",
+      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
+      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
+    },
+    "social": {
+      "medicalNecessity": "Extract medical necessity rationale for social skills or '🟠 FLAG FOR REVIEW'",
+      "goalStatement": "Extract social goal statement or '🟠 FLAG FOR REVIEW'",
+      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
+      "dateIntro": "YYYY-MM-DD or empty string",
+      "projectedMastery": "YYYY-MM-DD or empty string",
+      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
+      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
+    },
+    "adaptive": {
+      "medicalNecessity": "Extract medical necessity rationale for adaptive skills or '🟠 FLAG FOR REVIEW'",
+      "goalStatement": "Extract adaptive goal statement or '🟠 FLAG FOR REVIEW'",
+      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
+      "dateIntro": "YYYY-MM-DD or empty string",
+      "projectedMastery": "YYYY-MM-DD or empty string",
+      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
+      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
+    }
+  },
+  "replacementBehaviors": {
+    "aggression": {
+      "medicalNecessity": "Extract medical necessity for aggression reduction or '🟠 FLAG FOR REVIEW'",
+      "goalStatement": "Extract aggression replacement goal statement or '🟠 FLAG FOR REVIEW'",
+      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
+      "dateIntro": "YYYY-MM-DD or empty string",
+      "projectedMastery": "YYYY-MM-DD or empty string",
+      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
+      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
+    }
+  },
+  "reductionBehaviors": {
+    "aggression": {
+      "goalStatement": "Extract aggression reduction goal statement or '🟠 FLAG FOR REVIEW'",
+      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
+      "dateIntro": "YYYY-MM-DD or empty string",
+      "projectedMastery": "YYYY-MM-DD or empty string",
+      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
+      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
+    }
+  },
+  "bip": {
+    "behaviorAssessment": "Extract behavior assessment summary (FAST, MAS) or '🟠 FLAG FOR REVIEW'",
+    "targetBehavior": "Extract target behavior names or '🟠 FLAG FOR REVIEW'",
+    "operationalDefinition": "Extract operational definition or '🟠 FLAG FOR REVIEW'",
+    "hypothesizedFunction": "Extract function (escape, access, attention, sensory) or '🟠 FLAG FOR REVIEW'",
+    "replacementBehavior": "Extract replacement behaviors or '🟠 FLAG FOR REVIEW'",
+    "antecedentIntervention": "Extract proactive strategies or '🟠 FLAG FOR REVIEW'",
+    "consequenceProcedures": "Extract reactive strategies or '🟠 FLAG FOR REVIEW'",
+    "deescalationProcedures": "Extract deescalation steps or '🟠 FLAG FOR REVIEW'",
+    "crisisPlan": "Extract crisis plan or '🟠 FLAG FOR REVIEW'",
+    "generalizationPlan": "Extract generalization plan or '🟠 FLAG FOR REVIEW'"
+  },
+  "caregiverTraining": {
+    "goalStatement": "Extract caregiver training goal statement or '🟠 FLAG FOR REVIEW'",
+    "baseline": "Extract baseline or '🟠 FLAG FOR REVIEW'",
+    "dateIntro": "YYYY-MM-DD or empty string",
+    "projectedMastery": "YYYY-MM-DD or empty string",
+    "progressData": "Extract progress data or '🟠 FLAG FOR REVIEW'",
+    "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
+  },
+  "transitionDischarge": {
+    "maintenancePlan": "Extract maintenance plan or '🟠 FLAG FOR REVIEW'",
+    "generalizationPlan": "Extract generalization plan or '🟠 FLAG FOR REVIEW'",
+    "transitionFadingPlan": "Extract titration plan or '🟠 FLAG FOR REVIEW'",
+    "dischargeCriteria": "Extract discharge criteria or '🟠 FLAG FOR REVIEW'",
+    "crisisPlan": "Extract crisis plan or '🟠 FLAG FOR REVIEW'"
+  },
+  "recommendations": {
+    "medicalNecessity": "Extract recommendations rationale or '🟠 FLAG FOR REVIEW'",
+    "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
+  }
+}`;
+
+  const payload = {
+    contents: [{
+      parts: [
+        { text: systemInstructions },
+        { text: `### TEXT TO EXTRACT:\n\n${text}` }
+      ]
+    }],
+    generationConfig: {
+      responseMimeType: "application/json"
+    }
+  };
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  }
+
+  const resData = await response.json();
+  const rawText = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!rawText) {
+    throw new Error("No text returned in Gemini response");
+  }
+
+  return JSON.parse(rawText.trim());
+}
+
 async function handleFileUpload(event) {
   const files = event.target.files;
   if (!files || files.length === 0) return;
@@ -897,12 +1106,13 @@ async function handleFileUpload(event) {
   const originalHtml = uploadZone.innerHTML;
   
   const file = files[0];
+  const apiKey = localStorage.getItem('gemini_api_key') || '';
   
   uploadZone.innerHTML = `
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <i data-lucide="loader-2" class="lucide-loader-2" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem; animation: spin 2s linear infinite;"></i>
-      <h3 style="color: var(--color-blue-dark);">AI is analyzing ${file.name}...</h3>
-      <p style="color: var(--color-text-light);">Extracting content and mapping to assessment template...</p>
+      <h3 style="color: var(--color-blue-dark);">${apiKey ? 'Gemini AI is analyzing' : 'AI is parsing offline'} ${file.name}...</h3>
+      <p style="color: var(--color-text-light);">${apiKey ? 'Extracting fuzzy sections via LLM...' : 'Extracting content and mapping to template...'}</p>
     </div>
   `;
   lucide.createIcons();
@@ -934,7 +1144,17 @@ async function handleFileUpload(event) {
       extractedText = await file.text();
     }
     
-    window.pendingMigrationData = extractAssessmentData(extractedText);
+    if (apiKey) {
+      try {
+        window.pendingMigrationData = await callGeminiExtract(extractedText, apiKey);
+      } catch (geminiError) {
+        console.warn('Gemini extraction failed, falling back to local heuristics:', geminiError);
+        alert('Gemini LLM extraction failed (likely invalid API Key or network issue). Falling back to offline basic extraction.');
+        window.pendingMigrationData = extractAssessmentData(extractedText);
+      }
+    } else {
+      window.pendingMigrationData = extractAssessmentData(extractedText);
+    }
     
     uploadZone.innerHTML = originalHtml;
     lucide.createIcons();
@@ -946,7 +1166,7 @@ async function handleFileUpload(event) {
     newDraft.innerHTML = `
       <div>
         <strong>${file.name}</strong>
-        <span style="color: var(--color-blue-dark); font-weight: 500;">Dynamic extraction complete</span>
+        <span style="color: var(--color-blue-dark); font-weight: 500;">${apiKey ? 'Gemini Smart Extraction complete' : 'Basic offline extraction complete'}</span>
       </div>
       <button class="glass-btn btn-sm" onclick="openReviewModal('${selectedClientId || 'ethan-brooks'}')">Review & Commit</button>
     `;

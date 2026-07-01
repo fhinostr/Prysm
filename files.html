@@ -186,6 +186,22 @@
             </div>
           </div>
           
+          <!-- Gemini API Key configuration -->
+          <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: rgba(2, 136, 209, 0.04); border: 1px dashed rgba(2, 136, 209, 0.2); border-radius: 12px; margin-top: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(2, 136, 209, 0.1); display: flex; align-items: center; justify-content: center;">
+                <i data-lucide="key" style="color: var(--color-blue); width: 18px; height: 18px;"></i>
+              </div>
+              <div>
+                <h4 style="margin: 0; color: var(--color-blue-dark); font-size: 0.95rem; font-weight: 600;">Optional: Add Gemini API Key for Smart Extraction</h4>
+                <p style="margin: 0; color: var(--color-text-light); font-size: 0.8rem;">Enables advanced, flexible LLM parsing instead of offline keyword matching.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key..." style="padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); font-size: 0.85rem; width: 220px; outline: none; background: rgba(255,255,255,0.7);" onchange="saveGeminiKey(this.value)">
+            </div>
+          </div>
+          
           <div class="upload-zone glass-panel" id="migration-upload-zone" style="border: 2px dashed rgba(1, 87, 155, 0.3); text-align: center; padding: 3rem 2rem; margin-bottom: 2rem; cursor: pointer; transition: all 0.3s ease;">
             <i data-lucide="file-up" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem;"></i>
             <h3>Drag & Drop Legacy Assessment Plan Here</h3>
