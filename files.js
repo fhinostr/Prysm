@@ -9,17 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('client-files-view').style.display !== 'none') {
     switchFilesTab('assessments');
   }
-  
-  // Load Gemini API Key
-  const keyInput = document.getElementById('gemini-api-key');
-  if (keyInput) {
-    keyInput.value = localStorage.getItem('gemini_api_key') || '';
-  }
 });
-
-function saveGeminiKey(val) {
-  localStorage.setItem('gemini_api_key', val.trim());
-}
 
 function renderClientList() {
   const listContainer = document.getElementById('client-list');
@@ -801,270 +791,415 @@ function triggerBulkUpload() {
 }
 
 function extractAssessmentData(text) {
-  const data = JSON.parse(JSON.stringify(MIGRATION_ASSESSMENTS['john-doe']));
-  
-  // Clear mock data and set flags to avoid hallucinations like "john"
-  function clearMockData(obj) {
-    for (let key in obj) {
-      if (typeof obj[key] === 'string') {
-        if (key.toLowerCase().includes('date') || key.toLowerCase() === 'dob' || key.toLowerCase().includes('time') || key.toLowerCase().includes('start') || key.toLowerCase().includes('end')) {
-          obj[key] = ''; // Keep date/time fields empty to avoid input validation issues
+  const data = {
+    clientInfo: {
+      dob: "",
+      initialAssessmentDate: "",
+      reassessmentDate: "",
+      parentName: "🟠 FLAG FOR REVIEW",
+      parentPhone: "🟠 FLAG FOR REVIEW",
+      parentEmail: "🟠 FLAG FOR REVIEW"
+    },
+    biopsychosocial: {
+      familyStructure: "🟠 FLAG FOR REVIEW",
+      medications: "🟠 FLAG FOR REVIEW",
+      medicalHistory: "🟠 FLAG FOR REVIEW",
+      gradeIndex: 0,
+      gradeText: "🟠 FLAG FOR REVIEW",
+      schoolTypeIndex: 0,
+      schoolTypeText: "🟠 FLAG FOR REVIEW",
+      schoolHoursStart: "",
+      schoolHoursEnd: "",
+      academicSchedule: "🟠 FLAG FOR REVIEW",
+      schoolHoursPerWeek: "🟠 FLAG FOR REVIEW",
+      abaProvider: "🟠 FLAG FOR REVIEW",
+      abaStartDate: "",
+      abaEndDate: "",
+      abaOutcomes: "🟠 FLAG FOR REVIEW",
+      mentalHealthServices: "🟠 FLAG FOR REVIEW",
+      otherServices: "🟠 FLAG FOR REVIEW",
+      coordinationOfCare: "🟠 FLAG FOR REVIEW",
+      majorLifeChanges: "🟠 FLAG FOR REVIEW"
+    },
+    narrative: {
+      observationDate: "",
+      clinicalNarrative: "🟠 FLAG FOR REVIEW",
+      langStrengths: "🟠 FLAG FOR REVIEW",
+      langChallenges: "🟠 FLAG FOR REVIEW",
+      langSeverity: 0,
+      socialStrengths: "🟠 FLAG FOR REVIEW",
+      socialChallenges: "🟠 FLAG FOR REVIEW",
+      socialSeverity: 0,
+      adaptiveStrengths: "🟠 FLAG FOR REVIEW",
+      adaptiveChallenges: "🟠 FLAG FOR REVIEW",
+      adaptiveSeverity: 0,
+      challengingBehaviors: "🟠 FLAG FOR REVIEW",
+      challengingSeverity: 0,
+      standardizedAssessment: "🟠 FLAG FOR REVIEW"
+    },
+    goals: {
+      totalGoals: "0",
+      goalsMastered: "0",
+      goalsInProgress: "0",
+      goalsOnHold: "0",
+      goalsDiscontinued: "0",
+      goalsNew: "0",
+      responseToTreatment: "🟠 FLAG FOR REVIEW"
+    },
+    skillAcquisition: {
+      langComm: {
+        medicalNecessity: "🟠 FLAG FOR REVIEW",
+        goalStatement: "🟠 FLAG FOR REVIEW",
+        baseline: "🟠 FLAG FOR REVIEW",
+        dateIntro: "",
+        projectedMastery: "",
+        progressData: "🟠 FLAG FOR REVIEW",
+        barriers: "🟠 FLAG FOR REVIEW"
+      },
+      social: {
+        medicalNecessity: "🟠 FLAG FOR REVIEW",
+        goalStatement: "🟠 FLAG FOR REVIEW",
+        baseline: "🟠 FLAG FOR REVIEW",
+        dateIntro: "",
+        projectedMastery: "",
+        progressData: "🟠 FLAG FOR REVIEW",
+        barriers: "🟠 FLAG FOR REVIEW"
+      },
+      adaptive: {
+        medicalNecessity: "🟠 FLAG FOR REVIEW",
+        goalStatement: "🟠 FLAG FOR REVIEW",
+        baseline: "🟠 FLAG FOR REVIEW",
+        dateIntro: "",
+        projectedMastery: "",
+        progressData: "🟠 FLAG FOR REVIEW",
+        barriers: "🟠 FLAG FOR REVIEW"
+      }
+    },
+    replacementBehaviors: {
+      aggression: {
+        medicalNecessity: "🟠 FLAG FOR REVIEW",
+        goalStatement: "🟠 FLAG FOR REVIEW",
+        baseline: "🟠 FLAG FOR REVIEW",
+        dateIntro: "",
+        projectedMastery: "",
+        progressData: "🟠 FLAG FOR REVIEW",
+        barriers: "🟠 FLAG FOR REVIEW"
+      }
+    },
+    reductionBehaviors: {
+      aggression: {
+        goalStatement: "🟠 FLAG FOR REVIEW",
+        baseline: "🟠 FLAG FOR REVIEW",
+        dateIntro: "",
+        projectedMastery: "",
+        progressData: "🟠 FLAG FOR REVIEW",
+        barriers: "🟠 FLAG FOR REVIEW"
+      }
+    },
+    bip: {
+      behaviorAssessment: "🟠 FLAG FOR REVIEW",
+      targetBehavior: "🟠 FLAG FOR REVIEW",
+      operationalDefinition: "🟠 FLAG FOR REVIEW",
+      hypothesizedFunction: "🟠 FLAG FOR REVIEW",
+      replacementBehavior: "🟠 FLAG FOR REVIEW",
+      antecedentIntervention: "🟠 FLAG FOR REVIEW",
+      consequenceProcedures: "🟠 FLAG FOR REVIEW",
+      deescalationProcedures: "🟠 FLAG FOR REVIEW",
+      crisisPlan: "🟠 FLAG FOR REVIEW",
+      generalizationPlan: "🟠 FLAG FOR REVIEW"
+    },
+    caregiverTraining: {
+      goalStatement: "🟠 FLAG FOR REVIEW",
+      baseline: "🟠 FLAG FOR REVIEW",
+      dateIntro: "",
+      projectedMastery: "",
+      progressData: "🟠 FLAG FOR REVIEW",
+      barriers: "🟠 FLAG FOR REVIEW"
+    },
+    transitionDischarge: {
+      maintenancePlan: "🟠 FLAG FOR REVIEW",
+      generalizationPlan: "🟠 FLAG FOR REVIEW",
+      transitionFadingPlan: "🟠 FLAG FOR REVIEW",
+      dischargeCriteria: "🟠 FLAG FOR REVIEW",
+      crisisPlan: "🟠 FLAG FOR REVIEW"
+    },
+    recommendations: {
+      medicalNecessity: "🟠 FLAG FOR REVIEW",
+      barriers: "🟠 FLAG FOR REVIEW"
+    }
+  };
+
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+  function formatToISODate(dateStr) {
+    if (!dateStr) return "";
+    try {
+      const d = new Date(dateStr);
+      if (!isNaN(d.getTime())) {
+        return d.toISOString().split('T')[0];
+      }
+    } catch(e) {}
+    return dateStr;
+  }
+
+  function extractValue(keywords, regex, fallback = "🟠 FLAG FOR REVIEW") {
+    for (let line of lines) {
+      const lineLower = line.toLowerCase();
+      for (let kw of keywords) {
+        if (lineLower.includes(kw.toLowerCase())) {
+          const match = line.match(regex);
+          if (match) return match[1] || match[0];
+          
+          const idx = lines.indexOf(line);
+          if (idx !== -1 && idx < lines.length - 1) {
+            const nextLine = lines[idx + 1];
+            const nextMatch = nextLine.match(regex);
+            if (nextMatch) return nextMatch[1] || nextMatch[0];
+          }
+        }
+      }
+    }
+    return fallback;
+  }
+
+  function extractParagraph(startKeywords, endKeywords, fallback = "🟠 FLAG FOR REVIEW") {
+    let startIndex = -1;
+    let endIndex = -1;
+
+    for (let i = 0; i < lines.length; i++) {
+      const lineLower = lines[i].toLowerCase();
+      for (let kw of startKeywords) {
+        if (lineLower.includes(kw.toLowerCase()) && startIndex === -1) {
+          startIndex = i;
+          break;
+        }
+      }
+      if (startIndex !== -1) {
+        for (let kw of endKeywords) {
+          if (lineLower.includes(kw.toLowerCase()) && i > startIndex) {
+            endIndex = i;
+            break;
+          }
+        }
+      }
+      if (startIndex !== -1 && endIndex !== -1) break;
+    }
+
+    if (startIndex !== -1) {
+      const end = endIndex !== -1 ? endIndex : Math.min(startIndex + 15, lines.length);
+      const contentLines = lines.slice(startIndex + 1, end)
+        .filter(l => !startKeywords.some(kw => l.toLowerCase().includes(kw.toLowerCase())));
+      
+      const filteredLines = [];
+      for (let line of contentLines) {
+        if (line.length > 40) {
+          filteredLines.push(line);
+        } else if (line.endsWith(':') || /^[A-Z\s]{4,25}$/.test(line)) {
+          break;
         } else {
-          obj[key] = '🟠 FLAG FOR REVIEW';
+          filteredLines.push(line);
         }
-      } else if (typeof obj[key] === 'number') {
-        obj[key] = 0;
-      } else if (Array.isArray(obj[key])) {
-        obj[key] = []; 
-      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-        clearMockData(obj[key]);
+      }
+      
+      if (filteredLines.length > 0) {
+        return filteredLines.join(' ');
       }
     }
+    return fallback;
   }
-  clearMockData(data);
+
+  // --- 1. Client Info ---
+  const dobVal = extractValue(['dob', 'date of birth', 'birthdate', 'born on'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2}|\d{2}[-\/]\d{2}[-\/]\d{4}|[A-Za-z]+\s\d{1,2},\s\d{4})\b/, "");
+  if (dobVal) data.clientInfo.dob = formatToISODate(dobVal);
+
+  const reassVal = extractValue(['assessment date', 'date of assessment', 'evaluation date', 'current reassessment', 'review date'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2}|\d{2}[-\/]\d{2}[-\/]\d{4}|[A-Za-z]+\s\d{1,2},\s\d{4})\b/, "");
+  if (reassVal) data.clientInfo.reassessmentDate = formatToISODate(reassVal);
+
+  const initVal = extractValue(['initial assessment', 'first evaluation', 'initial evaluation'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2}|\d{2}[-\/]\d{2}[-\/]\d{4}|[A-Za-z]+\s\d{1,2},\s\d{4})\b/, "");
+  if (initVal) data.clientInfo.initialAssessmentDate = formatToISODate(initVal);
+
+  data.clientInfo.parentName = extractValue(['parent/guardian', 'parent name', 'mother', 'father', 'caregiver', 'contact name'], /:\s*([A-Za-z\s]{3,30})/, "🟠 FLAG FOR REVIEW");
+  data.clientInfo.parentPhone = extractValue(['parent phone', 'phone', 'contact number', 'mobile'], /:\s*([\d\(\)\-\s]{7,15})/, "🟠 FLAG FOR REVIEW");
+  data.clientInfo.parentEmail = extractValue(['parent email', 'email', 'e-mail'], /:\s*([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/, "🟠 FLAG FOR REVIEW");
+
+  // --- 2. Biopsychosocial ---
+  data.biopsychosocial.familyStructure = extractParagraph(['biopsychosocial', 'family history', 'home environment', 'living situation', 'family structure', 'background'], ['medications', 'medical history', 'school setting', 'grade', 'education']);
+  data.biopsychosocial.medications = extractValue(['medications', 'prescribed', 'meds'], /:\s*(.+)/, "None currently prescribed.");
+  data.biopsychosocial.medicalHistory = extractParagraph(['medical history', 'medical background', 'birth history', 'physical health'], ['grade', 'school setting', 'education', 'academic']);
   
-  const textLower = text.toLowerCase();
-
-  // Helper to extract a chunk of text after a keyword
-  function extractChunk(keywords, length) {
-    for (let kw of keywords) {
-      let idx = textLower.indexOf(kw.toLowerCase());
-      if (idx !== -1) {
-        // Find the start of actual content (skip the keyword itself and some spaces/colons)
-        let contentStart = idx + kw.length;
-        while (contentStart < text.length && (text[contentStart] === ' ' || text[contentStart] === ':' || text[contentStart] === '\\n' || text[contentStart] === '\\r')) {
-          contentStart++;
-        }
-        let chunk = text.substring(contentStart, contentStart + length).trim();
-        if (chunk.length > 5) return chunk;
-      }
-    }
-    return null;
+  const gradeStr = extractValue(['grade', 'grade level', 'school grade'], /:\s*(.+)/, "");
+  if (gradeStr) {
+    data.biopsychosocial.gradeText = gradeStr;
+    if (gradeStr.toLowerCase().includes('kindergarten')) data.biopsychosocial.gradeIndex = 1;
+    else if (gradeStr.toLowerCase().includes('1st')) data.biopsychosocial.gradeIndex = 2;
+    else if (gradeStr.toLowerCase().includes('2nd')) data.biopsychosocial.gradeIndex = 3;
+    else if (gradeStr.toLowerCase().includes('3rd')) data.biopsychosocial.gradeIndex = 4;
+  }
+  
+  const schoolTypeStr = extractValue(['school type', 'school setting', 'placement', 'educational environment'], /:\s*(.+)/, "");
+  if (schoolTypeStr) {
+    data.biopsychosocial.schoolTypeText = schoolTypeStr;
+    if (schoolTypeStr.toLowerCase().includes('public')) data.biopsychosocial.schoolTypeIndex = 0;
+    else if (schoolTypeStr.toLowerCase().includes('private')) data.biopsychosocial.schoolTypeIndex = 1;
   }
 
-  // 1. DOB
-  const dobChunk = extractChunk(['dob', 'date of birth', 'birth date'], 20);
-  if (dobChunk) {
-    const dMatch = dobChunk.match(/([A-Za-z0-9\/\-,\s]{6,15})/);
-    if (dMatch) data.clientInfo.dob = dMatch[1].trim();
-  }
+  const startHrs = extractValue(['school hours', 'school time', 'class schedule'], /(\b\d{2}:\d{2}\b)/, "");
+  if (startHrs) data.biopsychosocial.schoolHoursStart = startHrs;
+  const endHrs = extractValue(['school hours', 'school time', 'class schedule'], /to\s*(\b\d{2}:\d{2}\b)/, "");
+  if (endHrs) data.biopsychosocial.schoolHoursEnd = endHrs;
 
-  // 2. Assessment Date
-  const assDateChunk = extractChunk(['assessment date', 'date of assessment', 'date of initial assessment', 'date of current reassessment'], 20);
-  if (assDateChunk) {
-    const dMatch = assDateChunk.match(/([A-Za-z0-9\/\-,\s]{6,15})/);
-    if (dMatch) data.clientInfo.reassessmentDate = dMatch[1].trim();
-  }
+  data.biopsychosocial.academicSchedule = extractParagraph(['academic schedule', 'class schedule', 'daily schedule'], ['prior provider', 'aba provider', 'previous services']);
+  data.biopsychosocial.schoolHoursPerWeek = extractValue(['school hours per week', 'hours per week', 'school hours count'], /:\s*([0-9.]+\s*hours)/i, "🟠 FLAG FOR REVIEW");
+  data.biopsychosocial.abaProvider = extractValue(['aba provider', 'prior provider', 'previous provider'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  
+  const abaStart = extractValue(['prior provider start', 'aba start'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (abaStart) data.biopsychosocial.abaStartDate = formatToISODate(abaStart);
+  const abaEnd = extractValue(['prior provider end', 'aba end'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (abaEnd) data.biopsychosocial.abaEndDate = formatToISODate(abaEnd);
 
-  // 3. Parent/Guardian Name
-  const parentChunk = extractChunk(['parent name', 'guardian name', 'mother name', 'father name', 'parent:', 'guardian:', 'mother:', 'father:', "parent's name"], 30);
-  if (parentChunk) {
-    const pMatch = parentChunk.match(/([A-Za-z\s]{3,30})/);
-    if (pMatch && !pMatch[1].toLowerCase().includes('phone') && !pMatch[1].toLowerCase().includes('email')) {
-      data.clientInfo.parentName = pMatch[1].trim();
-    }
-  }
+  data.biopsychosocial.abaOutcomes = extractParagraph(['prior outcomes', 'previous outcomes', 'prior results'], ['mental health', 'other services']);
+  data.biopsychosocial.mentalHealthServices = extractParagraph(['mental health services', 'psychological services', 'counseling'], ['other services', 'coordination of care']);
+  data.biopsychosocial.otherServices = extractParagraph(['other services', 'speech therapy', 'occupational therapy', 'physical therapy', 'ot/st/pt'], ['coordination of care', 'major life changes']);
+  data.biopsychosocial.coordinationOfCare = extractParagraph(['coordination of care', 'interdisciplinary collaboration'], ['major life changes', 'family history']);
+  data.biopsychosocial.majorLifeChanges = extractParagraph(['major life changes', 'significant events', 'transitions'], ['narrative', 'direct observation']);
 
-  // 4. Biopsychosocial / Family Structure
-  const bioChunk = extractChunk(['biopsychosocial', 'family structure', 'background information'], 400);
-  if (bioChunk) {
-    data.biopsychosocial.familyStructure = bioChunk.substring(0, 300) + (bioChunk.length > 300 ? '...' : '');
-  }
+  // --- 3. Narrative ---
+  const obsDate = extractValue(['observation date', 'date of observation', 'evaluation date'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2}|\d{2}[-\/]\d{2}[-\/]\d{4})\b/, "");
+  if (obsDate) data.narrative.observationDate = formatToISODate(obsDate);
 
-  // 5. Clinical Narrative / Observation
-  const narChunk = extractChunk(['clinical narrative', 'direct observation', 'observation:', 'narrative:'], 600);
-  if (narChunk) {
-    let cleanNar = narChunk.replace(/Date of Observation:?\s*[\d\/\-]+/ig, '').trim();
-    data.narrative.clinicalNarrative = cleanNar.substring(0, 500) + (cleanNar.length > 500 ? '...' : '');
-  }
+  data.narrative.clinicalNarrative = extractParagraph(['clinical narrative', 'direct observation', 'observer notes', 'session behavior', 'observations summary'], ['language strengths', 'communication strengths']);
+  data.narrative.langStrengths = extractParagraph(['language strengths', 'communication strengths'], ['language challenges', 'communication challenges']);
+  data.narrative.langChallenges = extractParagraph(['language challenges', 'communication challenges'], ['language severity', 'social strengths']);
+  data.narrative.socialStrengths = extractParagraph(['social strengths', 'interpersonal strengths'], ['social challenges', 'peer interaction']);
+  data.narrative.socialChallenges = extractParagraph(['social challenges', 'peer challenges'], ['social severity', 'adaptive strengths']);
+  data.narrative.adaptiveStrengths = extractParagraph(['adaptive strengths', 'self-care strengths'], ['adaptive challenges', 'daily living challenges']);
+  data.narrative.adaptiveChallenges = extractParagraph(['adaptive challenges', 'self-care challenges'], ['adaptive severity', 'challenging behaviors']);
+  data.narrative.challengingBehaviors = extractParagraph(['challenging behaviors summary', 'problem behaviors', 'target behaviors description'], ['challenging severity', 'standardized assessment']);
+  data.narrative.standardizedAssessment = extractParagraph(['standardized assessment', 'vb-mapp', 'peak', 'ablls-r'], ['goals', 'objectives']);
 
-  // 6. Goals - Lang/Comm
-  const goalChunk = extractChunk(['goal statement', 'goal:'], 300);
-  if (goalChunk) {
-    data.skillAcquisition.langComm.goalStatement = goalChunk.trim();
-  }
+  const langSev = extractValue(['lang severity', 'language severity'], /:\s*(.+)/, "");
+  if (langSev.toLowerCase().includes('mild')) data.narrative.langSeverity = 0;
+  else if (langSev.toLowerCase().includes('moderate') || langSev.toLowerCase().includes('mod')) data.narrative.langSeverity = 1;
+  else if (langSev.toLowerCase().includes('severe') || langSev.toLowerCase().includes('sev')) data.narrative.langSeverity = 2;
 
-  // 7. Baseline
-  const baselineChunk = extractChunk(['baseline'], 200);
-  if (baselineChunk) {
-    data.skillAcquisition.langComm.baseline = baselineChunk.trim();
-  }
+  const socialSev = extractValue(['social severity'], /:\s*(.+)/, "");
+  if (socialSev.toLowerCase().includes('mild')) data.narrative.socialSeverity = 0;
+  else if (socialSev.toLowerCase().includes('moderate') || socialSev.toLowerCase().includes('mod')) data.narrative.socialSeverity = 1;
+  else if (socialSev.toLowerCase().includes('severe') || socialSev.toLowerCase().includes('sev')) data.narrative.socialSeverity = 2;
 
-  // 8. Medical Necessity
-  const medChunk = extractChunk(['medical necessity'], 300);
-  if (medChunk) {
-    data.skillAcquisition.langComm.medicalNecessity = medChunk.trim();
-  }
+  const adaptSev = extractValue(['adaptive severity'], /:\s*(.+)/, "");
+  if (adaptSev.toLowerCase().includes('mild')) data.narrative.adaptiveSeverity = 0;
+  else if (adaptSev.toLowerCase().includes('moderate') || adaptSev.toLowerCase().includes('mod')) data.narrative.adaptiveSeverity = 1;
+  else if (adaptSev.toLowerCase().includes('severe') || adaptSev.toLowerCase().includes('sev')) data.narrative.adaptiveSeverity = 2;
+
+  const chalSev = extractValue(['challenging severity', 'behavior severity'], /:\s*(.+)/, "");
+  if (chalSev.toLowerCase().includes('mild')) data.narrative.challengingSeverity = 0;
+  else if (chalSev.toLowerCase().includes('moderate') || chalSev.toLowerCase().includes('mod')) data.narrative.challengingSeverity = 1;
+  else if (chalSev.toLowerCase().includes('severe') || chalSev.toLowerCase().includes('sev')) data.narrative.challengingSeverity = 2;
+
+  // --- 4. Goals & Response ---
+  data.goals.totalGoals = extractValue(['total goals', 'goals count'], /:\s*(\d+)/, "0");
+  data.goals.goalsMastered = extractValue(['goals mastered', 'mastered goals'], /:\s*(\d+)/, "0");
+  data.goals.goalsInProgress = extractValue(['goals in progress', 'in-progress goals'], /:\s*(\d+)/, "0");
+  data.goals.goalsOnHold = extractValue(['goals on hold', 'on-hold goals'], /:\s*(\d+)/, "0");
+  data.goals.goalsDiscontinued = extractValue(['goals discontinued'], /:\s*(\d+)/, "0");
+  data.goals.goalsNew = extractValue(['goals new', 'new goals count'], /:\s*(\d+)/, "0");
+  data.goals.responseToTreatment = extractParagraph(['response to treatment', 'progress summary', 'treatment response'], ['skill acquisition', 'language goal']);
+
+  // --- 5. Skill Acquisition ---
+  data.skillAcquisition.langComm.goalStatement = extractParagraph(['language goal', 'lang goal', 'communication goal'], ['language baseline', 'lang baseline', 'language necessity']);
+  data.skillAcquisition.langComm.baseline = extractValue(['language baseline', 'lang baseline', 'communication baseline'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.skillAcquisition.langComm.medicalNecessity = extractParagraph(['language necessity', 'lang necessity', 'communication necessity'], ['social goal', 'social skill goal']);
+  data.skillAcquisition.langComm.progressData = extractParagraph(['language progress', 'lang progress'], ['language barriers', 'lang barriers']);
+  data.skillAcquisition.langComm.barriers = extractParagraph(['language barriers', 'lang barriers'], ['social goal', 'social necessity']);
+
+  const langIntro = extractValue(['language intro', 'lang intro'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (langIntro) data.skillAcquisition.langComm.dateIntro = formatToISODate(langIntro);
+  const langMaster = extractValue(['language mastery', 'lang mastery'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (langMaster) data.skillAcquisition.langComm.projectedMastery = formatToISODate(langMaster);
+
+  data.skillAcquisition.social.goalStatement = extractParagraph(['social goal', 'social skill goal'], ['social baseline', 'social necessity']);
+  data.skillAcquisition.social.baseline = extractValue(['social baseline'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.skillAcquisition.social.medicalNecessity = extractParagraph(['social necessity', 'social skill necessity'], ['adaptive goal', 'adaptive necessity']);
+  data.skillAcquisition.social.progressData = extractParagraph(['social progress'], ['social barriers']);
+  data.skillAcquisition.social.barriers = extractParagraph(['social barriers'], ['adaptive goal', 'adaptive necessity']);
+
+  const socIntro = extractValue(['social intro'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (socIntro) data.skillAcquisition.social.dateIntro = formatToISODate(socIntro);
+  const socMaster = extractValue(['social mastery'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (socMaster) data.skillAcquisition.social.projectedMastery = formatToISODate(socMaster);
+
+  data.skillAcquisition.adaptive.goalStatement = extractParagraph(['adaptive goal', 'self-care goal'], ['adaptive baseline', 'adaptive necessity']);
+  data.skillAcquisition.adaptive.baseline = extractValue(['adaptive baseline'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.skillAcquisition.adaptive.medicalNecessity = extractParagraph(['adaptive necessity', 'self-care necessity'], ['replacement behaviors', 'aggression replacement']);
+  data.skillAcquisition.adaptive.progressData = extractParagraph(['adaptive progress'], ['adaptive barriers']);
+  data.skillAcquisition.adaptive.barriers = extractParagraph(['adaptive barriers'], ['replacement behaviors', 'aggression replacement']);
+
+  const adaptIntro = extractValue(['adaptive intro'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (adaptIntro) data.skillAcquisition.adaptive.dateIntro = formatToISODate(adaptIntro);
+  const adaptMaster = extractValue(['adaptive mastery'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (adaptMaster) data.skillAcquisition.adaptive.projectedMastery = formatToISODate(adaptMaster);
+
+  // --- 6. Replacement Behaviors ---
+  data.replacementBehaviors.aggression.goalStatement = extractParagraph(['aggression replacement goal', 'replacement goal statement'], ['aggression replacement baseline', 'aggression replacement necessity']);
+  data.replacementBehaviors.aggression.baseline = extractValue(['aggression replacement baseline'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.replacementBehaviors.aggression.medicalNecessity = extractParagraph(['aggression replacement necessity', 'aggression replacement medical necessity'], ['reduction behaviors', 'aggression reduction']);
+  data.replacementBehaviors.aggression.progressData = extractParagraph(['aggression replacement progress'], ['aggression replacement barriers']);
+  data.replacementBehaviors.aggression.barriers = extractParagraph(['aggression replacement barriers'], ['reduction behaviors', 'aggression reduction']);
+
+  const repIntro = extractValue(['aggression replacement intro'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (repIntro) data.replacementBehaviors.aggression.dateIntro = formatToISODate(repIntro);
+  const repMaster = extractValue(['aggression replacement mastery'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (repMaster) data.replacementBehaviors.aggression.projectedMastery = formatToISODate(repMaster);
+
+  // --- 7. Reduction Behaviors ---
+  data.reductionBehaviors.aggression.goalStatement = extractParagraph(['aggression reduction goal', 'reduction goal statement'], ['aggression reduction baseline']);
+  data.reductionBehaviors.aggression.baseline = extractValue(['aggression reduction baseline'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.reductionBehaviors.aggression.progressData = extractParagraph(['aggression reduction progress'], ['aggression reduction barriers']);
+  data.reductionBehaviors.aggression.barriers = extractParagraph(['aggression reduction barriers'], ['bip', 'behavior intervention plan']);
+
+  const redIntro = extractValue(['aggression reduction intro'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (redIntro) data.reductionBehaviors.aggression.dateIntro = formatToISODate(redIntro);
+  const redMaster = extractValue(['aggression reduction mastery'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (redMaster) data.reductionBehaviors.aggression.projectedMastery = formatToISODate(redMaster);
+
+  // --- 8. BIP ---
+  data.bip.behaviorAssessment = extractParagraph(['behavior assessment summary', 'bba summary', 'fast assessment', 'mas assessment'], ['target behaviors', 'behavior definition']);
+  data.bip.targetBehavior = extractValue(['target behavior names', 'bip target behaviors'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.bip.operationalDefinition = extractParagraph(['operational definition', 'behavior definition'], ['hypothesized function', 'behavior function']);
+  data.bip.hypothesizedFunction = extractValue(['hypothesized function', 'behavior function'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.bip.replacementBehavior = extractParagraph(['replacement behaviors', 'bip replacement behaviors'], ['antecedent intervention', 'proactive strategies']);
+  data.bip.antecedentIntervention = extractParagraph(['antecedent intervention', 'proactive strategies', 'antecedent strategies'], ['consequence procedures', 'reactive strategies']);
+  data.bip.consequenceProcedures = extractParagraph(['consequence procedures', 'reactive strategies', 'consequence strategies'], ['deescalation procedures', 'crisis plan']);
+  data.bip.deescalationProcedures = extractParagraph(['deescalation procedures', 'crisis deescalation'], ['crisis plan', 'emergency procedures']);
+  data.bip.crisisPlan = extractParagraph(['crisis plan', 'emergency plan', 'safety plan'], ['generalization plan', 'caregiver training']);
+  data.bip.generalizationPlan = extractParagraph(['generalization plan', 'generalization strategies'], ['caregiver training', 'transition plan']);
+
+  // --- 9. Caregiver Training ---
+  data.caregiverTraining.goalStatement = extractParagraph(['caregiver training goal', 'parent coaching goal'], ['caregiver training baseline', 'parent training baseline']);
+  data.caregiverTraining.baseline = extractValue(['caregiver training baseline', 'parent coaching baseline'], /:\s*(.+)/, "🟠 FLAG FOR REVIEW");
+  data.caregiverTraining.progressData = extractParagraph(['caregiver progress data', 'parent coaching progress'], ['caregiver training barriers', 'parent coaching barriers']);
+  data.caregiverTraining.barriers = extractParagraph(['caregiver training barriers', 'parent coaching barriers'], ['transition plan', 'discharge plan']);
+
+  const cgIntro = extractValue(['caregiver intro', 'parent coaching intro'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (cgIntro) data.caregiverTraining.dateIntro = formatToISODate(cgIntro);
+  const cgMaster = extractValue(['caregiver mastery', 'parent coaching mastery'], /\b(\d{4}[-\/]\d{2}[-\/]\d{2})\b/, "");
+  if (cgMaster) data.caregiverTraining.projectedMastery = formatToISODate(cgMaster);
+
+  // --- 10. Transition & Discharge ---
+  data.transitionDischarge.maintenancePlan = extractParagraph(['maintenance plan', 'transition maintenance'], ['generalization plan', 'titration plan']);
+  data.transitionDischarge.generalizationPlan = extractParagraph(['transition generalization plan', 'discharge generalization'], ['transition fading plan', 'titration plan']);
+  data.transitionDischarge.transitionFadingPlan = extractParagraph(['transition fading plan', 'titration plan', 'fading plan'], ['discharge criteria']);
+  data.transitionDischarge.dischargeCriteria = extractParagraph(['discharge criteria'], ['transition crisis plan']);
+  data.transitionDischarge.crisisPlan = extractParagraph(['transition crisis plan'], ['recommendations']);
+
+  // --- 11. Recommendations ---
+  data.recommendations.medicalNecessity = extractParagraph(['recommendations rationale', 'recommendations medical necessity'], ['recommendations barriers', 'treatment barriers']);
+  data.recommendations.barriers = extractParagraph(['recommendations barriers', 'treatment barriers'], ['end of report']);
 
   return data;
 }
 
-async function callGeminiExtract(text, apiKey) {
-  const model = 'gemini-1.5-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  
-  const systemInstructions = `You are an expert clinical data migration assistant specializing in Applied Behavior Analysis (ABA) assessments. 
-Your task is to analyze the unstructured legacy assessment text provided and extract the information into a structured JSON format that matches the target schema.
-
-### EXTRACTION GUIDELINES (NOT RIGID):
-1. Legacy assessments vary wildly in their section headers and vocabulary. Do NOT look for exact word matches. Instead, look for semantically similar sections:
-   - For dob: Look for "DOB", "Date of Birth", "Birthdate", "Born on", "Age" (to infer year), etc.
-   - For reassessmentDate: Look for "Assessment Date", "Date of Assessment", "Evaluation Date", "Current Reassessment", "Review Date", etc.
-   - For parentName: Look for "Parent/Guardian", "Mother", "Father", "Caregiver", "Contact Name", etc.
-   - For familyStructure: Look for "Biopsychosocial", "Family History", "Home Environment", "Living Situation", "Family Structure", "Background", etc.
-   - For clinicalNarrative: Look for "Clinical Narrative", "Direct Observation", "Observer Notes", "Session Behavior", "Behavioral Observations", "Evaluation Summary", etc.
-   - For goals: Look for "Goals", "Objectives", "Skill Acquisition", "Target Skills", "Future Milestones", etc.
-   - For baseline: Look for "Baseline", "Current Level", "Pre-treatment level", "Starting rate", etc.
-   - For medicalNecessity: Look for "Medical Necessity Rationale", "Clinical Rationale", "Necessity", "Reason for service", etc.
-
-2. SAFETY NET & HALLUCINATION PREVENTION:
-   - If a text or string field cannot be found or inferred from the text, you MUST populate it with the exact string: "🟠 FLAG FOR REVIEW".
-   - Do NOT make up names, dates, or stories.
-   - For dates or times that are missing, leave them as an empty string "".
-   - For numbers that are missing, set them to 0.
-   - For arrays that are missing, set them to [].
-
-3. OUTPUT FORMAT:
-   - Output ONLY valid, parseable JSON.
-   - Do NOT wrap the output in markdown code blocks. Do not include any intro or outro text.
-
-### TARGET JSON SCHEMA:
-{
-  "clientInfo": {
-    "dob": "YYYY-MM-DD or empty string",
-    "initialAssessmentDate": "YYYY-MM-DD or empty string",
-    "reassessmentDate": "YYYY-MM-DD or empty string",
-    "parentName": "Name or '🟠 FLAG FOR REVIEW'",
-    "parentPhone": "Phone or '🟠 FLAG FOR REVIEW'",
-    "parentEmail": "Email or '🟠 FLAG FOR REVIEW'"
-  },
-  "biopsychosocial": {
-    "familyStructure": "Extract home life, parents, siblings, language or '🟠 FLAG FOR REVIEW'",
-    "medications": "Extract medications or '🟠 FLAG FOR REVIEW'",
-    "medicalHistory": "Extract medical history or '🟠 FLAG FOR REVIEW'",
-    "gradeIndex": 0,
-    "gradeText": "Extract grade level (e.g., '1st', 'Kindergarten') or '🟠 FLAG FOR REVIEW'",
-    "schoolTypeIndex": 0,
-    "schoolTypeText": "Extract school setting (e.g., 'Public school', 'Private school') or '🟠 FLAG FOR REVIEW'",
-    "schoolHoursStart": "HH:MM or empty string",
-    "schoolHoursEnd": "HH:MM or empty string",
-    "academicSchedule": "Extract class schedule or '🟠 FLAG FOR REVIEW'",
-    "schoolHoursPerWeek": "Extract total hours or '🟠 FLAG FOR REVIEW'",
-    "abaProvider": "Extract prior provider or '🟠 FLAG FOR REVIEW'",
-    "abaStartDate": "YYYY-MM-DD or empty string",
-    "abaEndDate": "YYYY-MM-DD or empty string",
-    "abaOutcomes": "Extract prior outcomes or '🟠 FLAG FOR REVIEW'",
-    "mentalHealthServices": "Extract mental health services or '🟠 FLAG FOR REVIEW'",
-    "otherServices": "Extract OT/ST/PT services or '🟠 FLAG FOR REVIEW'",
-    "coordinationOfCare": "Extract care coordination details or '🟠 FLAG FOR REVIEW'",
-    "majorLifeChanges": "Extract major life changes or '🟠 FLAG FOR REVIEW'"
-  },
-  "narrative": {
-    "observationDate": "YYYY-MM-DD or empty string",
-    "clinicalNarrative": "Extract direct observation narrative or '🟠 FLAG FOR REVIEW'",
-    "langStrengths": "Extract language strengths or '🟠 FLAG FOR REVIEW'",
-    "langChallenges": "Extract language challenges or '🟠 FLAG FOR REVIEW'",
-    "langSeverity": 0,
-    "socialStrengths": "Extract social strengths or '🟠 FLAG FOR REVIEW'",
-    "socialChallenges": "Extract social challenges or '🟠 FLAG FOR REVIEW'",
-    "socialSeverity": 0,
-    "adaptiveStrengths": "Extract adaptive/self-care strengths or '🟠 FLAG FOR REVIEW'",
-    "adaptiveChallenges": "Extract adaptive/self-care challenges or '🟠 FLAG FOR REVIEW'",
-    "adaptiveSeverity": 0,
-    "challengingBehaviors": "Extract challenging behaviors summary or '🟠 FLAG FOR REVIEW'",
-    "challengingSeverity": 0,
-    "standardizedAssessment": "Extract assessment results (e.g. VB-MAPP, PEAK, ABLLS-R) or '🟠 FLAG FOR REVIEW'"
-  },
-  "goals": {
-    "totalGoals": "Number of goals as string, e.g. '6' or '0'",
-    "goalsMastered": "Number of mastered goals as string, e.g. '2' or '0'",
-    "goalsInProgress": "Number of in-progress goals as string or '0'",
-    "goalsOnHold": "Number of on-hold goals as string or '0'",
-    "goalsDiscontinued": "Number of discontinued goals as string or '0'",
-    "goalsNew": "Number of new goals as string or '0'",
-    "responseToTreatment": "Extract response to treatment narrative or '🟠 FLAG FOR REVIEW'"
-  },
-  "skillAcquisition": {
-    "langComm": {
-      "medicalNecessity": "Extract medical necessity rationale for language or '🟠 FLAG FOR REVIEW'",
-      "goalStatement": "Extract the specific language goal statement or '🟠 FLAG FOR REVIEW'",
-      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
-      "dateIntro": "YYYY-MM-DD or empty string",
-      "projectedMastery": "YYYY-MM-DD or empty string",
-      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
-      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
-    },
-    "social": {
-      "medicalNecessity": "Extract medical necessity rationale for social skills or '🟠 FLAG FOR REVIEW'",
-      "goalStatement": "Extract social goal statement or '🟠 FLAG FOR REVIEW'",
-      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
-      "dateIntro": "YYYY-MM-DD or empty string",
-      "projectedMastery": "YYYY-MM-DD or empty string",
-      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
-      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
-    },
-    "adaptive": {
-      "medicalNecessity": "Extract medical necessity rationale for adaptive skills or '🟠 FLAG FOR REVIEW'",
-      "goalStatement": "Extract adaptive goal statement or '🟠 FLAG FOR REVIEW'",
-      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
-      "dateIntro": "YYYY-MM-DD or empty string",
-      "projectedMastery": "YYYY-MM-DD or empty string",
-      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
-      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
-    }
-  },
-  "replacementBehaviors": {
-    "aggression": {
-      "medicalNecessity": "Extract medical necessity for aggression reduction or '🟠 FLAG FOR REVIEW'",
-      "goalStatement": "Extract aggression replacement goal statement or '🟠 FLAG FOR REVIEW'",
-      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
-      "dateIntro": "YYYY-MM-DD or empty string",
-      "projectedMastery": "YYYY-MM-DD or empty string",
-      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
-      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
-    }
-  },
-  "reductionBehaviors": {
-    "aggression": {
-      "goalStatement": "Extract aggression reduction goal statement or '🟠 FLAG FOR REVIEW'",
-      "baseline": "Extract baseline metrics or '🟠 FLAG FOR REVIEW'",
-      "dateIntro": "YYYY-MM-DD or empty string",
-      "projectedMastery": "YYYY-MM-DD or empty string",
-      "progressData": "Extract progress metrics or '🟠 FLAG FOR REVIEW'",
-      "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
-    }
-  },
-  "bip": {
-    "behaviorAssessment": "Extract behavior assessment summary (FAST, MAS) or '🟠 FLAG FOR REVIEW'",
-    "targetBehavior": "Extract target behavior names or '🟠 FLAG FOR REVIEW'",
-    "operationalDefinition": "Extract operational definition or '🟠 FLAG FOR REVIEW'",
-    "hypothesizedFunction": "Extract function (escape, access, attention, sensory) or '🟠 FLAG FOR REVIEW'",
-    "replacementBehavior": "Extract replacement behaviors or '🟠 FLAG FOR REVIEW'",
-    "antecedentIntervention": "Extract proactive strategies or '🟠 FLAG FOR REVIEW'",
-    "consequenceProcedures": "Extract reactive strategies or '🟠 FLAG FOR REVIEW'",
-    "deescalationProcedures": "Extract deescalation steps or '🟠 FLAG FOR REVIEW'",
-    "crisisPlan": "Extract crisis plan or '🟠 FLAG FOR REVIEW'",
-    "generalizationPlan": "Extract generalization plan or '🟠 FLAG FOR REVIEW'"
-  },
-  "caregiverTraining": {
-    "goalStatement": "Extract caregiver training goal statement or '🟠 FLAG FOR REVIEW'",
-    "baseline": "Extract baseline or '🟠 FLAG FOR REVIEW'",
-    "dateIntro": "YYYY-MM-DD or empty string",
-    "projectedMastery": "YYYY-MM-DD or empty string",
-    "progressData": "Extract progress data or '🟠 FLAG FOR REVIEW'",
-    "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
-  },
-  "transitionDischarge": {
-    "maintenancePlan": "Extract maintenance plan or '🟠 FLAG FOR REVIEW'",
-    "generalizationPlan": "Extract generalization plan or '🟠 FLAG FOR REVIEW'",
-    "transitionFadingPlan": "Extract titration plan or '🟠 FLAG FOR REVIEW'",
-    "dischargeCriteria": "Extract discharge criteria or '🟠 FLAG FOR REVIEW'",
-    "crisisPlan": "Extract crisis plan or '🟠 FLAG FOR REVIEW'"
-  },
-  "recommendations": {
-    "medicalNecessity": "Extract recommendations rationale or '🟠 FLAG FOR REVIEW'",
-    "barriers": "Extract barriers or '🟠 FLAG FOR REVIEW'"
-  }
 }`;
 
   const payload = {
@@ -1082,22 +1217,6 @@ Your task is to analyze the unstructured legacy assessment text provided and ext
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`);
-  }
-
-  const resData = await response.json();
-  const rawText = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!rawText) {
-    throw new Error("No text returned in Gemini response");
-  }
-
-  return JSON.parse(rawText.trim());
-}
-
 async function handleFileUpload(event) {
   const files = event.target.files;
   if (!files || files.length === 0) return;
@@ -1106,13 +1225,12 @@ async function handleFileUpload(event) {
   const originalHtml = uploadZone.innerHTML;
   
   const file = files[0];
-  const apiKey = localStorage.getItem('gemini_api_key') || '';
   
   uploadZone.innerHTML = `
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <i data-lucide="loader-2" class="lucide-loader-2" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem; animation: spin 2s linear infinite;"></i>
-      <h3 style="color: var(--color-blue-dark);">${apiKey ? 'Gemini AI is analyzing' : 'AI is parsing offline'} ${file.name}...</h3>
-      <p style="color: var(--color-text-light);">${apiKey ? 'Extracting fuzzy sections via LLM...' : 'Extracting content and mapping to template...'}</p>
+      <h3 style="color: var(--color-blue-dark);">Parsing ${file.name}...</h3>
+      <p style="color: var(--color-text-light);">Extracting content and mapping to template...</p>
     </div>
   `;
   lucide.createIcons();
@@ -1144,17 +1262,7 @@ async function handleFileUpload(event) {
       extractedText = await file.text();
     }
     
-    if (apiKey) {
-      try {
-        window.pendingMigrationData = await callGeminiExtract(extractedText, apiKey);
-      } catch (geminiError) {
-        console.warn('Gemini extraction failed, falling back to local heuristics:', geminiError);
-        alert('Gemini LLM extraction failed (likely invalid API Key or network issue). Falling back to offline basic extraction.');
-        window.pendingMigrationData = extractAssessmentData(extractedText);
-      }
-    } else {
-      window.pendingMigrationData = extractAssessmentData(extractedText);
-    }
+    window.pendingMigrationData = extractAssessmentData(extractedText);
     
     uploadZone.innerHTML = originalHtml;
     lucide.createIcons();
@@ -1166,11 +1274,14 @@ async function handleFileUpload(event) {
     newDraft.innerHTML = `
       <div>
         <strong>${file.name}</strong>
-        <span style="color: var(--color-blue-dark); font-weight: 500;">${apiKey ? 'Gemini Smart Extraction complete' : 'Basic offline extraction complete'}</span>
+        <span style="color: var(--color-blue-dark); font-weight: 500;">Offline extraction complete</span>
       </div>
       <button class="glass-btn btn-sm" onclick="openReviewModal('${selectedClientId || 'ethan-brooks'}')">Review & Commit</button>
     `;
     draftList.prepend(newDraft);
+    
+    // Auto-open review modal right away
+    openReviewModal(selectedClientId || 'ethan-brooks');
     
   } catch (error) {
     console.error('Extraction error:', error);
@@ -1182,122 +1293,154 @@ async function handleFileUpload(event) {
   event.target.value = '';
 }
 
+const FIELD_METADATA = {
+  clientInfo: {
+    dob: { label: 'Date of Birth', type: 'text', placeholder: 'YYYY-MM-DD' },
+    initialAssessmentDate: { label: 'Initial Assessment Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+    reassessmentDate: { label: 'Reassessment Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+    parentName: { label: 'Parent/Guardian Name', type: 'text' },
+    parentPhone: { label: 'Parent Phone Number', type: 'text' },
+    parentEmail: { label: 'Parent Email Address', type: 'text' }
+  },
+  biopsychosocial: {
+    familyStructure: { label: 'Family Structure & Living Situation', type: 'textarea' },
+    medications: { label: 'Medications', type: 'textarea' },
+    medicalHistory: { label: 'Medical History', type: 'textarea' },
+    gradeIndex: { label: 'Grade Level Index (0-12, etc.)', type: 'number' },
+    gradeText: { label: 'Grade Level Name', type: 'text', placeholder: 'e.g. 1st, Kindergarten' },
+    schoolTypeIndex: { label: 'School Setting Index', type: 'number' },
+    schoolTypeText: { label: 'School Setting Name', type: 'text', placeholder: 'e.g. Public school, Private school' },
+    schoolHoursStart: { label: 'School Start Time', type: 'text', placeholder: 'HH:MM' },
+    schoolHoursEnd: { label: 'School End Time', type: 'text', placeholder: 'HH:MM' },
+    academicSchedule: { label: 'Academic Schedule Details', type: 'textarea' },
+    schoolHoursPerWeek: { label: 'School Hours Per Week', type: 'text' },
+    abaProvider: { label: 'Prior ABA Provider', type: 'text' },
+    abaStartDate: { label: 'Prior ABA Start Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+    abaEndDate: { label: 'Prior ABA End Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+    abaOutcomes: { label: 'Prior ABA Outcomes', type: 'textarea' },
+    mentalHealthServices: { label: 'Other Mental Health Services', type: 'textarea' },
+    otherServices: { label: 'OT / ST / PT Services', type: 'textarea' },
+    coordinationOfCare: { label: 'Care Coordination Details', type: 'textarea' },
+    majorLifeChanges: { label: 'Major Life Changes', type: 'textarea' }
+  },
+  narrative: {
+    observationDate: { label: 'Observation Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+    clinicalNarrative: { label: 'Direct Observation Narrative', type: 'textarea' },
+    langStrengths: { label: 'Language Strengths', type: 'textarea' },
+    langChallenges: { label: 'Language Challenges', type: 'textarea' },
+    langSeverity: { label: 'Language Severity Index (0=Mild, 1=Mod, 2=Sev)', type: 'number' },
+    socialStrengths: { label: 'Social Strengths', type: 'textarea' },
+    socialChallenges: { label: 'Social Challenges', type: 'textarea' },
+    socialSeverity: { label: 'Social Severity Index (0=Mild, 1=Mod, 2=Sev)', type: 'number' },
+    adaptiveStrengths: { label: 'Adaptive/Self-Care Strengths', type: 'textarea' },
+    adaptiveChallenges: { label: 'Adaptive/Self-Care Challenges', type: 'textarea' },
+    adaptiveSeverity: { label: 'Adaptive Severity Index (0=Mild, 1=Mod, 2=Sev)', type: 'number' },
+    challengingBehaviors: { label: 'Challenging Behaviors Summary', type: 'textarea' },
+    challengingSeverity: { label: 'Challenging Behavior Severity Index (0=Mild, 1=Mod, 2=Sev)', type: 'number' },
+    standardizedAssessment: { label: 'Standardized Assessment Results (VB-MAPP, PEAK, etc.)', type: 'textarea' }
+  },
+  goals: {
+    totalGoals: { label: 'Total Goals Count', type: 'text' },
+    goalsMastered: { label: 'Mastered Goals Count', type: 'text' },
+    goalsInProgress: { label: 'In Progress Goals Count', type: 'text' },
+    goalsOnHold: { label: 'On Hold Goals Count', type: 'text' },
+    goalsDiscontinued: { label: 'Discontinued Goals Count', type: 'text' },
+    goalsNew: { label: 'New Goals Count', type: 'text' },
+    responseToTreatment: { label: 'Response to Treatment Narrative', type: 'textarea' }
+  },
+  bip: {
+    behaviorAssessment: { label: 'Behavior Assessment (FBA, FAST, MAS)', type: 'textarea' },
+    targetBehavior: { label: 'Target Behaviors', type: 'textarea' },
+    operationalDefinition: { label: 'Operational Definition', type: 'textarea' },
+    hypothesizedFunction: { label: 'Hypothesized Function', type: 'textarea' },
+    replacementBehavior: { label: 'Replacement Behaviors', type: 'textarea' },
+    antecedentIntervention: { label: 'Antecedent Interventions (Proactive)', type: 'textarea' },
+    consequenceProcedures: { label: 'Consequence Procedures (Reactive)', type: 'textarea' },
+    deescalationProcedures: { label: 'De-escalation Procedures', type: 'textarea' },
+    crisisPlan: { label: 'Crisis Plan Steps', type: 'textarea' },
+    generalizationPlan: { label: 'Generalization & Maintenance Plan', type: 'textarea' }
+  },
+  caregiverTraining: {
+    goalStatement: { label: 'Caregiver Training Goal', type: 'textarea' },
+    baseline: { label: 'Caregiver Training Baseline', type: 'textarea' },
+    dateIntro: { label: 'Date Introduced', type: 'text', placeholder: 'YYYY-MM-DD' },
+    projectedMastery: { label: 'Projected Mastery Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+    progressData: { label: 'Caregiver Progress Data', type: 'textarea' },
+    barriers: { label: 'Caregiver Training Barriers', type: 'textarea' }
+  },
+  transitionDischarge: {
+    maintenancePlan: { label: 'Maintenance Plan', type: 'textarea' },
+    generalizationPlan: { label: 'Generalization Plan', type: 'textarea' },
+    transitionFadingPlan: { label: 'Transition & Fading Plan', type: 'textarea' },
+    dischargeCriteria: { label: 'Discharge Criteria', type: 'textarea' },
+    crisisPlan: { label: 'Transition Crisis Plan', type: 'textarea' }
+  },
+  recommendations: {
+    medicalNecessity: { label: 'Recommendations & Medical Necessity Rationale', type: 'textarea' },
+    barriers: { label: 'Potential Barriers to Treatment', type: 'textarea' }
+  }
+};
+
+let currentEditorTab = 'clientInfo';
+let migrationViewMode = 'form';
+
+function countFlagsInSection(sectionId, data) {
+  let count = 0;
+  function scan(val) {
+    if (typeof val === 'string' && val === '🟠 FLAG FOR REVIEW') {
+      count++;
+    } else if (typeof val === 'object' && val !== null) {
+      for (let k in val) {
+        scan(val[k]);
+      }
+    }
+  }
+  if (data && data[sectionId]) {
+    scan(data[sectionId]);
+  }
+  return count;
+}
+
+function countTotalFlags(data) {
+  let count = 0;
+  function scan(val) {
+    if (typeof val === 'string' && val === '🟠 FLAG FOR REVIEW') {
+      count++;
+    } else if (typeof val === 'object' && val !== null) {
+      for (let k in val) {
+        scan(val[k]);
+      }
+    }
+  }
+  scan(data);
+  return count;
+}
+
 function openReviewModal(clientId) {
   const modal = document.getElementById('migration-modal-overlay');
   const content = document.getElementById('migration-modal-content');
   if (!modal || !content) return;
 
-  const client = typeof getClientById === 'function' ? getClientById(clientId) : null;
-  const clientName = client ? client.name : 'Unknown Client';
-  const clientDiag = client ? client.diagnosis : 'ASD Level 2';
+  // Initialize or fetch pending migration data
+  if (!window.pendingMigrationData) {
+    window.pendingMigrationData = JSON.parse(JSON.stringify(MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe']));
+  }
   
-  const data = window.pendingMigrationData ? window.pendingMigrationData : (MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe']);
-  const severities = ['Mild', 'Moderate', 'Severe'];
+  // Set default view state
+  currentEditorTab = 'clientInfo';
+  migrationViewMode = 'form';
   
-  let mockDataHtml = `
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-        <i data-lucide="user" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Client & Family Details
-      </h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(2, 136, 209, 0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(2, 136, 209, 0.08); font-size: 0.9rem;">
-        <div><strong>Name:</strong> ${escapeHtml(clientName)}</div>
-        <div><strong>DOB:</strong> ${escapeHtml(data.clientInfo.dob)}</div>
-        <div><strong>Diagnosis:</strong> ${escapeHtml(clientDiag)}</div>
-        <div><strong>Assessment Date:</strong> ${escapeHtml(data.clientInfo.reassessmentDate)}</div>
-        <div><strong>Parent/Guardian:</strong> ${escapeHtml(data.clientInfo.parentName)}</div>
-        <div><strong>Phone:</strong> ${escapeHtml(data.clientInfo.parentPhone)}</div>
-        <div><strong>Email:</strong> ${escapeHtml(data.clientInfo.parentEmail)}</div>
-        <div><strong>Source File:</strong> ${escapeHtml(clientName.replace(/\s+/g, '_'))}_Assessment_2025.pdf</div>
-      </div>
-    </div>
-    
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-        <i data-lucide="activity" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Biopsychosocial History
-      </h3>
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
-        <div><strong>Family Structure:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.familyStructure)}</span></div>
-        <div><strong>Medical History & Medications:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.medicalHistory)} (Medications: ${escapeHtml(data.biopsychosocial.medications)})</span></div>
-        <div><strong>School Setting:</strong> <span style="color: var(--color-text);">Grade: ${escapeHtml(data.biopsychosocial.gradeText)} | ${escapeHtml(data.biopsychosocial.schoolTypeText)} (${escapeHtml(data.biopsychosocial.schoolHoursStart)} - ${escapeHtml(data.biopsychosocial.schoolHoursEnd)})</span></div>
-        <div><strong>Previous ABA Services:</strong> <span style="color: var(--color-text);">Provider: ${escapeHtml(data.biopsychosocial.abaProvider)} (${escapeHtml(data.biopsychosocial.abaStartDate)} to ${escapeHtml(data.biopsychosocial.abaEndDate)}) - ${escapeHtml(data.biopsychosocial.abaOutcomes)}</span></div>
-        <div><strong>Other Services:</strong> <span style="color: var(--color-text);">${escapeHtml(data.biopsychosocial.otherServices)}</span></div>
-      </div>
-    </div>
-    
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-        <i data-lucide="clipboard" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Observation & Clinical Narrative
-      </h3>
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
-        <div><strong>Direct Observation (${escapeHtml(data.narrative.observationDate)}):</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.clinicalNarrative)}</span></div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.25rem;">
-          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-            <strong>Language:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.langSeverity]}</span>
-          </div>
-          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-            <strong>Social Skills:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.socialSeverity]}</span>
-          </div>
-          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-            <strong>Adaptive Self-Care:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.adaptiveSeverity]}</span>
-          </div>
-          <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-            <strong>Challenging Behaviors:</strong> Severity: <span class="badge" style="background: rgba(2, 136, 209, 0.1); color: var(--color-blue);">${severities[data.narrative.challengingSeverity]}</span>
-          </div>
-        </div>
-        <div><strong>Standardized Assessment Info:</strong> <span style="color: var(--color-text);">${escapeHtml(data.narrative.standardizedAssessment)}</span></div>
-      </div>
-    </div>
+  // Update toggle state
+  const formBtn = document.getElementById('toggle-editor-form');
+  const jsonBtn = document.getElementById('toggle-editor-json');
+  if (formBtn && jsonBtn) {
+    formBtn.classList.add('active');
+    jsonBtn.classList.remove('active');
+  }
 
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-        <i data-lucide="target" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Goals & Skill Acquisition (All Domains)
-      </h3>
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
-          <div style="background: white; padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid rgba(0,0,0,0.05);"><strong>Total Goals:</strong> ${data.goals.totalGoals}</div>
-          <div style="background: white; padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid rgba(0,0,0,0.05);"><strong>Mastered:</strong> ${data.goals.goalsMastered}</div>
-          <div style="background: white; padding: 0.5rem; border-radius: 8px; text-align: center; border: 1px solid rgba(0,0,0,0.05);"><strong>New:</strong> ${data.goals.goalsNew}</div>
-        </div>
-        <div style="margin-top: 0.25rem;"><strong>Language Goal:</strong> ${escapeHtml(data.skillAcquisition.langComm.goalStatement)}</div>
-        <div><strong>Social Goal:</strong> ${escapeHtml(data.skillAcquisition.social.goalStatement)}</div>
-        <div><strong>Adaptive Goal:</strong> ${escapeHtml(data.skillAcquisition.adaptive.goalStatement)}</div>
-      </div>
-    </div>
-
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-        <i data-lucide="shield-alert" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Behavior Intervention Plan (BIP)
-      </h3>
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
-        <div><strong>Target Behavior:</strong> <span style="color: var(--color-text); font-weight: 500;">${escapeHtml(data.bip.targetBehavior)}</span></div>
-        <div><strong>Operational Definition:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.operationalDefinition)}</span></div>
-        <div><strong>Hypothesized Function:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.hypothesizedFunction)}</span></div>
-        <div><strong>Antecedent Interventions:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.antecedentIntervention)}</span></div>
-        <div><strong>Consequence Procedures:</strong> <span style="color: var(--color-text);">${escapeHtml(data.bip.consequenceProcedures)}</span></div>
-      </div>
-    </div>
-
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; font-size: 1.1rem;">
-        <i data-lucide="file-check-2" style="width: 18px; height: 18px; color: var(--color-blue);"></i> Recommendations & Provider
-      </h3>
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); padding: 1rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem;">
-        <div><strong>Medical Necessity Synopsis:</strong> <span style="color: var(--color-text);">${escapeHtml(data.recommendations.medicalNecessity.substring(0, 150))}...</span></div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-          <div style="background: white; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-            <strong>Direct (97153):</strong> ${data.recommendations.CPT97153.hours} (${data.recommendations.CPT97153.pos})
-          </div>
-          <div style="background: white; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);">
-            <strong>Supervision (97155):</strong> ${data.recommendations.CPT97155.hours}
-          </div>
-        </div>
-        <div><strong>BCBA Signature:</strong> <span style="color: var(--color-text); font-weight: 500;">${escapeHtml(data.providerInfo.signature)}</span></div>
-      </div>
-    </div>
-  `;
+  // Render content
+  renderMigrationEditor();
   
-  content.innerHTML = mockDataHtml;
-  lucide.createIcons();
   modal.style.display = 'flex';
 }
 
@@ -1305,15 +1448,409 @@ function closeReviewModal() {
   document.getElementById('migration-modal-overlay').style.display = 'none';
 }
 
+function setMigrationViewMode(mode) {
+  if (mode === migrationViewMode) return;
+  
+  const formBtn = document.getElementById('toggle-editor-form');
+  const jsonBtn = document.getElementById('toggle-editor-json');
+  
+  if (mode === 'json') {
+    formBtn.classList.remove('active');
+    jsonBtn.classList.add('active');
+    migrationViewMode = 'json';
+    renderMigrationEditor();
+  } else {
+    // Switching to form: parse first
+    const textarea = document.getElementById('migration-json-textarea');
+    if (textarea) {
+      try {
+        const parsed = JSON.parse(textarea.value);
+        window.pendingMigrationData = parsed;
+        
+        formBtn.classList.add('active');
+        jsonBtn.classList.remove('active');
+        migrationViewMode = 'form';
+        renderMigrationEditor();
+      } catch (err) {
+        alert('Invalid JSON syntax. Please correct it before switching to Form Editor.\n\nError: ' + err.message);
+      }
+    } else {
+      migrationViewMode = 'form';
+      renderMigrationEditor();
+    }
+  }
+}
+
+function validateJsonInput(val) {
+  const statusEl = document.getElementById('json-parse-status');
+  if (!statusEl) return;
+  
+  try {
+    const parsed = JSON.parse(val);
+    window.pendingMigrationData = parsed;
+    statusEl.innerHTML = `<i data-lucide="check-circle" style="width:14px;height:14px;vertical-align:text-bottom;"></i> Valid JSON`;
+    statusEl.style.color = '#2e7d32';
+    updateFooterFlagCount();
+  } catch (err) {
+    statusEl.innerHTML = `<i data-lucide="x-circle" style="width:14px;height:14px;vertical-align:text-bottom;"></i> Invalid JSON syntax`;
+    statusEl.style.color = '#c62828';
+  }
+  lucide.createIcons();
+}
+
+function renderMigrationEditor() {
+  const contentContainer = document.getElementById('migration-modal-content');
+  if (!contentContainer) return;
+  
+  if (migrationViewMode === 'json') {
+    contentContainer.innerHTML = `
+      <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column;">
+        <div class="migration-warning-banner" style="margin-bottom: 1rem;">
+          <span><strong>JSON Editor View</strong>: Edit the raw structure directly. Be sure to keep keys matching the schema.</span>
+          <span id="json-parse-status" style="font-weight: bold; color: #2e7d32;"><i data-lucide="check-circle" style="width:14px;height:14px;vertical-align:text-bottom;"></i> Valid JSON</span>
+        </div>
+        <textarea id="migration-json-textarea" style="flex: 1; font-family: Courier, monospace; font-size: 0.85rem; padding: 1rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); outline: none; background: #263238; color: #eceff1; resize: none; min-height: 400px;" oninput="validateJsonInput(this.value)">${JSON.stringify(window.pendingMigrationData, null, 2)}</textarea>
+      </div>
+    `;
+    lucide.createIcons();
+    updateFooterFlagCount();
+  } else {
+    contentContainer.innerHTML = `
+      <div class="migration-editor-container" style="flex: 1; border: none; border-radius: 0;">
+        <div class="migration-editor-sidebar" id="migration-sidebar">
+          <!-- Sidebar tabs loaded dynamically -->
+        </div>
+        <div class="migration-editor-content" id="migration-fields-container">
+          <!-- Form fields loaded dynamically -->
+        </div>
+      </div>
+    `;
+    
+    renderSidebar();
+    renderActiveTabFields();
+    updateFooterFlagCount();
+  }
+}
+
+function renderSidebar() {
+  const sidebar = document.getElementById('migration-sidebar');
+  if (!sidebar) return;
+  
+  const sections = [
+    { id: 'clientInfo', name: 'Client Info' },
+    { id: 'biopsychosocial', name: 'Biopsychosocial' },
+    { id: 'narrative', name: 'Observation & Narrative' },
+    { id: 'goals', name: 'Goals Summary' },
+    { id: 'skillAcquisition', name: 'Skill Acquisition' },
+    { id: 'replacementBehaviors', name: 'Replacement Behaviors' },
+    { id: 'reductionBehaviors', name: 'Reduction Behaviors' },
+    { id: 'bip', name: 'BIP' },
+    { id: 'caregiverTraining', name: 'Caregiver Training' },
+    { id: 'transitionDischarge', name: 'Transition & Discharge' },
+    { id: 'recommendations', name: 'Recommendations' }
+  ];
+  
+  sidebar.innerHTML = sections.map(sec => {
+    const flagCount = countFlagsInSection(sec.id, window.pendingMigrationData);
+    const badgeHtml = flagCount > 0 ? `<span class="migration-tab-badge" id="sidebar-badge-${sec.id}">${flagCount}</span>` : `<span class="migration-tab-badge" id="sidebar-badge-${sec.id}" style="display:none;"></span>`;
+    const flaggedClass = flagCount > 0 ? 'flagged' : '';
+    const activeClass = sec.id === currentEditorTab ? 'active' : '';
+    
+    return `
+      <button class="migration-editor-tab ${activeClass} ${flaggedClass}" id="sidebar-tab-${sec.id}" onclick="switchEditorTab('${sec.id}')">
+        <span>${sec.name}</span>
+        ${badgeHtml}
+      </button>
+    `;
+  }).join('');
+}
+
+function renderActiveTabFields() {
+  const container = document.getElementById('migration-fields-container');
+  if (!container) return;
+  
+  const flagCount = countFlagsInSection(currentEditorTab, window.pendingMigrationData);
+  let warningBanner = '';
+  if (flagCount > 0) {
+    warningBanner = `
+      <div class="migration-warning-banner" id="tab-warning-banner">
+        <span><i data-lucide="alert-triangle" style="vertical-align: text-bottom; margin-right: 4px;"></i> This section contains <strong>${flagCount}</strong> flagged values that require review.</span>
+        <button class="glass-btn btn-sm" style="background: rgba(255, 255, 255, 0.5); border: none; color: #e65100;" onclick="clearFlagsInSection('${currentEditorTab}')">Clear flags in this section</button>
+      </div>
+    `;
+  }
+  
+  container.innerHTML = `
+    <div style="max-width: 720px;">
+      <h3 style="color: var(--color-blue-dark); margin-bottom: 0.5rem; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;">
+        ${currentEditorTab.replace(/([A-Z])/g, ' $1').trim()} Fields
+      </h3>
+      <p style="color: var(--color-text-light); font-size: 0.85rem; margin-bottom: 1.5rem;">Review the extracted data below. Values marked in yellow/dashed orange require input or verification.</p>
+      ${warningBanner}
+      ${renderFormFields(currentEditorTab)}
+    </div>
+  `;
+  
+  lucide.createIcons();
+}
+
+function switchEditorTab(sectionId) {
+  document.querySelectorAll('.migration-editor-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  const activeTab = document.getElementById(`sidebar-tab-${sectionId}`);
+  if (activeTab) activeTab.classList.add('active');
+  
+  currentEditorTab = sectionId;
+  renderActiveTabFields();
+}
+
+function renderFormFields(sectionId) {
+  const sectionData = window.pendingMigrationData[sectionId];
+  if (!sectionData) return '';
+
+  let html = '';
+
+  function renderField(label, path, value, type, placeholder = '') {
+    const isFlagged = value === '🟠 FLAG FOR REVIEW';
+    const flaggedClass = isFlagged ? 'flagged' : '';
+    const warningBadge = isFlagged ? `<span class="migration-tab-badge"><i data-lucide="alert-triangle" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:2px;"></i> Needs Review</span>` : '';
+    
+    let inputHtml = '';
+    if (type === 'textarea') {
+      inputHtml = `<textarea class="migration-input ${flaggedClass}" rows="4" placeholder="${placeholder}" oninput="updateMigrationField('${path}', this.value)">${escapeHtml(value)}</textarea>`;
+    } else if (type === 'number') {
+      inputHtml = `<input type="number" class="migration-input ${flaggedClass}" value="${value}" oninput="updateMigrationField('${path}', parseFloat(this.value) || 0)">`;
+    } else {
+      inputHtml = `<input type="text" class="migration-input ${flaggedClass}" value="${escapeHtml(value)}" placeholder="${placeholder}" oninput="updateMigrationField('${path}', this.value)">`;
+    }
+
+    return `
+      <div class="migration-form-group">
+        <label style="display:flex; justify-content:space-between; align-items:center;">
+          <span>${label}</span>
+          ${warningBadge}
+        </label>
+        ${inputHtml}
+      </div>
+    `;
+  }
+
+  if (sectionId === 'skillAcquisition') {
+    const domains = {
+      langComm: 'Language & Communication Domain',
+      social: 'Social Skills Domain',
+      adaptive: 'Adaptive Skills Domain'
+    };
+    
+    for (let domKey in domains) {
+      html += `<h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--color-blue-dark); border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 0.25rem;">${domains[domKey]}</h4>`;
+      const domainData = sectionData[domKey] || {};
+      const fields = {
+        goalStatement: { label: 'Goal Statement', type: 'textarea' },
+        medicalNecessity: { label: 'Medical Necessity Rationale', type: 'textarea' },
+        baseline: { label: 'Baseline Metrics', type: 'textarea' },
+        dateIntro: { label: 'Date Introduced', type: 'text', placeholder: 'YYYY-MM-DD' },
+        projectedMastery: { label: 'Projected Mastery Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+        progressData: { label: 'Progress Metrics/Data', type: 'textarea' },
+        barriers: { label: 'Barriers & Remedies', type: 'textarea' }
+      };
+      
+      for (let fKey in fields) {
+        const val = domainData[fKey] || '';
+        html += renderField(fields[fKey].label, `${sectionId}.${domKey}.${fKey}`, val, fields[fKey].type, fields[fKey].placeholder || '');
+      }
+    }
+  } else if (sectionId === 'replacementBehaviors') {
+    html += `<h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--color-blue-dark); border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 0.25rem;">Aggression Replacement Behavior</h4>`;
+    const aggData = sectionData.aggression || {};
+    const fields = {
+      goalStatement: { label: 'Goal Statement', type: 'textarea' },
+      medicalNecessity: { label: 'Medical Necessity', type: 'textarea' },
+      baseline: { label: 'Baseline Metrics', type: 'textarea' },
+      dateIntro: { label: 'Date Introduced', type: 'text', placeholder: 'YYYY-MM-DD' },
+      projectedMastery: { label: 'Projected Mastery Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+      progressData: { label: 'Progress Metrics/Data', type: 'textarea' },
+      barriers: { label: 'Barriers & Remedies', type: 'textarea' }
+    };
+    for (let fKey in fields) {
+      const val = aggData[fKey] || '';
+      html += renderField(fields[fKey].label, `${sectionId}.aggression.${fKey}`, val, fields[fKey].type, fields[fKey].placeholder || '');
+    }
+  } else if (sectionId === 'reductionBehaviors') {
+    html += `<h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--color-blue-dark); border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 0.25rem;">Aggression Reduction Behavior</h4>`;
+    const aggData = sectionData.aggression || {};
+    const fields = {
+      goalStatement: { label: 'Goal Statement', type: 'textarea' },
+      baseline: { label: 'Baseline Metrics', type: 'textarea' },
+      dateIntro: { label: 'Date Introduced', type: 'text', placeholder: 'YYYY-MM-DD' },
+      projectedMastery: { label: 'Projected Mastery Date', type: 'text', placeholder: 'YYYY-MM-DD' },
+      progressData: { label: 'Progress Metrics/Data', type: 'textarea' },
+      barriers: { label: 'Barriers & Remedies', type: 'textarea' }
+    };
+    for (let fKey in fields) {
+      const val = aggData[fKey] || '';
+      html += renderField(fields[fKey].label, `${sectionId}.aggression.${fKey}`, val, fields[fKey].type, fields[fKey].placeholder || '');
+    }
+  } else {
+    const meta = FIELD_METADATA[sectionId] || {};
+    for (let key in meta) {
+      const val = sectionData[key] !== undefined ? sectionData[key] : '';
+      html += renderField(meta[key].label, `${sectionId}.${key}`, val, meta[key].type, meta[key].placeholder || '');
+    }
+  }
+
+  return html;
+}
+
+function updateMigrationField(path, value) {
+  const parts = path.split('.');
+  if (parts.length === 2) {
+    window.pendingMigrationData[parts[0]][parts[1]] = value;
+  } else if (parts.length === 3) {
+    if (!window.pendingMigrationData[parts[0]][parts[1]]) {
+      window.pendingMigrationData[parts[0]][parts[1]] = {};
+    }
+    window.pendingMigrationData[parts[0]][parts[1]][parts[2]] = value;
+  }
+  
+  updateTabFlagCount(parts[0]);
+  updateFooterFlagCount();
+  
+  // Update class of input live
+  const eventTarget = window.event?.target;
+  if (eventTarget) {
+    const isFlagged = value === '🟠 FLAG FOR REVIEW';
+    eventTarget.classList.toggle('flagged', isFlagged);
+    
+    // Sibling label's badge update
+    const labelEl = eventTarget.previousElementSibling;
+    if (labelEl) {
+      const badge = labelEl.querySelector('.migration-tab-badge');
+      if (badge && !isFlagged) {
+        badge.remove();
+      } else if (!badge && isFlagged) {
+        const span = document.createElement('span');
+        span.className = 'migration-tab-badge';
+        span.innerHTML = `<i data-lucide="alert-triangle" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:2px;"></i> Needs Review`;
+        labelEl.appendChild(span);
+        lucide.createIcons();
+      }
+    }
+  }
+}
+
+function updateTabFlagCount(sectionId) {
+  const flagCount = countFlagsInSection(sectionId, window.pendingMigrationData);
+  const badge = document.getElementById(`sidebar-badge-${sectionId}`);
+  const tab = document.getElementById(`sidebar-tab-${sectionId}`);
+  
+  if (badge) {
+    if (flagCount > 0) {
+      badge.textContent = flagCount;
+      badge.style.display = 'flex';
+      if (tab) tab.classList.add('flagged');
+    } else {
+      badge.style.display = 'none';
+      if (tab) tab.classList.remove('flagged');
+    }
+  }
+  
+  if (sectionId === currentEditorTab) {
+    const banner = document.getElementById('tab-warning-banner');
+    if (flagCount > 0) {
+      if (banner) {
+        banner.style.display = 'flex';
+        banner.querySelector('strong').textContent = flagCount;
+      } else {
+        renderActiveTabFields();
+      }
+    } else {
+      if (banner) banner.style.display = 'none';
+    }
+  }
+}
+
+function updateFooterFlagCount() {
+  const total = countTotalFlags(window.pendingMigrationData);
+  const footerBadge = document.getElementById('migration-flag-summary-count');
+  if (footerBadge) {
+    if (total > 0) {
+      footerBadge.textContent = `⚠️ ${total} fields left to review`;
+      footerBadge.style.color = '#e65100';
+      footerBadge.style.display = 'inline-block';
+    } else {
+      footerBadge.textContent = `✅ All flags resolved!`;
+      footerBadge.style.color = '#2e7d32';
+      footerBadge.style.display = 'inline-block';
+    }
+  }
+}
+
+function clearFlagsInSection(sectionId) {
+  function clearFlags(obj) {
+    for (let k in obj) {
+      if (typeof obj[k] === 'string' && obj[k] === '🟠 FLAG FOR REVIEW') {
+        obj[k] = '';
+      } else if (typeof obj[k] === 'object' && obj[k] !== null) {
+        clearFlags(obj[k]);
+      }
+    }
+  }
+  
+  if (window.pendingMigrationData[sectionId]) {
+    clearFlags(window.pendingMigrationData[sectionId]);
+    updateTabFlagCount(sectionId);
+    updateFooterFlagCount();
+    renderActiveTabFields();
+  }
+}
+
+function clearAllMigrationFlags() {
+  function clearFlags(obj) {
+    for (let k in obj) {
+      if (typeof obj[k] === 'string' && obj[k] === '🟠 FLAG FOR REVIEW') {
+        obj[k] = '';
+      } else if (typeof obj[k] === 'object' && obj[k] !== null) {
+        clearFlags(obj[k]);
+      }
+    }
+  }
+  
+  clearFlags(window.pendingMigrationData);
+  
+  if (migrationViewMode === 'form') {
+    renderSidebar();
+    renderActiveTabFields();
+  } else {
+    renderMigrationEditor();
+  }
+  updateFooterFlagCount();
+  alert('All flagged fields have been cleared and set to empty strings.');
+}
+
 async function commitMigration() {
-  const btn = document.querySelector('#migration-modal-overlay .btn-primary, #migration-modal-overlay button[onclick="commitMigration()"]');
+  // If in JSON view, parse the latest edits before committing
+  if (migrationViewMode === 'json') {
+    const textarea = document.getElementById('migration-json-textarea');
+    if (textarea) {
+      try {
+        window.pendingMigrationData = JSON.parse(textarea.value);
+      } catch (err) {
+        alert('Cannot commit: Invalid JSON syntax in the editor. Please fix it first.');
+        return;
+      }
+    }
+  }
+
+  const btn = document.querySelector('#migration-modal-overlay button[onclick="commitMigration()"]');
   if (!btn) return;
   const originalText = btn.innerHTML;
   btn.innerHTML = `<i data-lucide="loader-2" class="lucide-loader-2" style="width: 18px; height: 18px; animation: spin 2s linear infinite;"></i> Committing...`;
   lucide.createIcons();
 
   const clientId = selectedClientId || 'ethan-brooks';
-  const data = window.pendingMigrationData ? window.pendingMigrationData : (MIGRATION_ASSESSMENTS[clientId] || MIGRATION_ASSESSMENTS['john-doe']);
+  const data = window.pendingMigrationData;
   
   // Persist the full assessment data structure to localStorage
   localStorage.setItem('aba-assessment-data-' + clientId, JSON.stringify(data));
@@ -1338,9 +1875,62 @@ async function commitMigration() {
     // Remove the committed item from the draft list
     const draftList = document.getElementById('draft-migrations-list');
     if (draftList && draftList.children.length > 0) {
-        draftList.removeChild(draftList.children[0]);
+      draftList.removeChild(draftList.children[0]);
     }
   }, 1500);
+}
+
+async function handleTextPasteExtraction() {
+  const pasteArea = document.getElementById('migration-text-paste');
+  if (!pasteArea) return;
+  const text = pasteArea.value.trim();
+  if (!text) {
+    alert('Please paste some legacy assessment text to extract.');
+    return;
+  }
+  
+  const btn = document.querySelector('button[onclick="handleTextPasteExtraction()"]');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<i data-lucide="loader-2" class="lucide-loader-2" style="width: 16px; height: 16px; animation: spin 2s linear infinite; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Extracting...`;
+  lucide.createIcons();
+  
+  try {
+    window.pendingMigrationData = extractAssessmentData(text);
+    
+    // Add the draft to the list
+    const draftList = document.getElementById('draft-migrations-list');
+    const newDraft = document.createElement('div');
+    newDraft.className = 'file-row';
+    newDraft.style.borderLeft = '4px solid var(--color-turquoise)';
+    
+    const client = typeof getClientById === 'function' ? getClientById(selectedClientId || 'ethan-brooks') : null;
+    const clientName = client ? client.name : 'Client';
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    newDraft.innerHTML = `
+      <div>
+        <strong>Pasted_Text_Assessment_${timestamp}.txt</strong>
+        <span style="color: var(--color-blue-dark); font-weight: 500;">Offline extraction complete</span>
+      </div>
+      <button class="glass-btn btn-sm" onclick="openReviewModal('${selectedClientId || 'ethan-brooks'}')">Review & Commit</button>
+    `;
+    draftList.prepend(newDraft);
+    
+    // Clear the textarea
+    pasteArea.value = '';
+    
+    // Auto-open the review modal right away
+    openReviewModal(selectedClientId || 'ethan-brooks');
+    
+  } catch (error) {
+    console.error('Extraction error:', error);
+    alert('Error extracting text. Please check the console for details.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+    lucide.createIcons();
+  }
 }
 
 function addAssessmentGoal(btn) {

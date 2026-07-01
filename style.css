@@ -2887,3 +2887,158 @@ body.marketing-page {
 .liquid-glass-blue-btn svg {
   stroke: white;
 }
+
+/* AI Migration Hub Editor Styles */
+.migration-editor-container {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: 60vh;
+  min-height: 480px;
+  background: var(--color-white);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.migration-editor-sidebar {
+  background: rgba(2, 136, 209, 0.02);
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0.75rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.migration-editor-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.migration-editor-tab:hover {
+  background: rgba(2, 136, 209, 0.05);
+  color: var(--color-blue-dark);
+}
+
+.migration-editor-tab.active {
+  background: linear-gradient(135deg, rgba(2, 136, 209, 0.1), rgba(32, 178, 170, 0.1));
+  color: var(--color-blue-dark);
+  font-weight: 600;
+}
+
+.migration-editor-tab.flagged {
+  border-left: 3px solid #ff9800;
+}
+
+.migration-tab-badge {
+  background: #ffe0b2;
+  color: #e65100;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.migration-editor-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  background: #fafafa;
+}
+
+.migration-form-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.migration-form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-blue-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.migration-input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  background: white;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.migration-input:focus {
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 3px rgba(2, 136, 209, 0.1);
+}
+
+.migration-input.flagged {
+  border: 1px dashed #ff9800;
+  background-color: #fff8e1;
+}
+
+.migration-input.flagged:focus {
+  border-color: #f57c00;
+  box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.1);
+}
+
+.migration-warning-banner {
+  background: #fff3e0;
+  border: 1px solid #ffe0b2;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #e65100;
+}
+
+.migration-toggle-bar {
+  display: flex;
+  background: rgba(0,0,0,0.05);
+  padding: 3px;
+  border-radius: 8px;
+}
+
+.migration-toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.migration-toggle-btn.active {
+  background: white;
+  color: var(--color-blue-dark);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+

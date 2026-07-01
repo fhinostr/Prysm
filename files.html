@@ -186,28 +186,29 @@
             </div>
           </div>
           
-          <!-- Gemini API Key configuration -->
-          <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: rgba(2, 136, 209, 0.04); border: 1px dashed rgba(2, 136, 209, 0.2); border-radius: 12px; margin-top: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(2, 136, 209, 0.1); display: flex; align-items: center; justify-content: center;">
-                <i data-lucide="key" style="color: var(--color-blue); width: 18px; height: 18px;"></i>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; margin-top: 1rem;">
+            <div class="upload-zone glass-panel" id="migration-upload-zone" style="border: 2px dashed rgba(1, 87, 155, 0.3); text-align: center; padding: 2.5rem 1.5rem; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 320px; box-sizing: border-box;">
+              <i data-lucide="file-up" style="width: 40px; height: 40px; color: var(--color-blue); margin-bottom: 0.75rem;"></i>
+              <h3 style="margin-bottom: 0.5rem;">Upload Legacy Assessment Plan</h3>
+              <p style="color: var(--color-text-light); margin-bottom: 1.25rem; font-size: 0.85rem; line-height: 1.4;">Supports legacy PDFs, DOCX, and text reports.</p>
+              <input type="file" id="migration-file-input" multiple style="display: none;" accept=".pdf,.doc,.docx,image/*" onchange="handleFileUpload(event)">
+              <button class="glass-btn" onclick="document.getElementById('migration-file-input').click()">Browse Files</button>
+            </div>
+            
+            <div class="glass-panel" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; border: 1px solid rgba(1, 87, 155, 0.15); height: 320px; box-sizing: border-box; background: rgba(255, 255, 255, 0.45);">
+              <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--color-blue-dark);">
+                <i data-lucide="clipboard-paste" style="width: 20px; height: 20px;"></i>
+                <h3 style="margin: 0; font-size: 1.1rem; font-weight: 600;">Paste Legacy Assessment Text</h3>
               </div>
-              <div>
-                <h4 style="margin: 0; color: var(--color-blue-dark); font-size: 0.95rem; font-weight: 600;">Optional: Add Gemini API Key for Smart Extraction</h4>
-                <p style="margin: 0; color: var(--color-text-light); font-size: 0.8rem;">Enables advanced, flexible LLM parsing instead of offline keyword matching.</p>
+              <p style="color: var(--color-text-light); margin: 0; font-size: 0.85rem; line-height: 1.4;">Copy text directly from other software and paste it below.</p>
+              <textarea id="migration-text-paste" placeholder="Paste unstructured legacy assessment report text here... (e.g. client name, DOB, medical necessity, clinical narratives, goal descriptions, etc.)" style="flex: 1; width: 100%; min-height: 120px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); padding: 0.6rem 0.8rem; font-family: inherit; font-size: 0.85rem; outline: none; background: rgba(255,255,255,0.7); resize: none; box-sizing: border-box;"></textarea>
+              <div style="display: flex; justify-content: flex-end;">
+                <button class="glass-btn btn-primary" onclick="handleTextPasteExtraction()" style="background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white; border: none; width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                  <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i> Extract from Text
+                </button>
               </div>
             </div>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key..." style="padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(0,0,0,0.15); font-size: 0.85rem; width: 220px; outline: none; background: rgba(255,255,255,0.7);" onchange="saveGeminiKey(this.value)">
-            </div>
-          </div>
-          
-          <div class="upload-zone glass-panel" id="migration-upload-zone" style="border: 2px dashed rgba(1, 87, 155, 0.3); text-align: center; padding: 3rem 2rem; margin-bottom: 2rem; cursor: pointer; transition: all 0.3s ease;">
-            <i data-lucide="file-up" style="width: 48px; height: 48px; color: var(--color-blue); margin-bottom: 1rem;"></i>
-            <h3>Drag & Drop Legacy Assessment Plan Here</h3>
-            <p style="color: var(--color-text-light); margin-bottom: 1.5rem;">Supports legacy Assessment Plan PDFs, DOCX, and scanned reports.</p>
-            <input type="file" id="migration-file-input" multiple style="display: none;" accept=".pdf,.doc,.docx,image/*" onchange="handleFileUpload(event)">
-            <button class="glass-btn" onclick="document.getElementById('migration-file-input').click()">Browse Files</button>
           </div>
 
           <h3 class="section-title" style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
@@ -225,8 +226,8 @@
 
   <!-- AI Migration Review Modal -->
   <div id="migration-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
-    <div class="glass-panel" style="width: 100%; max-width: 800px; max-height: 90vh; display: flex; flex-direction: column; background: var(--color-white); overflow: hidden;">
-      <div style="padding: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to right, rgba(2, 136, 209, 0.05), transparent);">
+    <div class="glass-panel" style="width: 100%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; background: var(--color-white); overflow: hidden;">
+      <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to right, rgba(2, 136, 209, 0.05), transparent);">
         <div style="display: flex; align-items: center; gap: 1rem;">
           <div class="hub-icon-wrap" style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white;">
             <i data-lucide="bot"></i>
@@ -236,18 +237,34 @@
             <p id="migration-modal-subtitle" style="margin: 0; color: var(--color-text-light); font-size: 0.9rem;">Verify AI extraction before committing to database</p>
           </div>
         </div>
-        <button class="glass-btn btn-sm" onclick="closeReviewModal()" style="padding: 0.5rem;"><i data-lucide="x"></i></button>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div class="migration-toggle-bar">
+            <button id="toggle-editor-form" class="migration-toggle-btn active" onclick="setMigrationViewMode('form')">Form Editor</button>
+            <button id="toggle-editor-json" class="migration-toggle-btn" onclick="setMigrationViewMode('json')">JSON Code</button>
+          </div>
+          <button class="glass-btn btn-sm" onclick="closeReviewModal()" style="padding: 0.5rem;"><i data-lucide="x"></i></button>
+        </div>
       </div>
       
-      <div class="scrollable-content" style="padding: 1.5rem; flex: 1;" id="migration-modal-content">
-        <!-- Content injected by JS -->
+      <div style="display: flex; flex: 1; overflow: hidden; background: #fafafa;" id="migration-modal-content-wrapper">
+        <div class="scrollable-content" style="padding: 0; flex: 1; display: flex; flex-direction: column;" id="migration-modal-content">
+          <!-- Content injected by JS -->
+        </div>
       </div>
       
-      <div style="padding: 1.5rem; border-top: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: flex-end; gap: 1rem; background: rgba(255,255,255,0.8);">
-        <button class="glass-btn" onclick="closeReviewModal()">Cancel</button>
-        <button class="glass-btn" style="background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white; border: none;" onclick="commitMigration()">
-          <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> Finalize & Commit
-        </button>
+      <div style="padding: 1.25rem 1.5rem; border-top: 1px solid rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.85);">
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <button class="glass-btn btn-sm" onclick="clearAllMigrationFlags()" style="border: 1px dashed #ff9800; color: #e65100; display: flex; align-items: center; gap: 4px;">
+            <i data-lucide="check-square" style="width: 16px; height: 16px;"></i> Clear All Flags
+          </button>
+          <span id="migration-flag-summary-count" style="font-size: 0.85rem; font-weight: 600; color: #e65100; display: none;"></span>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <button class="glass-btn" onclick="closeReviewModal()">Cancel</button>
+          <button class="glass-btn" style="background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white; border: none;" onclick="commitMigration()">
+            <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> Finalize & Commit
+          </button>
+        </div>
       </div>
     </div>
   </div>
