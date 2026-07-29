@@ -58,7 +58,12 @@ function loadClientProfile() {
     document.title = `${client.name} | Prysm`;
 
     if (client.type === 'group') {
+      const editBtn = document.getElementById('hub-edit-name-btn');
+      if (editBtn) editBtn.style.display = 'flex';
+      
       document.getElementById('hub-profile-details').style.display = 'none';
+      renderHubGroupMembers(client);
+      document.getElementById('hub-group-management').style.display = 'block';
       document.getElementById('hub-group-details').style.display = 'flex';
       const authCard = document.getElementById('hub-auth-card');
       if (authCard) authCard.style.display = 'none';
@@ -149,6 +154,22 @@ function hubRemoveGroupMember(clientId) {
     group.members = group.members.filter(id => id !== clientId);
     localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
     loadClientProfile();
+  }
+}
+
+function editGroupName() {
+  const profiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+  const group = profiles.find(c => c.id === _hubClientId);
+  if (!group || group.type !== 'group') return;
+  
+  const currentName = group.name;
+  const newName = prompt('Enter new group name:', currentName);
+  if (newName && newName.trim() !== '' && newName.trim() !== currentName) {
+    group.name = newName.trim();
+    localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+    loadClientProfile();
+    // also recreate icons
+    setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 50);
   }
 }
 

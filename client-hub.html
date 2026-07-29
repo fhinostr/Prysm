@@ -52,7 +52,12 @@
         <!-- Client Profile Card -->
         <article class="glass-panel hub-profile-card">
           <div class="hub-profile-avatar" id="hub-avatar">?</div>
-          <h2 class="hub-profile-name" id="hub-client-name">Loading...</h2>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; position: relative;">
+            <h2 class="hub-profile-name" id="hub-client-name" style="margin:0;">Loading...</h2>
+            <button id="hub-edit-name-btn" onclick="editGroupName()" class="glass-btn btn-sm" style="padding: 0.35rem; display: none;" title="Edit Name">
+              <i data-lucide="pencil" style="width: 14px; height: 14px;"></i>
+            </button>
+          </div>
           <p class="hub-profile-meta" id="hub-client-meta"></p>
 
           <div class="hub-profile-details" id="hub-profile-details">

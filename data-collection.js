@@ -282,7 +282,7 @@ const DCManager = {
       if(indPane) indPane.style.display = 'none';
       
       const grpPane = document.getElementById('dc-pane-group');
-      if(grpPane) grpPane.style.display = 'block';
+      if(grpPane) grpPane.style.display = 'flex';
       
       const b2 = document.getElementById('btn-mode-grp');
       const b1 = document.getElementById('btn-mode-ind');
