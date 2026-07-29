@@ -936,7 +936,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 0.5rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* When exactly 1 client, span both columns */
@@ -953,11 +953,12 @@
   flex-direction: column;
   gap: 0;
   border-radius: 16px;
-  background: transparent; /* Removed glassy background to match aesthetic */
-  border: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  box-shadow: none;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 0.5rem;
   max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
