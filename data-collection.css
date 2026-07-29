@@ -928,13 +928,15 @@
 
 .dc-client-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: calc(50% - 0.75rem); /* Exactly 2 rows per viewport height */
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); /* 2 rows, max 50% height each */
+  grid-auto-flow: column;
+  grid-auto-columns: calc(50% - 0.75rem);
   gap: 1.5rem;
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-bottom: 6rem; /* room for batch dock */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2rem; /* reduced padding */
+  align-items: start; /* prevents cards from stretching and having empty gaps at the bottom */
 }
 
 /* When exactly 1 client, span both columns */
@@ -956,6 +958,7 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 4px 16px rgba(0,116,178,0.06), inset 0 0 0 1px white;
+  max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
