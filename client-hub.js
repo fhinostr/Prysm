@@ -57,13 +57,11 @@ function loadClientProfile() {
     }
     document.title = `${client.name} | Prysm`;
 
-    if (client.type === 'group') {
+    if (client.type === 'group' || client.id.startsWith('group-') || (client.members && Array.isArray(client.members))) {
       const editBtn = document.getElementById('hub-edit-name-btn');
       if (editBtn) editBtn.style.display = 'flex';
       
       document.getElementById('hub-profile-details').style.display = 'none';
-      renderHubGroupMembers(client);
-      document.getElementById('hub-group-management').style.display = 'block';
       document.getElementById('hub-group-details').style.display = 'flex';
       const authCard = document.getElementById('hub-auth-card');
       if (authCard) authCard.style.display = 'none';
