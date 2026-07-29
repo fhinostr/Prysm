@@ -963,6 +963,46 @@
   overflow-x: hidden;
 }
 
+/* ── COMPACT GRID OVERRIDES ── */
+.dc-client-card .data-card {
+  padding: 0.85rem;
+  margin-bottom: 0.75rem !important;
+}
+
+.dc-client-card .card-header h3 {
+  font-size: 0.95rem;
+}
+
+.dc-client-card .pc-controls button {
+  width: 38px;
+  height: 38px;
+}
+
+.dc-client-card .pc-controls i {
+  width: 18px;
+  height: 18px;
+}
+
+.dc-client-card .stat-box {
+  padding: 0.35rem 0.5rem;
+}
+
+.dc-client-card .stat-value {
+  font-size: 1.1rem;
+}
+
+.dc-client-card .problem-targets-section {
+  padding: 0.75rem !important;
+}
+
+.dc-client-card .problem-targets-section .data-card {
+  padding: 0.65rem;
+  margin-bottom: 0 !important;
+}
+
+.dc-client-card .large-counter {
+  font-size: 2rem;
+}
 /* Card header strip */
 .dc-card-header {
   display: flex;
