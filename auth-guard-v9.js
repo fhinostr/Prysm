@@ -401,9 +401,8 @@ function showLoginModal(errorMsg = '') {
             required
             autocapitalize="none"
             autocorrect="off"
-            autocomplete="email"
+            autocomplete="username"
             spellcheck="false"
-            inputmode="email"
           >
         </div>
         <div class="prysm-input-group">
