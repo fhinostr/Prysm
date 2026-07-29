@@ -336,21 +336,65 @@ window.openCreateClientModal = function(fromGroup = false) {
     window._activeManageGroupId = null;
   }
   
-  // If opening from group, force individual type
+  const typeToggle = document.getElementById('entity-type-toggle-container');
+  
+  // If opening from group, force individual type and hide toggle
   if (fromGroup) {
     toggleEntityType('individual');
-    // Maybe disable the group toggle while inside a group?
-    const lblGrp = document.getElementById('lbl-type-grp');
-    if (lblGrp) lblGrp.style.pointerEvents = 'none';
-    if (lblGrp) lblGrp.style.opacity = '0.5';
+    if (typeToggle) typeToggle.style.display = 'none';
   } else {
     toggleEntityType('individual');
-    const lblGrp = document.getElementById('lbl-type-grp');
-    if (lblGrp) lblGrp.style.pointerEvents = 'auto';
-    if (lblGrp) lblGrp.style.opacity = '1';
+    if (typeToggle) typeToggle.style.display = 'flex';
   }
   
   originalOpenCreateClientModal();
+}
+
+function bulkCreateGroupMembers() {
+  if (!window._activeManageGroupId) return;
+  const textarea = document.getElementById('mg-bulk-names');
+  if (!textarea) return;
+  
+  const rawText = textarea.value;
+  if (!rawText.trim()) return;
+  
+  const names = rawText.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+  if (names.length === 0) return;
+  
+  const profiles = getClientProfiles();
+  const group = profiles.find(c => c.id === window._activeManageGroupId);
+  if (!group) return;
+  
+  if (!group.members) group.members = [];
+  
+  let addedCount = 0;
+  names.forEach(name => {
+    const newClient = {
+      type: 'individual',
+      name: name,
+      dob: '',
+      caregiver: '—',
+      phone: '—',
+      diagnosis: 'Pending Setup',
+      clinicalId: `CLN-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+    };
+    
+    // Initial generation and save from clients-data.js logic
+    const saved = saveClientProfile(newClient);
+    if (saved && saved.id) {
+      if (!group.members.includes(saved.id)) {
+        group.members.push(saved.id);
+        addedCount++;
+      }
+    }
+  });
+  
+  if (addedCount > 0) {
+    saveClientProfile(group);
+    textarea.value = '';
+    openGroupModal(group.id);
+    renderClientDirectory();
+  }
 }
 
 function launchGroupSession() {
