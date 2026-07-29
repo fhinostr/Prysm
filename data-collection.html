@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Collection | Prysm</title>
+  <meta name="description" content="ABA Data Collection and Session Tracking — Individual and Group concurrent data collection for Applied Behavior Analysis.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="data-collection.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <main class="app-container dc-container">
+
+    <!-- HEADER -->
+    <header class="app-header glass-panel">
+      <div class="header-left">
+        <div class="brand-chip" style="padding-bottom:0;">
+          <img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal">
+        </div>
+        <a href="treatment-plan.html" class="glass-btn btn-sm hub-back-btn" style="margin-left:1rem;transform:translateY(-8px);">
+          <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> All Clients
+        </a>
+      </div>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
+        <a href="treatment-plan.html" class="site-toggle-link">Clients</a>
+        <a href="data-collection.html" class="site-toggle-link active" aria-current="page">Data</a>
+        <a href="billing.html" class="site-toggle-link">Billing</a>
+        <a href="files.html" class="site-toggle-link">Files</a>
+      </nav>
+      <div class="header-right" style="display:flex;align-items:center;gap:0.75rem;">
+        <div class="dc-session-clock" id="dc-global-clock">
+          <i data-lucide="clock" style="width:14px;height:14px;"></i>
+          <span id="dc-clock-display">00:00:00</span>
+        </div>
+        <button class="glass-btn btn-sm" id="btn-global-session-toggle" onclick="DCManager.toggleGlobalSession()" title="Start/Pause Session">
+          <i data-lucide="play" id="icon-global-toggle"></i>
+        </button>
+        <button class="glass-btn btn-sm" onclick="signOut()" title="Sign Out" aria-label="Sign Out">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- ACCESS DENIED (shown if not Dawenn) -->
+    <div class="dc-access-denied" id="dc-access-denied" style="display:none;">
+      <div class="dc-denied-card glass-panel">
+        <i data-lucide="lock" class="dc-denied-icon"></i>
+        <h2>Feature Under Development</h2>
+        <p>The Data Collection module is currently available to authorized beta users only. Contact your administrator for access.</p>
+        <a href="treatment-plan.html" class="glass-btn btn-primary">Back to Clients</a>
+      </div>
+    </div>
+
+    <!-- MAIN WORKSPACE (shown only for Dawenn) -->
+    <div class="dc-workspace" id="dc-workspace" style="display:none;">
+
+      <!-- WORKSPACE TOP BAR -->
+      <div class="dc-topbar glass-panel">
+        <div class="dc-topbar-left">
+          <h1 class="dc-page-title">
+            <i data-lucide="clipboard-list" style="width:20px;height:20px;color:var(--color-turquoise-dark);"></i>
+            Data Collection
+          </h1>
+          <span class="dc-badge-beta">BETA</span>
+        </div>
+        <div class="dc-mode-switcher view-toggle" id="dc-mode-toggle" role="tablist">
+          <button class="view-toggle-link active" data-pane="0" id="btn-mode-individual"
+                  onclick="DCManager.switchMode('individual')" role="tab">
+            <i data-lucide="user" style="width:14px;height:14px;"></i>
+            Individual
+          </button>
+          <button class="view-toggle-link" data-pane="1" id="btn-mode-group"
+                  onclick="DCManager.switchMode('group')" role="tab">
+            <i data-lucide="users" style="width:14px;height:14px;"></i>
+            Group / Multi-Client
+          </button>
+        </div>
+        <div class="dc-topbar-right">
+          <button class="glass-btn btn-sm" onclick="DCManager.openAddClientDrawer()">
+            <i data-lucide="user-plus" style="width:14px;height:14px;"></i>
+            Add Client
+          </button>
+          <button class="glass-btn btn-sm" onclick="DCManager.openCreateGroupModal()">
+            <i data-lucide="layout-grid" style="width:14px;height:14px;"></i>
+            New Group
+          </button>
+        </div>
+      </div>
+
+      <!-- PANE 0: INDIVIDUAL / SINGLE-CLIENT FOCUS MODE -->
+      <div class="dc-pane" id="dc-pane-individual">
+
+        <!-- Client Selector Bar -->
+        <div class="dc-client-selector-bar glass-panel">
+          <div class="dc-cs-label">Active Client</div>
+          <div class="dc-client-chips" id="dc-client-chips"></div>
+          <button class="glass-btn btn-sm" onclick="DCManager.openAddClientDrawer()" title="Add client to session">
+            <i data-lucide="plus" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+
+        <!-- Empty State -->
+        <div class="dc-empty-state" id="dc-individual-empty">
+          <div class="dc-empty-icon">
+            <i data-lucide="user-x"></i>
+          </div>
+          <h3>No Client Selected</h3>
+          <p>Select a client above or add a new one to begin a session.</p>
+          <button class="glass-btn btn-primary" onclick="DCManager.openAddClientDrawer()">
+            <i data-lucide="user-plus" style="width:14px;height:14px;"></i>
+            Add Client
+          </button>
+        </div>
+
+        <!-- Individual Client Workspace -->
+        <div class="dc-individual-workspace" id="dc-individual-workspace" style="display:none;">
+
+          <!-- Client Header Card -->
+          <div class="dc-client-header-card glass-panel">
+            <div class="dc-ch-avatar" id="dc-ind-avatar">JD</div>
+            <div class="dc-ch-info">
+              <div class="dc-ch-name" id="dc-ind-name">Jane Doe</div>
+              <div class="dc-ch-meta">
+                <span id="dc-ind-diagnosis">ASD Level 2</span>
+                <span class="dc-ch-sep">·</span>
+                <span id="dc-ind-age">Age 8</span>
+                <span class="dc-ch-sep">·</span>
+                <span class="dc-badge-active">Active</span>
+              </div>
+            </div>
+            <div class="dc-ch-session-info">
+              <div class="dc-timer-label">Session Timer</div>
+              <div class="dc-timer-display" id="dc-ind-timer">00:00:00</div>
+              <div class="dc-timer-actions">
+                <button class="dc-timer-btn" id="dc-ind-timer-toggle" onclick="DCManager.toggleIndTimer()">
+                  <i data-lucide="play" style="width:12px;height:12px;" id="icon-ind-timer"></i>
+                </button>
+                <button class="dc-timer-btn dc-timer-reset" onclick="DCManager.resetIndTimer()" title="Reset">
+                  <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Grid -->
+          <div class="dc-individual-grid">
+
+            <!-- LEFT COLUMN -->
+            <div class="dc-col-main">
+
+              <!-- Skill Acquisition Targets -->
+              <div class="dc-section-card glass-panel">
+                <div class="dc-section-header">
+                  <div class="dc-section-title-row">
+                    <i data-lucide="check-circle-2" style="width:16px;height:16px;color:var(--color-turquoise-dark);"></i>
+                    <h2 class="dc-section-title">Skill Acquisition</h2>
+                    <span class="dc-count-badge" id="dc-skill-count">0</span>
+                  </div>
+                  <div class="dc-mini-view-toggle">
+                    <button class="dc-mini-btn active" id="btn-view-discrete" onclick="DCManager.setTargetView('discrete')">Discrete</button>
+                    <button class="dc-mini-btn" id="btn-view-task" onclick="DCManager.setTargetView('task')">Task Analysis</button>
+                    <button class="dc-mini-btn" id="btn-view-interval" onclick="DCManager.setTargetView('interval')">Interval</button>
+                  </div>
+                </div>
+                <div class="dc-targets-list" id="dc-skill-targets-list"></div>
+              </div>
+
+              <!-- ABC Logger -->
+              <div class="dc-section-card glass-panel dc-abc-card">
+                <div class="dc-section-header">
+                  <div class="dc-section-title-row">
+                    <i data-lucide="file-text" style="width:16px;height:16px;color:var(--color-blue-dark);"></i>
+                    <h2 class="dc-section-title">ABC Logger</h2>
+                    <span class="dc-count-badge dc-badge-blue" id="dc-abc-count">0</span>
+                  </div>
+                  <button class="glass-btn btn-sm" onclick="DCManager.openABCLogger()">
+                    <i data-lucide="plus" style="width:13px;height:13px;"></i> Log Event
+                  </button>
+                </div>
+                <div class="dc-abc-log-list" id="dc-abc-log-list">
+                  <div class="dc-abc-empty">No ABC events logged this session.</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="dc-col-side">
+
+              <!-- Problem Behaviors -->
+              <div class="dc-section-card glass-panel dc-behavior-card">
+                <div class="dc-section-header">
+                  <div class="dc-section-title-row">
+                    <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--color-red);"></i>
+                    <h2 class="dc-section-title" style="color:var(--color-red);">Problem Behaviors</h2>
+                    <span class="dc-count-badge dc-badge-red" id="dc-behavior-count">0</span>
+                  </div>
+                </div>
+                <div class="dc-behavior-grid" id="dc-behavior-grid"></div>
+              </div>
+
+              <!-- Session Notes -->
+              <div class="dc-section-card glass-panel">
+                <div class="dc-section-header">
+                  <div class="dc-section-title-row">
+                    <i data-lucide="pencil-line" style="width:16px;height:16px;color:var(--color-blue-dark);"></i>
+                    <h2 class="dc-section-title">Session Notes</h2>
+                  </div>
+                  <button class="glass-btn btn-sm" onclick="DCManager.saveSessionNote()">Save</button>
+                </div>
+                <textarea class="dc-notes-textarea" id="dc-session-notes"
+                          placeholder="Record observations, prompting levels, environmental factors..."></textarea>
+              </div>
+
+              <!-- Target Mini-Graphs -->
+              <div class="dc-section-card glass-panel">
+                <div class="dc-section-header">
+                  <div class="dc-section-title-row">
+                    <i data-lucide="trending-up" style="width:16px;height:16px;color:var(--color-turquoise-dark);"></i>
+                    <h2 class="dc-section-title">Target Progress</h2>
+                  </div>
+                </div>
+                <div class="dc-mini-graphs" id="dc-mini-graphs"></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 1: GROUP / MULTI-CLIENT GRID MODE -->
+      <div class="dc-pane" id="dc-pane-group" style="display:none;">
+
+        <!-- Group Selector Bar -->
+        <div class="dc-group-selector-bar glass-panel">
+          <div class="dc-gs-left">
+            <div class="dc-cs-label">Active Group</div>
+            <div class="dc-group-chips" id="dc-group-chips"></div>
+          </div>
+          <div class="dc-gs-right">
+            <button class="glass-btn btn-sm" onclick="DCManager.openCreateGroupModal()">
+              <i data-lucide="plus" style="width:13px;height:13px;"></i> New Group
+            </button>
+            <button class="glass-btn btn-sm" onclick="DCManager.openLoadGroupTemplateModal()">
+              <i data-lucide="folder-open" style="width:13px;height:13px;"></i> Load Template
+            </button>
+          </div>
+        </div>
+
+        <!-- Global Interval Sync Bar -->
+        <div class="dc-interval-sync-bar glass-panel" id="dc-interval-bar">
+          <div class="dc-interval-info">
+            <i data-lucide="timer" style="width:14px;height:14px;color:var(--color-turquoise-dark);"></i>
+            <span class="dc-interval-label">Global Interval</span>
+            <span class="dc-interval-duration" id="dc-interval-current">10s</span>
+          </div>
+          <div class="dc-interval-progress-track">
+            <div class="dc-interval-progress-fill" id="dc-interval-fill" style="width:0%;"></div>
+          </div>
+          <div class="dc-interval-controls">
+            <select class="dc-interval-select" id="dc-interval-select" onchange="DCManager.setIntervalDuration(this.value)">
+              <option value="5">5s</option>
+              <option value="10" selected>10s</option>
+              <option value="15">15s</option>
+              <option value="30">30s</option>
+              <option value="60">1m</option>
+            </select>
+            <button class="glass-btn btn-sm dc-interval-btn" id="btn-interval-toggle" onclick="DCManager.toggleInterval()">
+              <i data-lucide="play" id="icon-interval-toggle" style="width:13px;height:13px;"></i>
+              Start Interval
+            </button>
+          </div>
+        </div>
+
+        <!-- Group Empty State -->
+        <div class="dc-empty-state" id="dc-group-empty">
+          <div class="dc-empty-icon dc-icon-group">
+            <i data-lucide="users"></i>
+          </div>
+          <h3>No Group Active</h3>
+          <p>Create a new group or load a saved template to begin concurrent multi-client tracking.</p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;">
+            <button class="glass-btn btn-primary" onclick="DCManager.openCreateGroupModal()">
+              <i data-lucide="layout-grid" style="width:14px;height:14px;"></i> Create Group
+            </button>
+            <button class="glass-btn" onclick="DCManager.openLoadGroupTemplateModal()">
+              <i data-lucide="folder-open" style="width:14px;height:14px;"></i> Load Template
+            </button>
+          </div>
+        </div>
+
+        <!-- 5-Client Concurrent Grid -->
+        <div class="dc-group-workspace" id="dc-group-workspace" style="display:none;">
+          <div class="dc-client-grid" id="dc-client-grid"></div>
+        </div>
+
+        <!-- Batch Action Dock -->
+        <div class="dc-batch-dock glass-panel" id="dc-batch-dock" style="display:none;">
+          <div class="dc-batch-label">
+            <i data-lucide="zap" style="width:14px;height:14px;"></i> Batch
+          </div>
+          <div class="dc-batch-actions">
+            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('meal')">
+              <i data-lucide="utensils" style="width:14px;height:14px;"></i> Mealtime
+            </button>
+            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('transition')">
+              <i data-lucide="arrow-right-left" style="width:14px;height:14px;"></i> Transition
+            </button>
+            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('break')">
+              <i data-lucide="coffee" style="width:14px;height:14px;"></i> Break
+            </button>
+            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('prompt_check')">
+              <i data-lucide="list-checks" style="width:14px;height:14px;"></i> Prompt Check
+            </button>
+            <button class="dc-batch-btn dc-batch-btn-note" onclick="DCManager.openBatchNoteModal()">
+              <i data-lucide="pencil" style="width:14px;height:14px;"></i> Group Note
+            </button>
+          </div>
+          <button class="glass-btn btn-sm dc-batch-end-btn" onclick="DCManager.endGroupSession()">
+            <i data-lucide="square" style="width:13px;height:13px;"></i> End Session
+          </button>
+        </div>
+
+      </div>
+    </div><!-- /dc-workspace -->
+  </main>
+
+  <!-- ADD CLIENT DRAWER -->
+  <div class="dc-drawer-overlay" id="dc-client-drawer-overlay" onclick="DCManager.closeClientDrawer()"></div>
+  <aside class="dc-drawer glass-drawer" id="dc-client-drawer">
+    <div class="drawer-header">
+      <h3>Add / Create Client</h3>
+      <button class="btn-icon" onclick="DCManager.closeClientDrawer()" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="drawer-content dc-drawer-body">
+
+      <div class="dc-drawer-section">
+        <div class="dc-drawer-section-label">
+          <i data-lucide="search" style="width:13px;height:13px;"></i>
+          Search Existing Clients
+        </div>
+        <input type="text" id="dc-client-search-input" class="glass-input dc-search-input"
+               placeholder="Search by name or ID..." oninput="DCManager.searchClients(this.value)">
+        <div class="dc-search-results" id="dc-client-search-results"></div>
+      </div>
+
+      <div class="dc-drawer-divider"><span>or create new</span></div>
+
+      <div class="dc-drawer-section">
+        <div class="dc-drawer-section-label">
+          <i data-lucide="user-plus" style="width:13px;height:13px;"></i>
+          New Client Profile
+        </div>
+        <form id="dc-add-client-form" onsubmit="DCManager.submitAddClient(event)" novalidate>
+          <div class="dc-form-row">
+            <div class="dc-form-group dc-fg-2">
+              <label class="dc-form-label" for="dc-client-fullname">Full Name <span class="dc-required">*</span></label>
+              <input type="text" id="dc-client-fullname" class="glass-input" placeholder="First Last" required>
+            </div>
+            <div class="dc-form-group dc-fg-1">
+              <label class="dc-form-label" for="dc-client-dob">Date of Birth</label>
+              <input type="date" id="dc-client-dob" class="glass-input">
+            </div>
+          </div>
+          <div class="dc-form-row">
+            <div class="dc-form-group dc-fg-1">
+              <label class="dc-form-label" for="dc-client-diagnosis">Diagnosis</label>
+              <select id="dc-client-diagnosis" class="glass-select">
+                <option value="">Select...</option>
+                <option>ASD Level 1</option>
+                <option>ASD Level 2</option>
+                <option>ASD Level 3</option>
+                <option>ADHD</option>
+                <option>Intellectual Disability</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="dc-form-group dc-fg-1">
+              <label class="dc-form-label" for="dc-client-insurance">Insurance</label>
+              <input type="text" id="dc-client-insurance" class="glass-input" placeholder="Provider">
+            </div>
+          </div>
+          <div class="dc-form-group">
+            <label class="dc-form-label" for="dc-client-guardian">Guardian Name</label>
+            <input type="text" id="dc-client-guardian" class="glass-input" placeholder="Parent / Guardian">
+          </div>
+          <div class="dc-form-row">
+            <div class="dc-form-group dc-fg-1">
+              <label class="dc-form-label" for="dc-client-guardian-phone">Phone</label>
+              <input type="tel" id="dc-client-guardian-phone" class="glass-input" placeholder="(555) 000-0000">
+            </div>
+            <div class="dc-form-group dc-fg-1">
+              <label class="dc-form-label" for="dc-client-guardian-email">Email</label>
+              <input type="email" id="dc-client-guardian-email" class="glass-input" placeholder="parent@email.com">
+            </div>
+          </div>
+
+          <div class="dc-form-section-header">
+            <i data-lucide="target" style="width:13px;height:13px;"></i>
+            Protocol &amp; Baseline
+          </div>
+          <div class="dc-form-group">
+            <label class="dc-form-label">Active Target Programs</label>
+            <div class="dc-tag-input-wrap" id="dc-target-tags">
+              <input type="text" id="dc-target-input" class="dc-tag-input"
+                     placeholder="Type target, press Enter..."
+                     onkeydown="DCManager.addTargetTag(event)">
+            </div>
+          </div>
+          <div class="dc-form-row">
+            <div class="dc-form-group dc-fg-1">
+              <label class="dc-form-label" for="dc-client-prompt">Default Prompt Level</label>
+              <select id="dc-client-prompt" class="glass-select">
+                <option>Independent</option>
+                <option>Verbal</option>
+                <option>Gestural</option>
+                <option>Model</option>
+                <option selected>Partial Physical</option>
+                <option>Full Physical</option>
+              </select>
+            </div>
+            <div class="dc-form-group dc-fg-1">
+              <label class="dc-form-label" for="dc-client-mastery">Mastery Criterion</label>
+              <input type="text" id="dc-client-mastery" class="glass-input" placeholder="e.g. 80% x 3">
+            </div>
+          </div>
+          <div class="dc-form-group">
+            <label class="dc-form-label" for="dc-client-notes-form">Clinical Notes</label>
+            <textarea id="dc-client-notes-form" class="glass-input" rows="3"
+                      placeholder="Baseline observations, special considerations..."></textarea>
+          </div>
+          <button type="submit" class="glass-btn btn-primary dc-submit-btn">
+            <i data-lucide="user-check" style="width:14px;height:14px;"></i>
+            Save &amp; Add to Session
+          </button>
+        </form>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CREATE GROUP MODAL -->
+  <div class="dc-modal-overlay" id="dc-group-modal-overlay" onclick="DCManager.closeGroupModal()">
+    <div class="dc-modal glass-modal" onclick="event.stopPropagation()">
+      <div class="modal-header" style="position:relative;">
+        <h2>Create New Group / Cohort</h2>
+        <button class="btn-icon" onclick="DCManager.closeGroupModal()" aria-label="Close"
+                style="position:absolute;top:1.25rem;right:1.25rem;">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body dc-modal-body">
+        <div class="dc-form-group">
+          <label class="dc-form-label" for="dc-group-name">Group Name <span class="dc-required">*</span></label>
+          <input type="text" id="dc-group-name" class="glass-input"
+                 placeholder="e.g. Sunrise House – Room A">
+        </div>
+        <div class="dc-form-row">
+          <div class="dc-form-group dc-fg-1">
+            <label class="dc-form-label" for="dc-group-type">Group Type</label>
+            <select id="dc-group-type" class="glass-select">
+              <option>Social Skills Group</option>
+              <option>Group Home</option>
+              <option>School Setting</option>
+              <option>Community Outing</option>
+              <option>Clinic Group</option>
+              <option>Custom</option>
+            </select>
+          </div>
+          <div class="dc-form-group dc-fg-1">
+            <label class="dc-form-label" for="dc-group-max">Max Clients</label>
+            <select id="dc-group-max" class="glass-select">
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5" selected>5</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="dc-form-section-header">
+          <i data-lucide="users" style="width:13px;height:13px;"></i>
+          Assign Clients to Group
+        </div>
+        <input type="text" id="dc-assign-search" class="glass-input dc-search-input"
+               placeholder="Search clients to assign..." oninput="DCManager.searchAssignClients(this.value)"
+               style="margin-bottom:0.75rem;">
+        <div class="dc-assign-list" id="dc-assign-list"></div>
+        <div class="dc-assigned-summary">
+          <span id="dc-assigned-count">0</span>/5 clients assigned
+        </div>
+
+        <label class="dc-checkbox-label" style="margin-top:1rem;">
+          <input type="checkbox" id="dc-save-template" class="dc-checkbox"
+                 onchange="DCManager.toggleTemplateName(this.checked)">
+          <span class="dc-checkmark"></span>
+          Save as reusable template
+        </label>
+        <div id="dc-template-name-wrap" style="display:none;margin-top:0.5rem;">
+          <input type="text" id="dc-template-name" class="glass-input"
+                 placeholder="Template name (e.g. Morning Group A)">
+        </div>
+
+        <div class="dc-modal-actions">
+          <button class="glass-btn" onclick="DCManager.closeGroupModal()">Cancel</button>
+          <button class="glass-btn btn-primary" onclick="DCManager.submitCreateGroup()">
+            <i data-lucide="layout-grid" style="width:14px;height:14px;"></i>
+            Launch Group Session
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOAD TEMPLATE MODAL -->
+  <div class="dc-modal-overlay" id="dc-template-modal-overlay" onclick="DCManager.closeTemplateModal()">
+    <div class="dc-modal dc-modal-sm glass-modal" onclick="event.stopPropagation()">
+      <div class="modal-header" style="position:relative;">
+        <h2>Saved Group Templates</h2>
+        <button class="btn-icon" onclick="DCManager.closeTemplateModal()" aria-label="Close"
+                style="position:absolute;top:1.25rem;right:1.25rem;">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body dc-modal-body">
+        <div class="dc-template-list" id="dc-template-list"></div>
+        <div class="dc-template-empty" id="dc-template-empty" style="display:none;">
+          <i data-lucide="folder" style="width:28px;height:28px;opacity:0.35;"></i>
+          <p>No saved templates yet. Create a group and check "Save as reusable template".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABC LOGGER MODAL -->
+  <div class="dc-modal-overlay" id="dc-abc-modal-overlay" onclick="DCManager.closeABCModal()">
+    <div class="dc-modal dc-modal-wide glass-modal" onclick="event.stopPropagation()">
+      <div class="modal-header" style="position:relative;">
+        <h2>Log ABC Event</h2>
+        <button class="btn-icon" onclick="DCManager.closeABCModal()" aria-label="Close"
+                style="position:absolute;top:1.25rem;right:1.25rem;">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body dc-modal-body">
+        <div class="dc-abc-grid">
+          <div class="dc-abc-col dc-abc-a">
+            <div class="dc-abc-header">A — Antecedent</div>
+            <select id="dc-abc-antecedent" class="glass-select">
+              <option>Demand presented</option>
+              <option>Preferred item removed</option>
+              <option>Transition initiated</option>
+              <option>Attention diverted</option>
+              <option>Peer interaction</option>
+              <option>Unstructured time</option>
+              <option>Other</option>
+            </select>
+            <textarea class="glass-input dc-abc-note" id="dc-abc-ant-note" rows="2"
+                      placeholder="Additional context..."></textarea>
+          </div>
+          <div class="dc-abc-col dc-abc-b">
+            <div class="dc-abc-header">B — Behavior</div>
+            <select id="dc-abc-behavior" class="glass-select">
+              <option>Physical Aggression</option>
+              <option>Self-Injurious Behavior</option>
+              <option>Property Destruction</option>
+              <option>Elopement</option>
+              <option>Non-Compliance</option>
+              <option>Vocal Disruption</option>
+              <option>Stereotypy</option>
+              <option>Other</option>
+            </select>
+            <div class="dc-abc-intensity">
+              <div class="dc-form-label" style="margin-bottom:0.5rem;">Intensity (1–5)</div>
+              <div class="dc-intensity-pills" id="dc-intensity-pills">
+                <button type="button" class="dc-intensity-pill" data-level="1" onclick="DCManager.setIntensity(1)">1</button>
+                <button type="button" class="dc-intensity-pill" data-level="2" onclick="DCManager.setIntensity(2)">2</button>
+                <button type="button" class="dc-intensity-pill active" data-level="3" onclick="DCManager.setIntensity(3)">3</button>
+                <button type="button" class="dc-intensity-pill" data-level="4" onclick="DCManager.setIntensity(4)">4</button>
+                <button type="button" class="dc-intensity-pill" data-level="5" onclick="DCManager.setIntensity(5)">5</button>
+              </div>
+            </div>
+            <label class="dc-form-label" style="margin-top:0.75rem;display:block;">Duration</label>
+            <input type="text" id="dc-abc-duration" class="glass-input" placeholder="e.g. 2m 30s">
+          </div>
+          <div class="dc-abc-col dc-abc-c">
+            <div class="dc-abc-header">C — Consequence</div>
+            <select id="dc-abc-consequence" class="glass-select">
+              <option>Demand removed</option>
+              <option>Preferred item returned</option>
+              <option>Redirection</option>
+              <option>Ignore / planned ignoring</option>
+              <option>Verbal reprimand</option>
+              <option>Reinforcer delivered</option>
+              <option>Safety intervention</option>
+              <option>Other</option>
+            </select>
+            <textarea class="glass-input dc-abc-note" id="dc-abc-con-note" rows="2"
+                      placeholder="Outcome / notes..."></textarea>
+          </div>
+        </div>
+        <div class="dc-modal-actions">
+          <button class="glass-btn" onclick="DCManager.closeABCModal()">Cancel</button>
+          <button class="glass-btn btn-primary" onclick="DCManager.submitABCEvent()">
+            <i data-lucide="save" style="width:14px;height:14px;"></i>
+            Log Event
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATCH GROUP NOTE MODAL -->
+  <div class="dc-modal-overlay" id="dc-batch-note-overlay" onclick="DCManager.closeBatchNoteModal()">
+    <div class="dc-modal dc-modal-sm glass-modal" onclick="event.stopPropagation()">
+      <div class="modal-header" style="position:relative;">
+        <h2>Group Session Note</h2>
+        <button class="btn-icon" onclick="DCManager.closeBatchNoteModal()" aria-label="Close"
+                style="position:absolute;top:1.25rem;right:1.25rem;">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body dc-modal-body">
+        <div class="dc-form-group">
+          <label class="dc-form-label">Applies to</label>
+          <div class="dc-batch-client-select" id="dc-batch-client-select"></div>
+        </div>
+        <div class="dc-form-group">
+          <label class="dc-form-label" for="dc-batch-note-text">Note</label>
+          <textarea id="dc-batch-note-text" class="glass-input" rows="4"
+                    placeholder="Enter a note to log across all selected clients..."></textarea>
+        </div>
+        <div class="dc-modal-actions">
+          <button class="glass-btn" onclick="DCManager.closeBatchNoteModal()">Cancel</button>
+          <button class="glass-btn btn-primary" onclick="DCManager.submitBatchNote()">
+            <i data-lucide="check" style="width:14px;height:14px;"></i>
+            Save Note
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="dc-toast-container" id="dc-toast-container"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js?v=12"></script>
+  <script src="auth-utils-v8.js?v=12"></script>
+  <script src="auth-guard-v9.js?v=12"></script>
+  <script src="supabase-data.js"></script>
+  <script src="nav.js"></script>
+  <script src="program-data.js"></script>
+  <script src="data-collection.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
