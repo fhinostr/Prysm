@@ -996,7 +996,17 @@ const DCManager = {
             <div class="dc-card-name">${this._esc(client.full_name)}</div>
             <div class="dc-card-meta">${this._esc(client.diagnosis)}</div>
           </div>
-          <div class="dc-card-status-dot" title="Active"></div>
+          <div class="dc-card-timer-ui">
+            <div class="dc-card-timer-display" id="grp-timer-${client.id}">00:00:00</div>
+            <button class="dc-card-timer-btn" id="grp-timer-btn-${client.id}"
+                    onclick="DCManager.toggleGroupClientTimer('${client.id}')"
+                    title="Start/Pause">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                   fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </button>
+          </div>
           <button class="dc-card-focus-btn" onclick="DCManager.focusClientFromGroup('${client.id}')"
                   title="Switch to Individual Focus Mode">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
@@ -1004,29 +1014,6 @@ const DCManager = {
               <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
             </svg>
           </button>
-        </div>
-
-        <!-- Session Timer -->
-        <div class="dc-card-timer-strip">
-          <div class="dc-card-timer-display" id="grp-timer-${client.id}">00:00:00</div>
-          <div class="dc-card-timer-actions">
-            <button class="dc-card-timer-btn" id="grp-timer-btn-${client.id}"
-                    onclick="DCManager.toggleGroupClientTimer('${client.id}')"
-                    title="Start/Pause">
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
-                   fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </button>
-            <button class="dc-card-timer-btn" onclick="DCManager.resetGroupClientTimer('${client.id}')"
-                    title="Reset">
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
-                   fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <path d="M3.51 15a9 9 0 1 0 .49-4.97"></path>
-              </svg>
-            </button>
-          </div>
         </div>
 
         <!-- High-Frequency Behavior Counters -->
