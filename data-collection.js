@@ -1031,33 +1031,47 @@ const DCManager = {
           </button>
         </div>
 
-        <!-- High-Frequency Behavior Counters -->
+        <!-- Skill Acquisition -->
+        ${(skillCountersHtml || targetsHtml) ? `
+        <div class="dc-section-card glass-panel" style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
+          <div class="dc-section-header" style="margin-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem;">
+            <div class="dc-section-title-row">
+              <i data-lucide="check-circle-2" style="width:16px;height:16px;color:var(--color-turquoise-dark);"></i>
+              <h2 class="dc-section-title" style="font-size: 0.85rem;">Skill Acquisition</h2>
+            </div>
+          </div>
+          <div class="dc-card-counters" style="margin-bottom: 0.5rem;">
+            ${skillCountersHtml}
+          </div>
+          <div class="dc-card-targets">
+            ${targetsHtml}
+          </div>
+        </div>` : ''}
+
+        <!-- Problem Behaviors -->
         ${countersHtml ? `
-        <div class="dc-card-counters">
-          <div class="dc-card-counter-label">Problem Behaviors</div>
-          ${countersHtml}
+        <div class="dc-section-card glass-panel dc-behavior-card" style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
+          <div class="dc-section-header" style="margin-bottom: 0.75rem; border-bottom: 1px solid rgba(239,68,68,0.1); padding-bottom: 0.5rem;">
+            <div class="dc-section-title-row">
+              <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--color-red);"></i>
+              <h2 class="dc-section-title" style="color:var(--color-red); font-size: 0.85rem;">Problem Behaviors</h2>
+            </div>
+          </div>
+          <div class="dc-card-counters">
+            ${countersHtml}
+          </div>
         </div>` : ''}
-
-        <!-- Skill Counters -->
-        ${skillCountersHtml ? `
-        <div class="dc-card-counters">
-          <div class="dc-card-counter-label">Quick Score</div>
-          ${skillCountersHtml}
-        </div>` : ''}
-
-        <!-- Target Program Strip -->
-        <div class="dc-card-targets">
-          ${targetsHtml}
-        </div>
 
         <!-- Interval Scoring Row -->
-        <div class="dc-card-interval-row">
-          <div class="dc-card-interval-label">Interval</div>
-          <div class="dc-card-interval-btns">
-            <button class="dc-card-interval-btn" id="grp-int-yes-${client.id}"
-                    onclick="DCManager.markInterval('${client.id}','yes')">✓ Occurred</button>
-            <button class="dc-card-interval-btn" id="grp-int-no-${client.id}"
-                    onclick="DCManager.markInterval('${client.id}','no')">✗ No</button>
+        <div class="dc-section-card glass-panel" style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
+          <div class="dc-card-interval-row" style="margin: 0;">
+            <div class="dc-card-interval-label">Interval</div>
+            <div class="dc-card-interval-btns">
+              <button class="dc-card-interval-btn" id="grp-int-yes-${client.id}"
+                      onclick="DCManager.markInterval('${client.id}','yes')">✓ Occurred</button>
+              <button class="dc-card-interval-btn" id="grp-int-no-${client.id}"
+                      onclick="DCManager.markInterval('${client.id}','no')">✗ No</button>
+            </div>
           </div>
         </div>
 
