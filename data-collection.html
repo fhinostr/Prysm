@@ -21,36 +21,7 @@
 
   <main class="app-container dc-container">
 
-    <!-- HEADER -->
-    <header class="app-header glass-panel">
-      <div class="header-left">
-        <div class="brand-chip" style="padding-bottom:0;">
-          <img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal">
-        </div>
-        <a href="treatment-plan.html" class="glass-btn btn-sm hub-back-btn" style="margin-left:1rem;transform:translateY(-8px);">
-          <i data-lucide="arrow-left" style="width:14px;height:14px;"></i> All Clients
-        </a>
-      </div>
-      <nav class="site-toggle" aria-label="Site Navigation">
-        <a href="index.html" class="site-toggle-link">Home</a>
-        <a href="treatment-plan.html" class="site-toggle-link active" aria-current="page">Clients</a>
-        <a href="billing.html" class="site-toggle-link">Billing</a>
-        <a href="files.html" class="site-toggle-link">Files</a>
-        <a href="contacts.html" class="site-toggle-link">Staff</a>
-      </nav>
-      <div class="header-right" style="display:flex;align-items:center;gap:0.75rem;">
-        <div class="dc-session-clock" id="dc-global-clock">
-          <i data-lucide="clock" style="width:14px;height:14px;"></i>
-          <span id="dc-clock-display">00:00:00</span>
-        </div>
-        <button class="glass-btn btn-sm" id="btn-global-session-toggle" onclick="DCManager.toggleGlobalSession()" title="Start/Pause Session">
-          <i data-lucide="play" id="icon-global-toggle"></i>
-        </button>
-        <button class="glass-btn btn-sm" onclick="signOut()" title="Sign Out" aria-label="Sign Out">
-          <i data-lucide="log-out"></i>
-        </button>
-      </div>
-    </header>
+
 
     <!-- ACCESS DENIED (shown if not Dawenn) -->
     <div class="dc-access-denied" id="dc-access-denied" style="display:none;">
@@ -65,13 +36,26 @@
     <!-- MAIN WORKSPACE (shown only for Dawenn) -->
     <div class="dc-workspace" id="dc-workspace" style="display:none;">
 
-      <div class="dc-topbar glass-panel">
+      <div class="dc-topbar glass-panel" style="justify-content: space-between;">
         <div class="dc-topbar-left">
+          <a href="client-hub.html" class="glass-btn btn-sm hub-back-btn" style="margin-right:0.5rem; padding: 0.35rem 0.5rem;" title="Close Session">
+            <i data-lucide="x" style="width:14px;height:14px;"></i>
+          </a>
           <h1 class="dc-page-title">
             <i data-lucide="clipboard-list" style="width:20px;height:20px;color:var(--color-turquoise-dark);"></i>
             Data Collection
           </h1>
           <span class="dc-badge-beta" id="dc-context-badge">Session</span>
+        </div>
+
+        <div class="header-right" style="display:flex;align-items:center;gap:0.75rem;">
+          <div class="dc-session-clock" id="dc-global-clock">
+            <i data-lucide="clock" style="width:14px;height:14px;"></i>
+            <span id="dc-clock-display" style="font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-blue-dark);">00:00:00</span>
+          </div>
+          <button class="glass-btn btn-sm" id="btn-global-session-toggle" onclick="DCManager.toggleGlobalSession()" title="Start/Pause Session">
+            <i data-lucide="play" id="icon-global-toggle"></i>
+          </button>
         </div>
       </div>
 
