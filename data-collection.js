@@ -1033,7 +1033,7 @@ const DCManager = {
 
         <!-- Skill Acquisition -->
         ${(skillCountersHtml || targetsHtml) ? `
-        <div class="dc-section-card glass-panel" style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
+        <div class="dc-section-card glass-panel" style="margin: 0 1rem 1rem 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
           <div class="dc-section-header" style="margin-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem;">
             <div class="dc-section-title-row">
               <i data-lucide="check-circle-2" style="width:16px;height:16px;color:var(--color-turquoise-dark);"></i>
@@ -1050,7 +1050,7 @@ const DCManager = {
 
         <!-- Problem Behaviors -->
         ${countersHtml ? `
-        <div class="dc-section-card glass-panel dc-behavior-card" style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
+        <div class="dc-section-card glass-panel dc-behavior-card" style="margin: 0 1rem 1rem 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
           <div class="dc-section-header" style="margin-bottom: 0.75rem; border-bottom: 1px solid rgba(239,68,68,0.1); padding-bottom: 0.5rem;">
             <div class="dc-section-title-row">
               <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--color-red);"></i>
@@ -1063,7 +1063,7 @@ const DCManager = {
         </div>` : ''}
 
         <!-- Interval Scoring Row -->
-        <div class="dc-section-card glass-panel" style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
+        <div class="dc-section-card glass-panel" style="margin: 0 1rem 1rem 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
           <div class="dc-card-interval-row" style="margin: 0;">
             <div class="dc-card-interval-label">Interval</div>
             <div class="dc-card-interval-btns">
