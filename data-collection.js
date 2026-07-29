@@ -224,7 +224,7 @@ const DCManager = {
             };
           };
 
-          if (targetProfile.type === 'group' || launchMode === 'group') {
+          if (targetProfile.type === 'group') {
             this.mode = 'group';
             this.activeGroupName = targetProfile.name || 'Active Group Cohort';
             const memberIds = targetProfile.members || [];
@@ -947,7 +947,7 @@ const DCManager = {
     const color   = avatarColor(client.full_name);
     const timer   = this.clientTimers[client.id];
 
-    const countersHtml = client.behaviors?.slice(0, 2).map((b, bi) => `
+    const countersHtml = client.behaviors?.map((b, bi) => `
       <div class="dc-card-counter-row">
         <button class="dc-card-tally-btn behavior"
                 onclick="DCManager.groupIncrementBehavior('${client.id}',${bi})"
@@ -960,7 +960,7 @@ const DCManager = {
       </div>
     `).join('') || '';
 
-    const skillCountersHtml = client.programs?.slice(0, 2).map((p, pi) => `
+    const skillCountersHtml = client.programs?.map((p, pi) => `
       <div class="dc-card-counter-row">
         <button class="dc-card-tally-btn"
                 onclick="DCManager.groupScoreTarget('${client.id}',${pi},'correct')"
@@ -973,7 +973,7 @@ const DCManager = {
       </div>
     `).join('') || '';
 
-    const targetsHtml = client.programs?.slice(0, 3).map((p, pi) => `
+    const targetsHtml = client.programs?.map((p, pi) => `
       <div class="dc-card-target-row">
         <div class="dc-card-target-name" title="${this._esc(p.name)}">${this._esc(p.name)}</div>
         <button class="dc-card-target-minus"
