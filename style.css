@@ -2299,7 +2299,8 @@ body.marketing-page {
   flex-direction: column;
   gap: 1.25rem;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .hub-main {
@@ -2307,6 +2308,8 @@ body.marketing-page {
   flex-direction: column;
   gap: 1.25rem;
   min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Mobile-only auth section (hidden on desktop) */
