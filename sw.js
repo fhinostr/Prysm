@@ -2,7 +2,7 @@
 // PRYSM ABA LMS — Service Worker v16 (Network-First)
 // Always fetches from network first to ensure instant updates without clearing cache.
 // ═══════════════════════════════════════════════════════════════
-const CACHE_VERSION = 'v17';
+const CACHE_VERSION = 'v19';
 const CACHE_NAME = `aba-lms-cache-${CACHE_VERSION}`;
 
 // Files that should NEVER be served from cache (always network-first)
@@ -18,6 +18,9 @@ const STATIC_ASSETS = [
   './index.html',
   './treatment-plan.html',
   './session-book.html',
+  './data-collection.html',
+  './data-collection.js',
+  './data-collection.css',
   './bcba.html',
   './billing.html',
   './files.html',
