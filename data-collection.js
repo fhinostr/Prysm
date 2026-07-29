@@ -166,13 +166,12 @@ const DCManager = {
       if (saved) this.savedTemplates = JSON.parse(saved);
     } catch(e) {}
 
-    // Check if redirected from main Client Hub with a selected client
+    // Check if redirected from main Client Hub with a selected client in the URL
     try {
-      const launchClientId = localStorage.getItem('dc_launch_client');
-      const launchMode = localStorage.getItem('dc_launch_mode');
+      const urlParams = new URLSearchParams(window.location.search);
+      const launchClientId = urlParams.get('client');
+      
       if (launchClientId) {
-        localStorage.removeItem('dc_launch_client');
-        localStorage.removeItem('dc_launch_mode');
         
         const storedProfiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
         const targetProfile = storedProfiles.find(c => c.id === launchClientId);
@@ -181,6 +180,36 @@ const DCManager = {
           // Helper to convert a hub profile into a Data Collection client
           const mapProfileToDcClient = (p) => {
             if (this.allClients.some(c => c.id === p.id)) return null;
+            
+            let allTargets = [];
+            if (typeof loadProgramData === 'function') {
+              const memberProgramsData = loadProgramData(p.id).targets;
+              const groupProgramsData = targetProfile.type === 'group' ? loadProgramData(targetProfile.id).targets : [];
+              allTargets = [...memberProgramsData, ...groupProgramsData];
+            }
+            
+            const uniqueTargets = Array.from(new Map(allTargets.map(item => [item.id, item])).values());
+            
+            const programs = uniqueTargets.filter(t => t.domain === 'skill').map(t => ({
+              id: t.id,
+              name: t.name,
+              promptLevel: 'Independent', // Default starting prompt
+              correct: 0,
+              total: 0,
+              scores: [],
+              measurementType: t.measurementType
+            }));
+
+            const behaviors = uniqueTargets.filter(t => t.domain === 'problem').map(t => ({
+              id: t.id,
+              name: t.name,
+              count: 0,
+              measurementType: t.measurementType
+            }));
+
+            if (programs.length === 0) programs.push({ id: `TGT-NEW-${Date.now()}-${Math.random()}`, name: 'Skill Acquisition Protocol', promptLevel: 'Partial Physical', correct: 0, total: 0, scores: [] });
+            if (behaviors.length === 0) behaviors.push({ id: `BHV-NEW-${Date.now()}-${Math.random()}`, name: 'Disruption', count: 0 });
+
             return {
               id: p.id,
               full_name: p.name,
@@ -189,12 +218,8 @@ const DCManager = {
               diagnosis: p.diagnosis || 'Pending Setup',
               insurance: 'Unspecified',
               status: 'active',
-              programs: [
-                { id: `TGT-NEW-${Date.now()}-${Math.random()}`, name: 'Skill Acquisition Protocol', promptLevel: 'Partial Physical', correct: 0, total: 0, scores: [] }
-              ],
-              behaviors: [
-                { id: `BHV-NEW-${Date.now()}-${Math.random()}`, name: 'Disruption', count: 0 }
-              ],
+              programs,
+              behaviors,
               historyPct: [50, 60, 65, 70]
             };
           };

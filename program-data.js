@@ -150,31 +150,38 @@ function normalizeProgramData(program) {
   };
 }
 
-function loadProgramData() {
-  const raw = localStorage.getItem(PROGRAM_STORAGE_KEY);
+function getStorageKey(clientId) {
+  return clientId ? `aba-program-data-v1-${clientId}` : PROGRAM_STORAGE_KEY;
+}
+
+function loadProgramData(clientId = null) {
+  const key = getStorageKey(clientId);
+  const raw = localStorage.getItem(key);
   if (!raw) {
-    const defaults = cloneProgramData(DEFAULT_PROGRAM);
-    saveProgramData(defaults);
+    // Start empty if it's a specific client, otherwise use defaults for demo
+    const defaults = clientId ? { clientName: 'Client', targets: [] } : cloneProgramData(DEFAULT_PROGRAM);
+    saveProgramData(defaults, clientId);
     return defaults;
   }
 
   try {
     return normalizeProgramData(JSON.parse(raw));
   } catch (error) {
-    const defaults = cloneProgramData(DEFAULT_PROGRAM);
-    saveProgramData(defaults);
+    const defaults = clientId ? { clientName: 'Client', targets: [] } : cloneProgramData(DEFAULT_PROGRAM);
+    saveProgramData(defaults, clientId);
     return defaults;
   }
 }
 
-function saveProgramData(program) {
+function saveProgramData(program, clientId = null) {
   const normalized = normalizeProgramData(program);
-  localStorage.setItem(PROGRAM_STORAGE_KEY, JSON.stringify(normalized));
+  const key = getStorageKey(clientId);
+  localStorage.setItem(key, JSON.stringify(normalized));
   return normalized;
 }
 
-function upsertTarget(target) {
-  const program = loadProgramData();
+function upsertTarget(target, clientId = null) {
+  const program = loadProgramData(clientId);
   const existingIds = new Set(program.targets.map(item => item.id));
   let nextId = target.id || slugify(target.name);
 
@@ -198,17 +205,29 @@ function upsertTarget(target) {
     program.targets.unshift(nextTarget);
   }
 
-  return saveProgramData(program);
+  saveProgramData(program, clientId);
+  return nextTarget;
 }
 
-function deleteTarget(targetId) {
-  const program = loadProgramData();
+function deleteTarget(targetId, clientId = null) {
+  const program = loadProgramData(clientId);
   program.targets = program.targets.filter(target => target.id !== targetId);
-  return saveProgramData(program);
+  return saveProgramData(program, clientId);
 }
 
-function getTargetById(targetId) {
-  return loadProgramData().targets.find(target => target.id === targetId) || null;
+function toggleTargetPhase(targetId, clientId = null) {
+  const program = loadProgramData(clientId);
+  const target = program.targets.find(t => t.id === targetId);
+  if (target) {
+    const phases = ['Baseline', 'Acquisition', 'Generalization', 'Intervention', 'Maintenance'];
+    const currentIndex = phases.indexOf(target.phase);
+    target.phase = phases[(currentIndex + 1) % phases.length];
+  }
+  return saveProgramData(program, clientId);
+}
+
+function getTargetById(targetId, clientId = null) {
+  return loadProgramData(clientId).targets.find(target => target.id === targetId) || null;
 }
 
 function slugify(value) {

@@ -15,14 +15,14 @@ function renderClientDirectory() {
   listContainer.innerHTML = clients.map(client => {
     if (client.type === 'group') {
       return `
-        <div class="client-row" style="background: rgba(32,178,170,0.08); border: 1px solid rgba(32,178,170,0.2); cursor: pointer;" onclick="openGroupModal('${client.id}')">
+        <a href="client-hub.html?client=${encodeURIComponent(client.id)}" class="client-row" style="background: rgba(32,178,170,0.08); border: 1px solid rgba(32,178,170,0.2); text-decoration: none; color: inherit;">
           <div class="client-avatar" style="background: linear-gradient(135deg, var(--color-turquoise), #0288d1);"><i data-lucide="users" style="width:20px; color:white;"></i></div>
           <div class="client-copy">
             <strong>${escapeHtml(client.name)}</strong>
             <span style="color: var(--color-turquoise-dark);">${(client.members || []).length} Members — ${escapeHtml(client.subtitle)}</span>
           </div>
-          <i data-lucide="settings-2" style="color: var(--color-turquoise-dark);"></i>
-        </div>
+          <i data-lucide="chevron-right" style="color: var(--color-turquoise-dark);"></i>
+        </a>
       `;
     } else {
       return `
@@ -302,163 +302,4 @@ async function handleCreateClient(event) {
     }
   }
 }
-// ── GROUP MANAGEMENT ──────────────────────────────────────────────
 
-function openGroupModal(groupId) {
-  const group = getClientProfiles().find(c => c.id === groupId);
-  if (!group || group.type !== 'group') return;
-  
-  window._activeManageGroupId = groupId;
-  
-  document.getElementById('mg-group-name').textContent = group.name;
-  
-  const members = group.members || [];
-  document.getElementById('mg-member-count').textContent = `${members.length} Members`;
-  
-  const listEl = document.getElementById('mg-members-list');
-  if (members.length === 0) {
-    listEl.innerHTML = '<div style="text-align:center; color:var(--color-text-light); padding:1rem; font-size:0.85rem;">No members in this cohort yet.</div>';
-  } else {
-    const profiles = getClientProfiles();
-    listEl.innerHTML = members.map(mId => {
-      const p = profiles.find(c => c.id === mId);
-      if(!p) return '';
-      return `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.7); padding:0.5rem 0.75rem; border-radius:8px;">
-          <div style="display:flex; align-items:center; gap:0.5rem;">
-            <div style="width:24px; height:24px; border-radius:50%; background:var(--color-blue); color:white; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:bold;">${p.initials}</div>
-            <span style="font-size:0.85rem; font-weight:600; color:var(--color-blue-dark);">${escapeHtml(p.name)}</span>
-          </div>
-          <button class="btn-icon" onclick="removeGroupMember('${groupId}', '${p.id}')" style="background:none; border:none; cursor:pointer; color:var(--color-red); padding:0.25rem;">
-            <i data-lucide="x" style="width:14px;"></i>
-          </button>
-        </div>
-      `;
-    }).join('');
-  }
-  
-  // Populate add existing dropdown
-  const addSelect = document.getElementById('mg-add-existing');
-  const available = getClientProfiles().filter(c => c.type !== 'group' && !members.includes(c.id));
-  addSelect.innerHTML = '<option value="">Select client...</option>' + 
-    available.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
-    
-  document.getElementById('manage-group-overlay').style.display = 'flex';
-  if (window.lucide) lucide.createIcons();
-}
-
-function closeGroupModal() {
-  document.getElementById('manage-group-overlay').style.display = 'none';
-  window._activeManageGroupId = null;
-}
-
-function addGroupMember() {
-  if (!window._activeManageGroupId) return;
-  const select = document.getElementById('mg-add-existing');
-  const clientId = select.value;
-  if (!clientId) return;
-  
-  const profiles = getClientProfiles();
-  const group = profiles.find(c => c.id === window._activeManageGroupId);
-  if (group) {
-    if (!group.members) group.members = [];
-    if (!group.members.includes(clientId)) {
-      group.members.push(clientId);
-      saveClientProfile(group);
-      openGroupModal(group.id);
-      renderClientDirectory();
-    }
-  }
-}
-
-function removeGroupMember(groupId, clientId) {
-  const profiles = getClientProfiles();
-  const group = profiles.find(c => c.id === groupId);
-  if (group && group.members) {
-    group.members = group.members.filter(id => id !== clientId);
-    saveClientProfile(group);
-    if (window._activeManageGroupId === groupId) {
-      openGroupModal(groupId);
-    }
-    renderClientDirectory();
-  }
-}
-
-// Override openCreateClientModal to support nested creation
-const originalOpenCreateClientModal = openCreateClientModal;
-window.openCreateClientModal = function(fromGroup = false) {
-  if (!fromGroup) {
-    window._activeManageGroupId = null;
-  }
-  
-  const typeToggle = document.getElementById('entity-type-toggle-container');
-  
-  // If opening from group, force individual type and hide toggle
-  if (fromGroup) {
-    toggleEntityType('individual');
-    if (typeToggle) typeToggle.style.display = 'none';
-  } else {
-    toggleEntityType('individual');
-    if (typeToggle) typeToggle.style.display = 'flex';
-  }
-  
-  originalOpenCreateClientModal();
-}
-
-function bulkCreateGroupMembers() {
-  if (!window._activeManageGroupId) return;
-  const textarea = document.getElementById('mg-bulk-names');
-  if (!textarea) return;
-  
-  const rawText = textarea.value;
-  if (!rawText.trim()) return;
-  
-  const names = rawText.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
-  if (names.length === 0) return;
-  
-  const profiles = getClientProfiles();
-  const group = profiles.find(c => c.id === window._activeManageGroupId);
-  if (!group) return;
-  
-  if (!group.members) group.members = [];
-  
-  let addedCount = 0;
-  names.forEach(name => {
-    const newClient = {
-      type: 'individual',
-      name: name,
-      dob: '',
-      caregiver: '—',
-      phone: '—',
-      diagnosis: 'Pending Setup',
-      clinicalId: `CLN-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
-    };
-    
-    // Initial generation and save from clients-data.js logic
-    const saved = saveClientProfile(newClient);
-    if (saved && saved.id) {
-      if (!group.members.includes(saved.id)) {
-        group.members.push(saved.id);
-        addedCount++;
-      }
-    }
-  });
-  
-  if (addedCount > 0) {
-    saveClientProfile(group);
-    textarea.value = '';
-    openGroupModal(group.id);
-    renderClientDirectory();
-  }
-}
-
-function launchGroupSession() {
-  if (!window._activeManageGroupId) return;
-  
-  try {
-    localStorage.setItem('dc_launch_client', window._activeManageGroupId);
-    localStorage.setItem('dc_launch_mode', 'group');
-  } catch(e) {}
-  
-  window.location.href = 'data-collection.html';
-}

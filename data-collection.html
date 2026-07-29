@@ -65,66 +65,21 @@
     <!-- MAIN WORKSPACE (shown only for Dawenn) -->
     <div class="dc-workspace" id="dc-workspace" style="display:none;">
 
-      <!-- WORKSPACE TOP BAR -->
       <div class="dc-topbar glass-panel">
         <div class="dc-topbar-left">
           <h1 class="dc-page-title">
             <i data-lucide="clipboard-list" style="width:20px;height:20px;color:var(--color-turquoise-dark);"></i>
             Data Collection
           </h1>
-          <span class="dc-badge-beta">BETA</span>
-        </div>
-        <div class="dc-mode-switcher view-toggle" id="dc-mode-toggle" role="tablist">
-          <button class="view-toggle-link active" data-pane="0" id="btn-mode-individual"
-                  onclick="DCManager.switchMode('individual')" role="tab">
-            <i data-lucide="user" style="width:14px;height:14px;"></i>
-            Individual
-          </button>
-          <button class="view-toggle-link" data-pane="1" id="btn-mode-group"
-                  onclick="DCManager.switchMode('group')" role="tab">
-            <i data-lucide="users" style="width:14px;height:14px;"></i>
-            Group / Multi-Client
-          </button>
-        </div>
-        <div class="dc-topbar-right">
-          <button class="glass-btn btn-sm" onclick="DCManager.openAddClientDrawer()">
-            <i data-lucide="user-plus" style="width:14px;height:14px;"></i>
-            Add Client
-          </button>
-          <button class="glass-btn btn-sm" onclick="DCManager.openCreateGroupModal()">
-            <i data-lucide="layout-grid" style="width:14px;height:14px;"></i>
-            New Group
-          </button>
+          <span class="dc-badge-beta" id="dc-context-badge">Session</span>
         </div>
       </div>
 
       <!-- PANE 0: INDIVIDUAL / SINGLE-CLIENT FOCUS MODE -->
       <div class="dc-pane" id="dc-pane-individual">
 
-        <!-- Client Selector Bar -->
-        <div class="dc-client-selector-bar glass-panel">
-          <div class="dc-cs-label">Active Client</div>
-          <div class="dc-client-chips" id="dc-client-chips"></div>
-          <button class="glass-btn btn-sm" onclick="DCManager.openAddClientDrawer()" title="Add client to session">
-            <i data-lucide="plus" style="width:14px;height:14px;"></i>
-          </button>
-        </div>
-
-        <!-- Empty State -->
-        <div class="dc-empty-state" id="dc-individual-empty">
-          <div class="dc-empty-icon">
-            <i data-lucide="user-x"></i>
-          </div>
-          <h3>No Client Selected</h3>
-          <p>Select a client above or add a new one to begin a session.</p>
-          <button class="glass-btn btn-primary" onclick="DCManager.openAddClientDrawer()">
-            <i data-lucide="user-plus" style="width:14px;height:14px;"></i>
-            Add Client
-          </button>
-        </div>
-
         <!-- Individual Client Workspace -->
-        <div class="dc-individual-workspace" id="dc-individual-workspace" style="display:none;">
+        <div class="dc-individual-workspace" id="dc-individual-workspace" style="display:block;">
 
           <!-- Client Header Card -->
           <div class="dc-client-header-card glass-panel">
@@ -242,22 +197,6 @@
       <!-- PANE 1: GROUP / MULTI-CLIENT GRID MODE -->
       <div class="dc-pane" id="dc-pane-group" style="display:none;">
 
-        <!-- Group Selector Bar -->
-        <div class="dc-group-selector-bar glass-panel">
-          <div class="dc-gs-left">
-            <div class="dc-cs-label">Active Group</div>
-            <div class="dc-group-chips" id="dc-group-chips"></div>
-          </div>
-          <div class="dc-gs-right">
-            <button class="glass-btn btn-sm" onclick="DCManager.openCreateGroupModal()">
-              <i data-lucide="plus" style="width:13px;height:13px;"></i> New Group
-            </button>
-            <button class="glass-btn btn-sm" onclick="DCManager.openLoadGroupTemplateModal()">
-              <i data-lucide="folder-open" style="width:13px;height:13px;"></i> Load Template
-            </button>
-          </div>
-        </div>
-
         <!-- Global Interval Sync Bar -->
         <div class="dc-interval-sync-bar glass-panel" id="dc-interval-bar">
           <div class="dc-interval-info">
@@ -283,25 +222,8 @@
           </div>
         </div>
 
-        <!-- Group Empty State -->
-        <div class="dc-empty-state" id="dc-group-empty">
-          <div class="dc-empty-icon dc-icon-group">
-            <i data-lucide="users"></i>
-          </div>
-          <h3>No Group Active</h3>
-          <p>Create a new group or load a saved template to begin concurrent multi-client tracking.</p>
-          <div style="display:flex;gap:0.75rem;justify-content:center;">
-            <button class="glass-btn btn-primary" onclick="DCManager.openCreateGroupModal()">
-              <i data-lucide="layout-grid" style="width:14px;height:14px;"></i> Create Group
-            </button>
-            <button class="glass-btn" onclick="DCManager.openLoadGroupTemplateModal()">
-              <i data-lucide="folder-open" style="width:14px;height:14px;"></i> Load Template
-            </button>
-          </div>
-        </div>
-
         <!-- 5-Client Concurrent Grid -->
-        <div class="dc-group-workspace" id="dc-group-workspace" style="display:none;">
+        <div class="dc-group-workspace" id="dc-group-workspace" style="display:block;">
           <div class="dc-client-grid" id="dc-client-grid"></div>
         </div>
 

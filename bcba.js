@@ -11,13 +11,36 @@ var bcbaClientNameEl = document.getElementById('client-name');
 
 let editingTargetId = null;
 
+const urlParams = new URLSearchParams(window.location.search);
+const _sessionClientId = urlParams.get('client');
+let _sessionClientProfile = null;
+let _sessionIsGroup = false;
+let _sessionGroupMembers = [];
+
+try {
+  const profiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+  _sessionClientProfile = profiles.find(c => c.id === _sessionClientId);
+  if (_sessionClientProfile && _sessionClientProfile.type === 'group') {
+    _sessionIsGroup = true;
+    _sessionGroupMembers = (_sessionClientProfile.members || []).map(mId => profiles.find(c => c.id === mId)).filter(Boolean);
+  }
+} catch(e) {}
+
 initializeTreatmentPlanning();
 
 function initializeTreatmentPlanning() {
   try {
-    const program = loadProgramData();
+    const program = loadProgramData(_sessionClientId);
     if (bcbaClientNameEl) {
-      bcbaClientNameEl.textContent = `Client: ${program.clientName}`;
+      bcbaClientNameEl.textContent = _sessionClientProfile ? `Client: ${_sessionClientProfile.name}` : `Client: ${program.clientName}`;
+    }
+    
+    // Group filter setup
+    const groupFilter = document.getElementById('group-program-filter');
+    if (groupFilter && _sessionIsGroup) {
+      groupFilter.style.display = 'block';
+      groupFilter.innerHTML = '<option value="group">Entire Group Cohort</option>' + 
+        _sessionGroupMembers.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
     }
     
     // Populate category select
@@ -138,7 +161,13 @@ function updateDomainStyling() {
 }
 
 function renderLibrary() {
-  const { targets } = loadProgramData();
+  let targetClientId = _sessionClientId;
+  const groupFilter = document.getElementById('group-program-filter');
+  if (_sessionIsGroup && groupFilter && groupFilter.value !== 'group') {
+    targetClientId = groupFilter.value;
+  }
+  
+  const { targets } = loadProgramData(targetClientId);
   const skillTargets = targets.filter(target => target.domain === 'skill');
   const problemTargets = targets.filter(target => target.domain === 'problem');
 
@@ -366,8 +395,17 @@ function updateMasteryCriteriaFields(measurementType, masteryCriteria) {
   }
 }
 
+function getTargetClientId() {
+  let id = _sessionClientId;
+  const groupFilter = document.getElementById('group-program-filter');
+  if (_sessionIsGroup && groupFilter && groupFilter.value !== 'group') {
+    id = groupFilter.value;
+  }
+  return id;
+}
+
 function editTarget(targetId) {
-  const target = getTargetById(targetId);
+  const target = getTargetById(targetId, getTargetClientId());
   if (!target) return;
 
   editingTargetId = target.id;
@@ -406,9 +444,36 @@ function editTarget(targetId) {
 
 function openTargetModal() {
   try {
+    const groupContainer = document.getElementById('group-assignment-container');
+    const memberSelect = document.getElementById('target-assignment-member');
+    if (_sessionIsGroup) {
+      if (groupContainer) groupContainer.style.display = 'block';
+      if (memberSelect) {
+        memberSelect.innerHTML = '<option value="">Select Member...</option>' + 
+          _sessionGroupMembers.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+      }
+      
+      if (editingTargetId) {
+        // Hide assignment if editing an existing target to avoid confusion
+        if (groupContainer) groupContainer.style.display = 'none';
+      }
+    } else {
+      if (groupContainer) groupContainer.style.display = 'none';
+    }
+    
     document.getElementById('target-modal-overlay').style.display = 'flex';
   } catch (err) {
     document.body.innerHTML += `<div style="position:fixed; top:0; left:0; right:0; background:red; color:white; z-index:9999; padding:20px;">JS ERROR in modal: ${err.message}<br>${err.stack}</div>`;
+  }
+}
+
+window.toggleGroupAssignmentSelect = function() {
+  const type = document.querySelector('input[name="target-assignment-type"]:checked').value;
+  const select = document.getElementById('target-assignment-member');
+  if (type === 'specific') {
+    select.style.display = 'block';
+  } else {
+    select.style.display = 'none';
   }
 }
 
@@ -418,7 +483,7 @@ function closeTargetModal() {
 }
 
 function removeTarget(targetId) {
-  deleteTarget(targetId);
+  deleteTarget(targetId, getTargetClientId());
   if (editingTargetId === targetId) {
     resetFormState();
   }
@@ -455,26 +520,49 @@ function handleFormSubmit(event) {
     category: document.getElementById('target-domain').value === 'skill' ? document.getElementById('target-category').value : null
   };
 
-  // Preserve existing sessionData and lastStaff (audit trail) when editing
+  let saveToClientId = _sessionClientId;
+  const groupFilter = document.getElementById('group-program-filter');
+  
   if (editingTargetId) {
-    const existing = getTargetById(editingTargetId);
-    if (existing) {
-      target.sessionData = existing.sessionData || [];
-      target.lastStaff = existing.lastStaff || target.lastStaff; // audit trail — immutable
+    if (_sessionIsGroup && groupFilter && groupFilter.value !== 'group') {
+      saveToClientId = groupFilter.value;
+    }
+  } else {
+    if (_sessionIsGroup) {
+      const assignmentType = document.querySelector('input[name="target-assignment-type"]:checked')?.value;
+      if (assignmentType === 'specific') {
+        const selectedMember = document.getElementById('target-assignment-member').value;
+        if (!selectedMember) {
+          alert("Please select a specific member.");
+          return;
+        }
+        saveToClientId = selectedMember;
+        if (groupFilter) groupFilter.value = selectedMember;
+      }
     }
   }
 
+  if (editingTargetId) {
+    const existing = getTargetById(editingTargetId, saveToClientId);
+    if (existing) {
+      target.sessionData = existing.sessionData || [];
+      target.lastStaff = existing.lastStaff || target.lastStaff;
+    }
+  }
+  
   if (measurementType === 'ta') {
-    target.steps = Array.from(document.querySelectorAll('.step-input')).map(i => i.value.trim()).filter(Boolean);
-  }
-
-  if (measurementType === 'interval') {
+    const steps = [];
+    document.querySelectorAll('.step-input').forEach(input => {
+      if (input.value.trim()) steps.push(input.value.trim());
+    });
+    target.steps = steps;
+  } else if (measurementType === 'interval') {
     target.intervalLength = Number(document.getElementById('interval-length').value) || 60;
-    target.intervalUnit = document.getElementById('interval-unit').value;
-    target.intervalKind = document.getElementById('interval-type').value;
+    target.intervalUnit = document.getElementById('interval-unit').value || 'seconds';
+    target.intervalKind = document.getElementById('interval-type').value || 'whole';
   }
 
-  upsertTarget(target);
+  upsertTarget(target, saveToClientId);
   closeTargetModal();
   renderLibrary();
   alert(`Saved "${target.name}" to Treatment Planning. The Session Book now reflects this program.`);

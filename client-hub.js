@@ -32,26 +32,178 @@ function loadClientProfile() {
   const nameEl = document.getElementById('hub-client-name');
   const metaEl = document.getElementById('hub-client-meta');
 
+  // Update session links
+  const linkSb = document.getElementById('link-session-book');
+  const linkTp = document.getElementById('link-treatment-planning');
+  if (linkSb) linkSb.href = `data-collection.html?client=${encodeURIComponent(_hubClientId)}`;
+  if (linkTp) linkTp.href = `session-book.html?client=${encodeURIComponent(_hubClientId)}#treatment-planning`;
+
   if (client) {
-    if (avatarEl) avatarEl.textContent = client.initials;
+    if (avatarEl) {
+      if (client.type === 'group') {
+        avatarEl.style.background = 'linear-gradient(135deg, var(--color-turquoise), #0288d1)';
+        avatarEl.innerHTML = '<i data-lucide="users" style="width:28px; height:28px; color:white;"></i>';
+      } else {
+        avatarEl.textContent = client.initials;
+      }
+    }
     if (nameEl) nameEl.textContent = client.name;
-    if (metaEl) metaEl.textContent = `ID: ${client.id}`;
+    if (metaEl) {
+      if (client.type === 'group') {
+        metaEl.textContent = `${(client.members || []).length} Cohort Members`;
+      } else {
+        metaEl.textContent = `ID: ${client.id}`;
+      }
+    }
     document.title = `${client.name} | Prysm`;
 
-    // Populate detail fields
-    const caregiverEl = document.getElementById('hub-caregiver');
-    const dobEl = document.getElementById('hub-dob');
-    const phoneEl = document.getElementById('hub-phone');
-    const diagnosisEl = document.getElementById('hub-diagnosis');
+    if (client.type === 'group') {
+      document.getElementById('hub-profile-details').style.display = 'none';
+      document.getElementById('hub-group-details').style.display = 'flex';
+      const authCard = document.getElementById('hub-auth-card');
+      if (authCard) authCard.style.display = 'none';
+      
+      renderHubGroupMembers(client);
+    } else {
+      document.getElementById('hub-profile-details').style.display = 'flex';
+      document.getElementById('hub-group-details').style.display = 'none';
+      const authCard = document.getElementById('hub-auth-card');
+      if (authCard) authCard.style.display = 'block';
 
-    if (caregiverEl) caregiverEl.textContent = client.caregiver || '—';
-    if (dobEl) dobEl.textContent = client.dob || '—';
-    if (phoneEl) phoneEl.textContent = client.phone || '—';
-    if (diagnosisEl) diagnosisEl.textContent = client.diagnosis || '—';
+      // Populate detail fields
+      const caregiverEl = document.getElementById('hub-caregiver');
+      const dobEl = document.getElementById('hub-dob');
+      const phoneEl = document.getElementById('hub-phone');
+      const diagnosisEl = document.getElementById('hub-diagnosis');
+
+      if (caregiverEl) caregiverEl.textContent = client.caregiver || '—';
+      if (dobEl) dobEl.textContent = client.dob || '—';
+      if (phoneEl) phoneEl.textContent = client.phone || '—';
+      if (diagnosisEl) diagnosisEl.textContent = client.diagnosis || '—';
+    }
+    
+    if (window.lucide) lucide.createIcons();
   } else {
     if (nameEl) nameEl.textContent = 'Unknown Client';
   }
 }
+
+// ─── GROUP MANAGEMENT ───────────────────────────────────────
+
+function renderHubGroupMembers(group) {
+  const members = group.members || [];
+  document.getElementById('hub-group-member-count').textContent = members.length;
+  
+  const listEl = document.getElementById('hub-group-members-list');
+  if (members.length === 0) {
+    listEl.innerHTML = '<div style="text-align:center; color:var(--color-text-light); padding:1rem; font-size:0.75rem;">No members in this cohort yet.</div>';
+  } else {
+    const profiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+    listEl.innerHTML = members.map(mId => {
+      const p = profiles.find(c => c.id === mId);
+      if(!p) return '';
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.7); padding:0.4rem 0.5rem; border-radius:8px; border: 1px solid rgba(32,178,170,0.2);">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div style="width:20px; height:20px; border-radius:50%; background:var(--color-blue); color:white; display:flex; align-items:center; justify-content:center; font-size:0.5rem; font-weight:bold;">${p.initials}</div>
+            <span style="font-size:0.75rem; font-weight:600; color:var(--color-blue-dark);">${escapeHtml(p.name)}</span>
+          </div>
+          <button class="btn-icon" onclick="hubRemoveGroupMember('${p.id}')" style="background:none; border:none; cursor:pointer; color:var(--color-red); padding:0.1rem;">
+            <i data-lucide="x" style="width:12px;"></i>
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  const addSelect = document.getElementById('hub-group-add-existing');
+  const allProfiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+  const available = allProfiles.filter(c => c.type !== 'group' && !members.includes(c.id));
+  addSelect.innerHTML = '<option value="">Select client...</option>' + 
+    available.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+    
+  if (window.lucide) lucide.createIcons();
+}
+
+function hubAddGroupMember() {
+  const select = document.getElementById('hub-group-add-existing');
+  const clientId = select.value;
+  if (!clientId) return;
+  
+  const profiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+  const group = profiles.find(c => c.id === _hubClientId);
+  if (group) {
+    if (!group.members) group.members = [];
+    if (!group.members.includes(clientId)) {
+      group.members.push(clientId);
+      localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+      loadClientProfile();
+    }
+  }
+}
+
+function hubRemoveGroupMember(clientId) {
+  const profiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+  const group = profiles.find(c => c.id === _hubClientId);
+  if (group && group.members) {
+    group.members = group.members.filter(id => id !== clientId);
+    localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+    loadClientProfile();
+  }
+}
+
+function hubBulkCreateGroupMembers() {
+  const textarea = document.getElementById('hub-group-bulk-names');
+  if (!textarea) return;
+  const rawText = textarea.value;
+  if (!rawText.trim()) return;
+  
+  const names = rawText.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+  if (names.length === 0) return;
+  
+  const profiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+  const group = profiles.find(c => c.id === _hubClientId);
+  if (!group) return;
+  if (!group.members) group.members = [];
+  
+  let addedCount = 0;
+  names.forEach(name => {
+    const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    let finalId = id;
+    let count = 1;
+    while (profiles.some(c => c.id === finalId)) {
+      finalId = `${id}-${count}`;
+      count++;
+    }
+    
+    const initials = name.split(' ').filter(n => n.length > 0).map(n => n[0]).join('').toUpperCase().substring(0, 3);
+    
+    const newClient = {
+      id: finalId,
+      initials: initials,
+      type: 'individual',
+      name: name,
+      dob: '',
+      caregiver: '—',
+      phone: '—',
+      diagnosis: 'Pending Setup',
+      clinicalId: `CLN-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+    };
+    
+    profiles.push(newClient);
+    if (!group.members.includes(newClient.id)) {
+      group.members.push(newClient.id);
+      addedCount++;
+    }
+  });
+  
+  if (addedCount > 0) {
+    localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+    textarea.value = '';
+    loadClientProfile();
+  }
+}
+
 
 
 // ─── AUTHORIZATION PROGRESS BARS ────────────────────────────

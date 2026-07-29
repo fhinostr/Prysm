@@ -76,7 +76,12 @@
         <div class="main-viewport-pane" id="pane-treatment-planning">
           <div class="bcba-container-main" style="max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; flex: 1; overflow: hidden;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0 1rem; margin-top: 1rem;">
-              <h2 class="section-title" style="margin: 0;">Program Library</h2>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <h2 class="section-title" style="margin: 0;">Program Library</h2>
+                <select id="group-program-filter" class="glass-select" style="display: none; padding: 0.35rem 1rem; font-size: 0.85rem;" onchange="renderLibrary()">
+                  <option value="group">Entire Group Cohort</option>
+                </select>
+              </div>
               <button class="glass-btn btn-primary" onclick="openTargetModal()">
                 <i data-lucide="plus"></i> Add New Target
               </button>
@@ -119,6 +124,24 @@
                         <option value="problem">Problem Behavior</option>
                       </select>
                     </div>
+                  </div>
+
+                  <!-- Group Assignment UI (Injected dynamically if group) -->
+                  <div class="form-group" id="group-assignment-container" style="display: none; background: rgba(32,178,170,0.1); border: 1px dashed rgba(32,178,170,0.4); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                    <label style="color: var(--color-blue-dark); font-weight: 600;">Target Assignment (Group Cohort)</label>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                      <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+                        <input type="radio" name="target-assignment-type" value="all" checked onchange="toggleGroupAssignmentSelect()">
+                        <span>Apply to entire group</span>
+                      </label>
+                      <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+                        <input type="radio" name="target-assignment-type" value="specific" onchange="toggleGroupAssignmentSelect()">
+                        <span>Apply to specific member</span>
+                      </label>
+                    </div>
+                    <select id="target-assignment-member" class="glass-select" style="margin-top: 0.75rem; display: none;">
+                      <!-- JS Populated -->
+                    </select>
                   </div>
 
                   <div class="form-group" id="category-group">
