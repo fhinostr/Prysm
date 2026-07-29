@@ -278,8 +278,12 @@ const DCManager = {
 
     // Setup initial DOM state based on mode
     if (this.mode === 'group') {
-      document.getElementById('dc-view-individual').style.display = 'none';
-      document.getElementById('dc-view-group').style.display = 'block';
+      const indPane = document.getElementById('dc-pane-individual');
+      if(indPane) indPane.style.display = 'none';
+      
+      const grpPane = document.getElementById('dc-pane-group');
+      if(grpPane) grpPane.style.display = 'block';
+      
       const b2 = document.getElementById('btn-mode-grp');
       const b1 = document.getElementById('btn-mode-ind');
       if (b2) b2.classList.add('active');
