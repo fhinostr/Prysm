@@ -174,35 +174,64 @@ const DCManager = {
         localStorage.removeItem('dc_launch_client');
         localStorage.removeItem('dc_launch_mode');
         
-        const storedClients = JSON.parse(localStorage.getItem('prysm_clients') || '[]');
-        const found = storedClients.find(c => c.id === launchClientId);
-        if (found && !this.allClients.some(c => c.id === found.id)) {
-          const newDcClient = {
-            id: found.id,
-            full_name: found.name,
-            date_of_birth: found.dob || '',
-            age: found.dob ? Math.floor((Date.now() - new Date(found.dob)) / 3.156e10) : 0,
-            diagnosis: found.diagnosis || 'Pending Setup',
-            insurance: 'Unspecified',
-            status: 'active',
-            programs: [
-              { id: `TGT-NEW-${Date.now()}-0`, name: 'Skill Acquisition Protocol', promptLevel: 'Partial Physical', correct: 0, total: 0, scores: [] }
-            ],
-            behaviors: [
-              { id: `BHV-NEW-${Date.now()}-0`, name: 'Disruption', count: 0 }
-            ],
-            historyPct: [50, 60, 65, 70]
+        const storedProfiles = JSON.parse(localStorage.getItem('prysm_client_profiles') || '[]');
+        const targetProfile = storedProfiles.find(c => c.id === launchClientId);
+        
+        if (targetProfile) {
+          // Helper to convert a hub profile into a Data Collection client
+          const mapProfileToDcClient = (p) => {
+            if (this.allClients.some(c => c.id === p.id)) return null;
+            return {
+              id: p.id,
+              full_name: p.name,
+              date_of_birth: p.dob || '',
+              age: p.dob ? Math.floor((Date.now() - new Date(p.dob)) / 3.156e10) : 0,
+              diagnosis: p.diagnosis || 'Pending Setup',
+              insurance: 'Unspecified',
+              status: 'active',
+              programs: [
+                { id: `TGT-NEW-${Date.now()}-${Math.random()}`, name: 'Skill Acquisition Protocol', promptLevel: 'Partial Physical', correct: 0, total: 0, scores: [] }
+              ],
+              behaviors: [
+                { id: `BHV-NEW-${Date.now()}-${Math.random()}`, name: 'Disruption', count: 0 }
+              ],
+              historyPct: [50, 60, 65, 70]
+            };
           };
-          this.allClients.push(newDcClient);
 
-          if (launchMode === 'group') {
-            this.groupClients.push(newDcClient);
-            this.activeGroupName = 'Active Group Cohort';
+          if (targetProfile.type === 'group' || launchMode === 'group') {
             this.mode = 'group';
+            this.activeGroupName = targetProfile.name || 'Active Group Cohort';
+            const memberIds = targetProfile.members || [];
+            
+            // For a group, push all members into groupClients
+            memberIds.forEach(mId => {
+              const memProfile = storedProfiles.find(c => c.id === mId);
+              if (memProfile) {
+                const existing = this.allClients.find(c => c.id === mId);
+                if (existing) {
+                  this.groupClients.push(existing);
+                } else {
+                  const newClient = mapProfileToDcClient(memProfile);
+                  if (newClient) {
+                    this.allClients.push(newClient);
+                    this.groupClients.push(newClient);
+                  }
+                }
+              }
+            });
           } else {
-            this.sessionClients.push(newDcClient);
-            this.activeClientId = newDcClient.id;
+            // Individual mode
             this.mode = 'individual';
+            let clientToLoad = this.allClients.find(c => c.id === targetProfile.id);
+            if (!clientToLoad) {
+              clientToLoad = mapProfileToDcClient(targetProfile);
+              if (clientToLoad) this.allClients.push(clientToLoad);
+            }
+            if (clientToLoad) {
+              this.sessionClients.push(clientToLoad);
+              this.activeClientId = clientToLoad.id;
+            }
           }
         }
       }

@@ -83,12 +83,31 @@ function saveClientProfile(client) {
       .toUpperCase()
       .substring(0, 3);
   }
-  
+
+  // Ensure type exists
+  if (!client.type) {
+    client.type = 'individual';
+  }
+
+  // Default subtitle based on type
   if (!client.subtitle) {
-    client.subtitle = 'Open Session Book and Treatment Planning';
+    client.subtitle = client.type === 'group' 
+      ? 'Manage Cohort and Launch Data Collection' 
+      : 'Open Session Book and Treatment Planning';
   }
   
-  profiles.push(client);
+  if (client.type === 'group' && !client.members) {
+    client.members = [];
+  }
+
+  // Update existing or add new
+  const index = profiles.findIndex(c => c.id === client.id);
+  if (index >= 0) {
+    profiles[index] = { ...profiles[index], ...client };
+  } else {
+    profiles.push(client);
+  }
+  
   _clientProfilesCache = profiles;
   localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
   return client;
