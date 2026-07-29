@@ -129,7 +129,7 @@ function initials(name) {
 const DCManager = {
 
   // ── STATE ────────────────────────────────────────────────────
-  mode: 'individual',           // 'individual' | 'group'
+  mode: 'group',                // Always use grid mode!
   allClients: [],               // master roster (demo data)
   sessionClients: [],           // clients added to individual session list
   activeClientId: null,         // currently focused individual client
@@ -246,21 +246,32 @@ const DCManager = {
               }
             });
           } else {
-            // Individual mode
-            this.mode = 'individual';
+            // Force Grid Mode for Individual Sessions too!
+            this.mode = 'group';
+            this.activeGroupName = targetProfile.name || 'Individual Session';
+            
             let clientToLoad = this.allClients.find(c => c.id === targetProfile.id);
             if (!clientToLoad) {
               clientToLoad = mapProfileToDcClient(targetProfile);
               if (clientToLoad) this.allClients.push(clientToLoad);
             }
             if (clientToLoad) {
-              this.sessionClients.push(clientToLoad);
-              this.activeClientId = clientToLoad.id;
+              this.groupClients.push(clientToLoad);
             }
           }
+        } else {
+          // No client ID in URL -> fallback to grid with demo client
+          this.activeGroupName = 'Individual Session';
+          this.groupClients.push(this.allClients[0]); // Jane Doe
         }
+      } else {
+        this.activeGroupName = 'Individual Session';
+        this.groupClients.push(this.allClients[0]);
       }
-    } catch(e) {}
+    } catch(e) {
+        this.activeGroupName = 'Individual Session';
+        if(this.groupClients.length === 0) this.groupClients.push(this.allClients[0]);
+    }
 
     // Start global session clock
     this._startGlobalClock();
