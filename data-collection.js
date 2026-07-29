@@ -1093,15 +1093,8 @@ const DCManager = {
       `;
     }).join('') || '';
 
-    // Wrap PB in the dock layout if they exist
-    const pbDockHtml = pbCardsHtml ? `
-      <footer class="problem-targets-section glass-panel" style="margin-top: auto; padding: 0.75rem; border-radius: 12px; margin-bottom: 0;">
-        <h2 class="section-title text-red" style="margin-bottom: 0.75rem; font-size: 0.9rem;">Problem Behaviors</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem;">
-          ${pbCardsHtml}
-        </div>
-      </footer>
-    ` : '';
+    // We no longer wrap the PBs in a banner dock
+    const pbDockHtml = pbCardsHtml;
 
     return `
       <div class="dc-client-card" id="grp-card-${client.id}">
