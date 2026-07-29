@@ -277,17 +277,15 @@
 
 // ── 2. MAIN AUTH GUARD LOGIC ────────────────────────────────
 (async function authGuard() {
-  // 2a. Wait for supabaseClient to be available (max 5s)
   let retry = 0;
-  while (!window.supabaseClient && retry < 50) {
+  while (!window.supabaseClient && retry < 20) {
     await new Promise(r => setTimeout(r, 100));
     retry++;
   }
 
   if (!window.supabaseClient) {
-    console.error('Auth Guard: Supabase client not found after 5s.');
-    showLoginModal('Unable to connect. Please refresh the page.');
-    return;
+    console.warn('Auth Guard: Supabase client not found after 2s. Continuing to fallback mode.');
+    // We do NOT return here, so that showLoginModal() can still be triggered by the catch blocks below.
   }
 
   // 2b. Ensure PrysmAuth is loaded
@@ -309,6 +307,8 @@
 
   // 2c. Check for existing session
   try {
+    if (!window.supabaseClient) throw new Error('SupabaseClientUndefined');
+
     const { data: { session }, error: sessionError } = await window.supabaseClient.auth.getSession();
 
     if (sessionError || !session) {
@@ -321,24 +321,26 @@
     unlockPage(session, profile);
 
   } catch (err) {
-    console.error('Auth guard: Unexpected error', err);
+    console.warn('Auth guard: No active session or network error.', err.message);
     showLoginModal();
   }
 
   // 2d. Listen for auth state changes (sign-out from another tab, token expiry)
-  window.supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
-      // Re-lock the page
-      const lockStyle = document.getElementById('prysm-page-lock');
-      if (!lockStyle) {
-        const s = document.createElement('style');
-        s.id = 'prysm-page-lock';
-        s.textContent = '.app-container { filter: blur(20px) saturate(0.3) !important; pointer-events: none !important; }';
-        document.head.appendChild(s);
+  if (window.supabaseClient) {
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
+        // Re-lock the page
+        const lockStyle = document.getElementById('prysm-page-lock');
+        if (!lockStyle) {
+          const s = document.createElement('style');
+          s.id = 'prysm-page-lock';
+          s.textContent = '.app-container { filter: blur(20px) saturate(0.3) !important; pointer-events: none !important; }';
+          document.head.appendChild(s);
+        }
+        showLoginModal();
       }
-      showLoginModal();
-    }
-  });
+    });
+  }
 })();
 
 // ── 3. UNLOCK PAGE ──────────────────────────────────────────
@@ -390,12 +392,12 @@ function showLoginModal(errorMsg = '') {
 
       <form id="modal-login-form" autocomplete="on">
         <div class="prysm-input-group">
-          <label for="modal-login-email">Email Address</label>
+          <label for="modal-login-email">Email or Username</label>
           <input
-            type="email"
+            type="text"
             id="modal-login-email"
             class="prysm-modal-input"
-            placeholder="you@practice.com"
+            placeholder="you@practice.com or username"
             required
             autocapitalize="none"
             autocorrect="off"

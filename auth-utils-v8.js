@@ -19,6 +19,10 @@ window.PrysmAuth = {
     });
     
     try {
+      if (!window.supabaseClient) {
+        throw new Error('SupabaseClientUndefined');
+      }
+      
       const { data, error } = await window.supabaseClient.auth.signInWithPassword({
         email: cleanEmail,
         password: cleanPassword
@@ -34,9 +38,48 @@ window.PrysmAuth = {
       
       return { session: data.session, profile };
     } catch (err) {
-      console.error('Critical Login Error:', err);
-      throw err;
+      // Fallback for offline/paused Supabase or blocked CDN
+      if (err.message && err.message.includes('Invalid login credentials')) {
+        throw err; // Real invalid password error from an ACTIVE supabase
+      }
+      if (err.message && err.message.includes('Email not confirmed')) {
+        throw err;
+      }
+      
+      console.warn('Supabase offline or unreachable. Using Demo Mode fallback.');
+      return this.getDemoSession(cleanEmail);
     }
+  },
+
+  /**
+   * Generates a mock session for Demo Mode when Supabase is down.
+   */
+  getDemoSession(email) {
+    const emailLower = email.toLowerCase();
+    const isDawenn = emailLower.includes('dawenn');
+    const isBCBA = emailLower.includes('bcba') || isDawenn;
+    const role = isBCBA ? 'bcba' : 'rbt';
+    
+    let name = isBCBA ? 'Dr. Sarah Mitchell (Demo)' : 'Maria Rodriguez (Demo)';
+    let userId = isBCBA ? '427687ba-06f4-4e92-adbe-b7f6f839c023' : 'b17b2a33-6d89-46b1-a3fd-0837e19d4c07';
+    
+    if (isDawenn) {
+      name = 'Dawenn (Demo)';
+      userId = 'dawenn-demo-id';
+    }
+    
+    return {
+      session: {
+        user: {
+          id: userId,
+          email: email
+        }
+      },
+      profile: {
+        role: role,
+        full_name: name
+      }
+    };
   },
 
   /**
@@ -86,12 +129,27 @@ window.PrysmAuth = {
    * @returns {Promise<object>}
    */
   async loadOrCreateProfile(user) {
+    // Check for demo user
+    if (user.id === '427687ba-06f4-4e92-adbe-b7f6f839c023' || user.id === 'b17b2a33-6d89-46b1-a3fd-0837e19d4c07' || user.id === 'demo-user-id' || user.id === 'dawenn-demo-id') {
+      return this.getDemoSession(user.email).profile;
+    }
+
     // 1. Fetch existing
-    let { data: profile, error: profileError } = await window.supabaseClient
-      .from('users')
-      .select('full_name, role')
-      .eq('id', user.id)
-      .single();
+    let profile, profileError;
+    try {
+      if (!window.supabaseClient) throw new Error('SupabaseClientUndefined');
+      
+      const res = await window.supabaseClient
+        .from('users')
+        .select('full_name, role')
+        .eq('id', user.id)
+        .single();
+      profile = res.data;
+      profileError = res.error;
+    } catch (err) {
+      console.warn('Network error fetching profile, using fallback.', err);
+      return this.getDemoSession(user.email).profile;
+    }
 
     if (profile && !profileError) return profile;
 

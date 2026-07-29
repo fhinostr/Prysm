@@ -22,6 +22,11 @@ UPDATE public.users
 SET full_name = 'Maria Rodriguez', role = 'rbt'
 WHERE id = 'b17b2a33-6d89-46b1-a3fd-0837e19d4c07';
 
+-- Make sure to create dawenn@prysm.com (or username Dawenn) in Supabase Auth first with ID below
+UPDATE public.users
+SET full_name = 'Dawenn', role = 'bcba'
+WHERE id = 'dawenn-demo-id';
+
 -- ─── STEP 2: Insert demo clients ─────────────────────────────
 
 INSERT INTO public.clients (id, clinical_id, full_name, initials, dob, status) VALUES
@@ -52,6 +57,21 @@ SELECT
   id,
   'bcba'
 FROM public.users WHERE email = 'bcba@prysm.com';
+
+-- Dawenn gets BCBA assignments too
+INSERT INTO public.client_assignments (client_id, user_id, role)
+SELECT
+  'a1b2c3d4-0001-4000-a000-000000000001',
+  id,
+  'bcba'
+FROM public.users WHERE email = 'dawenn' OR email = 'dawenn@prysm.com';
+
+INSERT INTO public.client_assignments (client_id, user_id, role)
+SELECT
+  'a1b2c3d4-0002-4000-a000-000000000002',
+  id,
+  'bcba'
+FROM public.users WHERE email = 'dawenn' OR email = 'dawenn@prysm.com';
 
 -- RBT assigned to John Doe and Mia Hernandez (NOT Ethan Brooks — tests RLS)
 INSERT INTO public.client_assignments (client_id, user_id, role)
