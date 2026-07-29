@@ -1299,21 +1299,18 @@
    BATCH DOCK
 ═══════════════════════════════════════════════════════════════ */
 .dc-batch-dock {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.875rem;
   padding: 0.625rem 1.125rem;
   border-radius: 99px;
-  box-shadow: 0 10px 25px rgba(0, 116, 178, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 116, 178, 0.08);
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.8);
+  margin-bottom: 1rem;
 }
 
 .dc-batch-label {
