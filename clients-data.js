@@ -33,6 +33,10 @@ const CLIENT_PROFILES = [
 
 let _clientProfilesCache = null;
 
+function invalidateClientCache() {
+  _clientProfilesCache = null;
+}
+
 function getClientProfiles() {
   if (typeof window === 'undefined') {
     return CLIENT_PROFILES.slice();

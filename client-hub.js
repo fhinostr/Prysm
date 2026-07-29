@@ -140,6 +140,7 @@ function hubAddGroupMember() {
     if (!group.members.includes(clientId)) {
       group.members.push(clientId);
       localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+      if (typeof invalidateClientCache === 'function') invalidateClientCache();
       loadClientProfile();
     }
   }
@@ -151,6 +152,7 @@ function hubRemoveGroupMember(clientId) {
   if (group && group.members) {
     group.members = group.members.filter(id => id !== clientId);
     localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+    if (typeof invalidateClientCache === 'function') invalidateClientCache();
     loadClientProfile();
   }
 }
@@ -164,7 +166,9 @@ function editGroupName() {
   const newName = prompt('Enter new group name:', currentName);
   if (newName && newName.trim() !== '' && newName.trim() !== currentName) {
     group.name = newName.trim();
+    group.initials = newName.trim().split(' ').filter(n => n.length > 0).map(n => n[0]).join('').toUpperCase().substring(0, 3);
     localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+    if (typeof invalidateClientCache === 'function') invalidateClientCache();
     loadClientProfile();
     // also recreate icons
     setTimeout(() => { if (window.lucide) lucide.createIcons(); }, 50);
@@ -219,6 +223,7 @@ function hubBulkCreateGroupMembers() {
   if (addedCount > 0) {
     localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
     textarea.value = '';
+    if (typeof invalidateClientCache === 'function') invalidateClientCache();
     loadClientProfile();
   }
 }
