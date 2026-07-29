@@ -43,25 +43,42 @@ function renderClientDirectory() {
 
 function toggleEntityType(type) {
   const indFields = document.getElementById('individual-fields');
-  const lblName = document.getElementById('label-name-input');
+  const singleNameField = document.getElementById('single-name-field');
+  const bulkFields = document.getElementById('bulk-fields');
   
   const lblInd = document.getElementById('lbl-type-ind');
   const lblGrp = document.getElementById('lbl-type-grp');
+  const lblBulk = document.getElementById('lbl-type-bulk');
+  
+  // Reset all borders
+  lblInd.style.borderColor = 'transparent';
+  lblGrp.style.borderColor = 'transparent';
+  if (lblBulk) lblBulk.style.borderColor = 'transparent';
   
   if (type === 'group') {
     indFields.style.display = 'none';
-    lblName.innerHTML = 'Group Name <span style="font-weight:400; opacity:0.6; font-size:0.75rem;">(Required)</span>';
+    singleNameField.style.display = 'flex';
+    if (bulkFields) bulkFields.style.display = 'none';
+    
+    document.getElementById('label-name-input').innerHTML = 'Group Name <span style="font-weight:400; opacity:0.6; font-size:0.75rem;">(Required)</span>';
     document.getElementById('client-name').placeholder = 'e.g. Social Skills Group A';
     
     lblGrp.style.borderColor = 'var(--color-turquoise-dark)';
-    lblInd.style.borderColor = 'transparent';
+  } else if (type === 'bulk') {
+    indFields.style.display = 'none';
+    singleNameField.style.display = 'none';
+    if (bulkFields) bulkFields.style.display = 'flex';
+    
+    if (lblBulk) lblBulk.style.borderColor = 'var(--color-turquoise-dark)';
   } else {
     indFields.style.display = 'flex';
-    lblName.innerHTML = 'Full Name <span style="font-weight:400; opacity:0.6; font-size:0.75rem;">(Optional)</span>';
+    singleNameField.style.display = 'flex';
+    if (bulkFields) bulkFields.style.display = 'none';
+    
+    document.getElementById('label-name-input').innerHTML = 'Full Name <span style="font-weight:400; opacity:0.6; font-size:0.75rem;">(Optional)</span>';
     document.getElementById('client-name').placeholder = 'e.g. Lucas Smith (or leave blank)';
     
     lblInd.style.borderColor = 'var(--color-turquoise-dark)';
-    lblGrp.style.borderColor = 'transparent';
   }
 }
 
@@ -119,6 +136,44 @@ async function handleCreateClient(event) {
   const clinicalIdVal = document.getElementById('client-clinical-id').value.trim();
   
   const entityType = document.querySelector('input[name="entity-type"]:checked')?.value || 'individual';
+  
+  // ── BULK CREATION INTERCEPT ──
+  if (entityType === 'bulk') {
+    const rawBulk = document.getElementById('bulk-names').value;
+    if (!rawBulk.trim()) {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Save Profile'; }
+      return;
+    }
+    
+    const names = rawBulk.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+    if (names.length === 0) {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Save Profile'; }
+      return;
+    }
+    
+    names.forEach(name => {
+      const newClient = {
+        type: 'individual',
+        name: name,
+        dob: '',
+        caregiver: '—',
+        phone: '—',
+        diagnosis: 'Pending Setup',
+        clinicalId: `CLN-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+      };
+      saveClientProfile(newClient); // Automatically generates id, initials, and saves to localStorage
+    });
+    
+    renderClientDirectory();
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save Profile';
+    }
+    document.getElementById('bulk-names').value = '';
+    closeCreateClientModal();
+    return;
+  }
+  
   const nameVal = rawName || (entityType === 'group' ? `Cohort ${Math.floor(100+Math.random()*900)}` : `Client #${Math.floor(100 + Math.random() * 900)}`);
 
   let newClient;

@@ -86,12 +86,22 @@
               <input type="radio" name="entity-type" value="group" style="accent-color: var(--color-turquoise-dark);">
               <span style="font-size:0.8rem; font-weight:600; color:var(--color-blue-dark);">👥 Group Cohort</span>
             </label>
+            <label id="lbl-type-bulk" style="flex:1; display:flex; align-items:center; gap:0.5rem; padding:0.5rem; background:rgba(255,255,255,0.6); border: 1.5px solid transparent; border-radius:8px; cursor:pointer;" onclick="toggleEntityType('bulk')">
+              <input type="radio" name="entity-type" value="bulk" style="accent-color: var(--color-turquoise-dark);">
+              <span style="font-size:0.8rem; font-weight:600; color:var(--color-blue-dark);">📋 Bulk Generate</span>
+            </label>
           </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+        <div id="single-name-field" style="display: flex; flex-direction: column; gap: 0.35rem;">
           <label id="label-name-input" for="client-name" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">Full Name <span style="font-weight:400; opacity:0.6; font-size:0.75rem;">(Optional)</span></label>
           <input type="text" id="client-name" class="glass-input" placeholder="e.g. Lucas Smith (or leave blank)">
+        </div>
+        
+        <div id="bulk-fields" style="display: none; flex-direction: column; gap: 0.35rem;">
+           <label for="bulk-names" style="font-weight: 600; font-size: 0.85rem; color: var(--color-blue-dark);">List of Names</label>
+           <textarea id="bulk-names" class="glass-input" rows="4" placeholder="Paste a list of names (one per line) or comma-separated..." style="font-size: 0.85rem; resize: vertical;"></textarea>
+           <span style="font-size: 0.75rem; color: var(--color-text-light);">Each name will be created as a separate Individual Profile with default settings.</span>
         </div>
         
         <div id="individual-fields" style="display: flex; flex-direction: column; gap: 1rem;">
