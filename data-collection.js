@@ -1106,7 +1106,7 @@ const DCManager = {
     return `
       <div class="dc-client-card" id="grp-card-${client.id}">
         <!-- Card Header -->
-        <div class="dc-card-header" style="padding: 1rem; margin-bottom: 0;">
+        <div class="dc-card-header glass-panel" style="padding: 1rem; margin-bottom: 1rem; border-radius: 12px;">
           <div class="dc-card-avatar" style="background:${color}">${initStr}</div>
           <div class="dc-card-identity">
             <div class="dc-card-name">${this._esc(client.full_name)}</div>
@@ -1132,7 +1132,7 @@ const DCManager = {
           </button>
         </div>
 
-        <div style="padding: 0 1rem 1rem 1rem; flex: 1; display: flex; flex-direction: column;">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
           ${skillCardsHtml}
           ${pbDockHtml}
         </div>
