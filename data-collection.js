@@ -1220,18 +1220,63 @@ const DCManager = {
     this._renderTargetTags();
   },
 
+  selectClientModeDest(mode) {
+    const indLbl = document.getElementById('lbl-client-mode-ind');
+    const grpLbl = document.getElementById('lbl-client-mode-grp');
+    const indRad = document.getElementById('radio-mode-ind');
+    const grpRad = document.getElementById('radio-mode-grp');
+    if (mode === 'group') {
+      if (indLbl) indLbl.classList.remove('active');
+      if (grpLbl) grpLbl.classList.add('active');
+      if (indRad) indRad.checked = false;
+      if (grpRad) grpRad.checked = true;
+    } else {
+      if (indLbl) indLbl.classList.add('active');
+      if (grpLbl) grpLbl.classList.remove('active');
+      if (indRad) indRad.checked = true;
+      if (grpRad) grpRad.checked = false;
+    }
+  },
+
   submitAddClient(event) {
     event.preventDefault();
-    const name = document.getElementById('dc-client-fullname')?.value.trim();
-    if (!name) { this.toast('Client name is required', 'warning'); return; }
+
+    // Raw input values — all fields optional
+    const rawName = document.getElementById('dc-client-fullname')?.value.trim();
+    const defaultNum = this.allClients.length + 1;
+    const name = rawName || `Client #${defaultNum}`;
 
     const dob = document.getElementById('dc-client-dob')?.value || '';
     const age = dob ? Math.floor((Date.now() - new Date(dob)) / 3.156e10) : 0;
-    const diagnosis = document.getElementById('dc-client-diagnosis')?.value || 'Not specified';
-    const insurance = document.getElementById('dc-client-insurance')?.value || '';
+    const diagnosis = document.getElementById('dc-client-diagnosis')?.value || 'Pending Setup';
+    const insurance = document.getElementById('dc-client-insurance')?.value || 'Unspecified';
     const promptLevel = document.getElementById('dc-client-prompt')?.value || 'Partial Physical';
-    const mastery = document.getElementById('dc-client-mastery')?.value || '';
-    const notes = document.getElementById('dc-client-notes-form')?.value || '';
+    const mastery = document.getElementById('dc-client-mastery')?.value || 'Standard';
+    const notes = document.getElementById('dc-client-notes-form')?.value || 'No initial notes provided.';
+
+    // Mode assignment choice: individual vs group
+    const isGroupMode = document.getElementById('radio-mode-grp')?.checked || false;
+
+    // Targets list — if blank, provide default starter target
+    const initialPrograms = this.targetTags.length > 0
+      ? this.targetTags.map((tag, i) => ({
+          id: `TGT-NEW-${Date.now()}-${i}`,
+          name: tag,
+          promptLevel,
+          correct: 0,
+          total: 0,
+          scores: []
+        }))
+      : [
+          {
+            id: `TGT-NEW-${Date.now()}-0`,
+            name: 'Skill Acquisition Protocol',
+            promptLevel,
+            correct: 0,
+            total: 0,
+            scores: []
+          }
+        ];
 
     const newClient = {
       id: `CLT-${Date.now()}`,
@@ -1241,27 +1286,43 @@ const DCManager = {
       diagnosis,
       insurance,
       status: 'active',
-      programs: this.targetTags.map((tag, i) => ({
-        id: `TGT-NEW-${i}`,
-        name: tag,
-        promptLevel,
-        correct: 0,
-        total: 0,
-        scores: []
-      })),
-      behaviors: [],
-      historyPct: []
+      programs: initialPrograms,
+      behaviors: [
+        { id: `BHV-NEW-${Date.now()}-0`, name: 'Disruption', count: 0 }
+      ],
+      historyPct: [50, 60, 65, 70]
     };
 
+    // Store in master roster
     this.allClients.push(newClient);
-    this.sessionClients.push(newClient);
+
+    // Reset drawer form state
     this.targetTags = [];
     event.target.reset();
     this._renderTargetTags();
+    this.selectClientModeDest('individual'); // reset selector to default
     this.closeClientDrawer();
-    this._renderIndividualClientChips();
-    this.setActiveClient(newClient.id);
-    this.toast(`${name} added to session`, 'success');
+
+    if (isGroupMode) {
+      // Add to group session
+      if (this.groupClients.length >= 5) {
+        this.toast('Group max capacity reached (5). Client added to roster.', 'warning');
+      } else {
+        this.groupClients.push(JSON.parse(JSON.stringify(newClient)));
+        if (!this.activeGroupName) this.activeGroupName = 'Active Group Cohort';
+      }
+      this.switchMode('group');
+      this._renderGroupChips();
+      this._renderGroupGrid();
+      this.toast(`Created ${name} → Group Session launched!`, 'success');
+    } else {
+      // Add to individual focus session
+      this.sessionClients.push(newClient);
+      this.switchMode('individual');
+      this._renderIndividualClientChips();
+      this.setActiveClient(newClient.id);
+      this.toast(`Created ${name} → Individual Session launched!`, 'success');
+    }
   },
 
   // ── MODAL HELPERS ─────────────────────────────────────────────

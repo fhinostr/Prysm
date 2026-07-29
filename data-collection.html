@@ -365,10 +365,33 @@
           New Client Profile
         </div>
         <form id="dc-add-client-form" onsubmit="DCManager.submitAddClient(event)" novalidate>
+          <!-- Session Mode Destination Choice -->
+          <div class="dc-form-group">
+            <label class="dc-form-label">Session Assignment Mode</label>
+            <div class="dc-mode-radio-group">
+              <label class="dc-mode-radio-card active" id="lbl-client-mode-ind" onclick="DCManager.selectClientModeDest('individual')">
+                <input type="radio" name="dc-client-mode-dest" id="radio-mode-ind" value="individual" checked style="display:none;">
+                <i data-lucide="user" style="width:16px;height:16px;color:var(--color-blue-dark);"></i>
+                <div class="dc-mrc-text">
+                  <div class="dc-mrc-title">Individual Focus</div>
+                  <div class="dc-mrc-sub">1-on-1 Trial &amp; ABC Logging</div>
+                </div>
+              </label>
+              <label class="dc-mode-radio-card" id="lbl-client-mode-grp" onclick="DCManager.selectClientModeDest('group')">
+                <input type="radio" name="dc-client-mode-dest" id="radio-mode-grp" value="group" style="display:none;">
+                <i data-lucide="users" style="width:16px;height:16px;color:var(--color-turquoise-dark);"></i>
+                <div class="dc-mrc-text">
+                  <div class="dc-mrc-title">Group / Multi-Client</div>
+                  <div class="dc-mrc-sub">Concurrent Grid Mode</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
           <div class="dc-form-row">
             <div class="dc-form-group dc-fg-2">
-              <label class="dc-form-label" for="dc-client-fullname">Full Name <span class="dc-required">*</span></label>
-              <input type="text" id="dc-client-fullname" class="glass-input" placeholder="First Last" required>
+              <label class="dc-form-label" for="dc-client-fullname">Full Name <span style="font-weight:400;opacity:0.6;font-size:0.68rem;">(Optional — can fill later)</span></label>
+              <input type="text" id="dc-client-fullname" class="glass-input" placeholder="e.g. Alex Morgan (or leave blank)">
             </div>
             <div class="dc-form-group dc-fg-1">
               <label class="dc-form-label" for="dc-client-dob">Date of Birth</label>
@@ -379,7 +402,7 @@
             <div class="dc-form-group dc-fg-1">
               <label class="dc-form-label" for="dc-client-diagnosis">Diagnosis</label>
               <select id="dc-client-diagnosis" class="glass-select">
-                <option value="">Select...</option>
+                <option value="">Select (Optional)...</option>
                 <option>ASD Level 1</option>
                 <option>ASD Level 2</option>
                 <option>ASD Level 3</option>
@@ -390,27 +413,27 @@
             </div>
             <div class="dc-form-group dc-fg-1">
               <label class="dc-form-label" for="dc-client-insurance">Insurance</label>
-              <input type="text" id="dc-client-insurance" class="glass-input" placeholder="Provider">
+              <input type="text" id="dc-client-insurance" class="glass-input" placeholder="Provider (Optional)">
             </div>
           </div>
           <div class="dc-form-group">
             <label class="dc-form-label" for="dc-client-guardian">Guardian Name</label>
-            <input type="text" id="dc-client-guardian" class="glass-input" placeholder="Parent / Guardian">
+            <input type="text" id="dc-client-guardian" class="glass-input" placeholder="Parent / Guardian (Optional)">
           </div>
           <div class="dc-form-row">
             <div class="dc-form-group dc-fg-1">
               <label class="dc-form-label" for="dc-client-guardian-phone">Phone</label>
-              <input type="tel" id="dc-client-guardian-phone" class="glass-input" placeholder="(555) 000-0000">
+              <input type="tel" id="dc-client-guardian-phone" class="glass-input" placeholder="(Optional)">
             </div>
             <div class="dc-form-group dc-fg-1">
               <label class="dc-form-label" for="dc-client-guardian-email">Email</label>
-              <input type="email" id="dc-client-guardian-email" class="glass-input" placeholder="parent@email.com">
+              <input type="email" id="dc-client-guardian-email" class="glass-input" placeholder="(Optional)">
             </div>
           </div>
 
           <div class="dc-form-section-header">
             <i data-lucide="target" style="width:13px;height:13px;"></i>
-            Protocol &amp; Baseline
+            Protocol &amp; Baseline <span style="font-weight:400;opacity:0.6;font-size:0.65rem;text-transform:none;margin-left:0.25rem;">(Optional)</span>
           </div>
           <div class="dc-form-group">
             <label class="dc-form-label">Active Target Programs</label>
@@ -444,7 +467,7 @@
           </div>
           <button type="submit" class="glass-btn btn-primary dc-submit-btn">
             <i data-lucide="user-check" style="width:14px;height:14px;"></i>
-            Save &amp; Add to Session
+            Save &amp; Launch Client
           </button>
         </form>
       </div>

@@ -1994,6 +1994,53 @@
   color: var(--color-blue-dark);
 }
 
+/* ─── MODE RADIO CARDS (ADD CLIENT DRAWER) ───────────────────── */
+.dc-mode-radio-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dc-mode-radio-card {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.4);
+  border: 1.5px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.dc-mode-radio-card:hover {
+  background: rgba(255,255,255,0.7);
+  transform: translateY(-1px);
+}
+
+.dc-mode-radio-card.active {
+  background: rgba(32,178,170,0.12);
+  border-color: var(--color-turquoise-dark);
+  box-shadow: 0 2px 8px rgba(32,178,170,0.15);
+}
+
+.dc-mrc-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dc-mrc-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-blue-dark);
+}
+
+.dc-mrc-sub {
+  font-size: 0.62rem;
+  color: var(--color-text-light);
+}
+
 /* ─── RESPONSIVE ─────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .dc-individual-grid {
