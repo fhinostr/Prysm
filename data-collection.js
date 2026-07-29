@@ -960,52 +960,153 @@ const DCManager = {
   _buildClientCard(client, cardIndex) {
     const initStr = initials(client.full_name);
     const color   = avatarColor(client.full_name);
-    const timer   = this.clientTimers[client.id];
+    
+    // Helper to get meta info
+    const getMeta = (type) => {
+      switch(type) {
+        case 'percent': return { label: '% Correct', icon: 'check-circle' };
+        case 'ta': return { label: 'Task Analysis', icon: 'list-ordered' };
+        case 'interval': return { label: 'Interval', icon: 'clock' };
+        case 'frequency': return { label: 'Frequency', icon: 'plus-circle' };
+        case 'duration': return { label: 'Duration', icon: 'timer' };
+        default: return { label: type || 'Target', icon: 'circle' };
+      }
+    };
 
-    const countersHtml = client.behaviors?.map((b, bi) => `
-      <div class="dc-card-counter-row">
-        <button class="dc-card-tally-btn behavior"
-                onclick="DCManager.groupIncrementBehavior('${client.id}',${bi})"
-                aria-label="Log ${this._esc(b.name)}"
-                id="grp-bhv-btn-${client.id}-${bi}">+1</button>
-        <div class="dc-card-counter-info">
-          <div class="dc-card-counter-name">${this._esc(b.name)}</div>
-          <div class="dc-card-counter-tally" id="grp-bhv-count-${client.id}-${bi}" style="color:var(--color-red);">${b.count}</div>
+    // 1. SKILL TARGETS
+    const skillCardsHtml = client.programs?.map((p, pi) => {
+      const meta = getMeta(p.measurementType || 'percent');
+      
+      let bodyHtml = '';
+      if (p.measurementType === 'ta') {
+        const steps = (p.steps || ['Push the lace through the hole', 'Pull both loops tight']).map((step, index) => `
+          <div class="ta-step-row">
+            <span>${index + 1}. ${this._esc(step)}</span>
+            <div class="ta-prompt-levels">
+              ${['I', 'V', 'M', 'P'].map(level => `<button class="prompt-btn" type="button" title="Score ${level}">${level}</button>`).join('')}
+            </div>
+          </div>
+        `).join('');
+        bodyHtml = `<div class="ta-steps">${steps}</div>`;
+      } else if (p.measurementType === 'interval') {
+        bodyHtml = `
+          <div class="interval-controls">
+            <button class="glass-btn btn-primary" onclick="DCManager.markInterval('${client.id}','yes')" style="margin-bottom: 1rem; width: 100%;">
+              <i data-lucide="play"></i> Start Interval Timer
+            </button>
+          </div>
+          <div class="intervals-grid">
+            ${Array.from({ length: 10 }, (_, index) => `<div class="interval-box">${index + 1}</div>`).join('')}
+          </div>
+        `;
+      } else {
+        // Default to % Correct
+        const pct = p.total === 0 ? '0%' : Math.round((p.correct / p.total) * 100) + '%';
+        bodyHtml = `
+          <div class="pc-layout">
+            <div class="pc-controls">
+              <button class="glass-btn btn-incorrect" onclick="DCManager.groupScoreTarget('${client.id}',${pi},'incorrect')" aria-label="Mark Incorrect">
+                <i data-lucide="x"></i>
+              </button>
+              <button class="glass-btn btn-correct" onclick="DCManager.groupScoreTarget('${client.id}',${pi},'correct')" aria-label="Mark Correct">
+                <i data-lucide="check"></i>
+              </button>
+            </div>
+            <div class="pc-stats">
+              <div class="stat-box">
+                <span class="stat-label">Correct</span>
+                <span class="stat-value" id="grp-tgt-correct-${client.id}-${pi}">${p.correct}</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Total</span>
+                <span class="stat-value" id="grp-tgt-total-${client.id}-${pi}">${p.total}</span>
+              </div>
+              <div class="stat-box stat-highlight">
+                <span class="stat-label">%</span>
+                <span class="stat-value" id="grp-tgt-pct-${client.id}-${pi}">${pct}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <article class="data-card glass-panel" style="margin-bottom: 1rem;">
+          <header class="card-header">
+            <div class="card-title-group">
+              <i data-lucide="${meta.icon}" class="card-icon"></i>
+              <h3>${this._esc(p.name)}</h3>
+            </div>
+            <div class="card-actions">
+              <span class="badge">${meta.label}</span>
+              <button class="btn-info" aria-label="Target Menu"><i data-lucide="more-vertical"></i></button>
+            </div>
+          </header>
+          <div class="card-body">
+            ${bodyHtml}
+          </div>
+        </article>
+      `;
+    }).join('') || '<div class="dc-abc-empty">No skill acquisition targets.</div>';
+
+
+    // 2. PROBLEM BEHAVIORS
+    const pbCardsHtml = client.behaviors?.map((b, bi) => {
+      const meta = getMeta(b.measurementType || 'frequency');
+      
+      let pbBodyHtml = '';
+      if (b.measurementType === 'duration') {
+        pbBodyHtml = `
+          <div class="duration-display">00:00</div>
+          <div class="duration-controls">
+            <button class="glass-btn btn-action" aria-label="Start or stop timer"><i data-lucide="play"></i></button>
+            <button class="glass-btn btn-reset" aria-label="Reset timer"><i data-lucide="rotate-ccw"></i></button>
+          </div>
+        `;
+      } else {
+        pbBodyHtml = `
+          <button class="glass-btn btn-minus" onclick="DCManager.groupDecrementBehavior('${client.id}',${bi})" aria-label="Decrease count">
+            <i data-lucide="minus"></i>
+          </button>
+          <div class="large-counter" id="grp-bhv-count-${client.id}-${bi}">${b.count}</div>
+          <button class="glass-btn btn-plus" id="grp-bhv-btn-${client.id}-${bi}" onclick="DCManager.groupIncrementBehavior('${client.id}',${bi})" aria-label="Increase count">
+            <i data-lucide="plus"></i>
+          </button>
+        `;
+      }
+
+      return `
+        <article class="data-card glass-panel warning-glass" style="margin-bottom: 1rem;">
+          <header class="card-header pb-header">
+            <div class="card-title-group">
+              <h4>${this._esc(b.name)}</h4>
+            </div>
+            <div class="card-actions">
+              <span class="badge badge-warning">${meta.label === 'Frequency' ? 'Freq' : 'Dur'}</span>
+              <button class="btn-info" aria-label="Target Menu"><i data-lucide="more-vertical"></i></button>
+            </div>
+          </header>
+          <div class="card-body pb-layout">
+            ${pbBodyHtml}
+          </div>
+        </article>
+      `;
+    }).join('') || '';
+
+    // Wrap PB in the dock layout if they exist
+    const pbDockHtml = pbCardsHtml ? `
+      <footer class="problem-targets-section glass-panel-dock" style="margin-top: auto; padding: 1rem; border-radius: 12px; margin-bottom: 0;">
+        <h2 class="section-title text-red" style="margin-bottom: 1rem;">Problem Behaviors</h2>
+        <div class="dock-items" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          ${pbCardsHtml}
         </div>
-      </div>
-    `).join('') || '';
-
-    const skillCountersHtml = client.programs?.map((p, pi) => `
-      <div class="dc-card-counter-row">
-        <button class="dc-card-tally-btn"
-                onclick="DCManager.groupScoreTarget('${client.id}',${pi},'correct')"
-                aria-label="Score ${this._esc(p.name)}"
-                id="grp-tgt-btn-${client.id}-${pi}">+1</button>
-        <div class="dc-card-counter-info">
-          <div class="dc-card-counter-name">${this._esc(p.name)}</div>
-          <div class="dc-card-counter-tally" id="grp-tgt-count-${client.id}-${pi}">${p.correct}/${p.total}</div>
-        </div>
-      </div>
-    `).join('') || '';
-
-    const targetsHtml = client.programs?.map((p, pi) => `
-      <div class="dc-card-target-row">
-        <div class="dc-card-target-name" title="${this._esc(p.name)}">${this._esc(p.name)}</div>
-        <button class="dc-card-target-minus"
-                onclick="DCManager.groupScoreTarget('${client.id}',${pi},'incorrect')"
-                aria-label="Incorrect">−</button>
-        <div class="dc-card-target-score" id="grp-score-${client.id}-${pi}">${p.correct}/${p.total}</div>
-        <button class="dc-card-target-plus"
-                onclick="DCManager.groupScoreTarget('${client.id}',${pi},'correct')"
-                aria-label="Correct">+</button>
-      </div>
-    `).join('') || '<div class="dc-abc-empty" style="font-size:0.68rem;">No targets set.</div>';
+      </footer>
+    ` : '';
 
     return `
       <div class="dc-client-card" id="grp-card-${client.id}">
-
         <!-- Card Header -->
-        <div class="dc-card-header">
+        <div class="dc-card-header" style="padding: 1rem; margin-bottom: 0;">
           <div class="dc-card-avatar" style="background:${color}">${initStr}</div>
           <div class="dc-card-identity">
             <div class="dc-card-name">${this._esc(client.full_name)}</div>
@@ -1031,50 +1132,10 @@ const DCManager = {
           </button>
         </div>
 
-        <!-- Skill Acquisition -->
-        ${(skillCountersHtml || targetsHtml) ? `
-        <div class="dc-section-card glass-panel" style="margin: 0 1rem 1rem 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
-          <div class="dc-section-header" style="margin-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 0.5rem;">
-            <div class="dc-section-title-row">
-              <i data-lucide="check-circle-2" style="width:16px;height:16px;color:var(--color-turquoise-dark);"></i>
-              <h2 class="dc-section-title" style="font-size: 0.85rem;">Skill Acquisition</h2>
-            </div>
-          </div>
-          <div class="dc-card-counters" style="margin-bottom: 0.5rem;">
-            ${skillCountersHtml}
-          </div>
-          <div class="dc-card-targets">
-            ${targetsHtml}
-          </div>
-        </div>` : ''}
-
-        <!-- Problem Behaviors -->
-        ${countersHtml ? `
-        <div class="dc-section-card glass-panel dc-behavior-card" style="margin: 0 1rem 1rem 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
-          <div class="dc-section-header" style="margin-bottom: 0.75rem; border-bottom: 1px solid rgba(239,68,68,0.1); padding-bottom: 0.5rem;">
-            <div class="dc-section-title-row">
-              <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--color-red);"></i>
-              <h2 class="dc-section-title" style="color:var(--color-red); font-size: 0.85rem;">Problem Behaviors</h2>
-            </div>
-          </div>
-          <div class="dc-card-counters">
-            ${countersHtml}
-          </div>
-        </div>` : ''}
-
-        <!-- Interval Scoring Row -->
-        <div class="dc-section-card glass-panel" style="margin: 0 1rem 1rem 1rem; padding: 0.75rem; border-radius: 12px; background: white; border: 1px solid rgba(0,0,0,0.05);">
-          <div class="dc-card-interval-row" style="margin: 0;">
-            <div class="dc-card-interval-label">Interval</div>
-            <div class="dc-card-interval-btns">
-              <button class="dc-card-interval-btn" id="grp-int-yes-${client.id}"
-                      onclick="DCManager.markInterval('${client.id}','yes')">✓ Occurred</button>
-              <button class="dc-card-interval-btn" id="grp-int-no-${client.id}"
-                      onclick="DCManager.markInterval('${client.id}','no')">✗ No</button>
-            </div>
-          </div>
+        <div style="padding: 0 1rem 1rem 1rem; flex: 1; display: flex; flex-direction: column;">
+          ${skillCardsHtml}
+          ${pbDockHtml}
         </div>
-
       </div>
     `;
   },
@@ -1095,6 +1156,16 @@ const DCManager = {
     }
     this.toast(`${client.full_name.split(' ')[0]}: ${client.behaviors[behaviorIndex].name} ×${count}`, 'warning');
   },
+  groupDecrementBehavior(clientId, behaviorIndex) {
+    const client = this.groupClients.find(c => c.id === clientId);
+    if (!client || !client.behaviors[behaviorIndex]) return;
+    if (client.behaviors[behaviorIndex].count > 0) {
+      client.behaviors[behaviorIndex].count--;
+      const count = client.behaviors[behaviorIndex].count;
+      const el = document.getElementById(`grp-bhv-count-${clientId}-${behaviorIndex}`);
+      if (el) el.textContent = count;
+    }
+  },
 
   groupScoreTarget(clientId, progIndex, outcome) {
     const client = this.groupClients.find(c => c.id === clientId);
@@ -1102,10 +1173,18 @@ const DCManager = {
     const prog = client.programs[progIndex];
     prog.total++;
     if (outcome === 'correct') prog.correct++;
-    const el = document.getElementById(`grp-score-${clientId}-${progIndex}`);
-    const el2 = document.getElementById(`grp-tgt-count-${clientId}-${progIndex}`);
-    if (el)  el.textContent  = `${prog.correct}/${prog.total}`;
-    if (el2) el2.textContent = `${prog.correct}/${prog.total}`;
+    
+    const pct = prog.total === 0 ? '0%' : Math.round((prog.correct / prog.total) * 100) + '%';
+    
+    const correctEl = document.getElementById(`grp-tgt-correct-${clientId}-${progIndex}`);
+    const totalEl = document.getElementById(`grp-tgt-total-${clientId}-${progIndex}`);
+    const pctEl = document.getElementById(`grp-tgt-pct-${clientId}-${progIndex}`);
+    
+    if (correctEl) correctEl.textContent = prog.correct;
+    if (totalEl) totalEl.textContent = prog.total;
+    if (pctEl) pctEl.textContent = pct;
+    
+    this.toast(`${client.full_name.split(' ')[0]}: ${prog.name} ${outcome}`, outcome === 'correct' ? 'success' : 'info');
   },
 
   markInterval(clientId, value) {
