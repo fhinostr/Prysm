@@ -17,6 +17,46 @@ window.PrysmAuth = {
       const map = { '\u201c': '"', '\u201d': '"', '\u2018': "'", '\u2019': "'" };
       return map[match];
     });
+
+    // ── USERNAME LOGIN: if no "@", resolve to a full email first ──
+    if (!cleanEmail.includes('@')) {
+      const usernameLower = cleanEmail.toLowerCase();
+      // Map of known usernames to their Supabase email + profile
+      const KNOWN_USERS = {
+        'dawenn': { email: 'dawenn@prysm.com', name: 'Dawenn', role: 'bcba', id: 'f372230c-d8d3-4f75-9c11-76c119a26111' },
+        'bcba':   { email: 'bcba@prysm.com',   name: 'Dr. Sarah Mitchell', role: 'bcba', id: '427687ba-06f4-4e92-adbe-b7f6f839c023' },
+        'rbt':    { email: 'rbt@prysm.com',    name: 'Maria Rodriguez',    role: 'rbt',  id: 'b17b2a33-6d89-46b1-a3fd-0837e19d4c07' },
+      };
+      const match = KNOWN_USERS[usernameLower];
+      if (!match) {
+        throw new Error(`Username "${cleanEmail}" not found. Please use your full email address or a recognised username.`);
+      }
+      // Try to authenticate via Supabase using the resolved email
+      try {
+        if (window.supabaseClient) {
+          const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+            email: match.email,
+            password: cleanPassword
+          });
+          if (!error && data?.session) {
+            const profile = await this.loadOrCreateProfile(data.user);
+            return { session: data.session, profile };
+          }
+          if (error && error.message && error.message.includes('Invalid login credentials')) {
+            throw error; // Wrong password — surface the error
+          }
+        }
+      } catch (supaErr) {
+        if (supaErr.message && supaErr.message.includes('Invalid login credentials')) throw supaErr;
+        console.warn('Supabase offline for username login, using Demo Mode.', supaErr.message);
+      }
+      // Supabase down or error → demo session
+      console.info(`Username login (demo): ${cleanEmail} → ${match.role}`);
+      return {
+        session: { user: { id: match.id, email: match.email } },
+        profile: { role: match.role, full_name: match.name }
+      };
+    }
     
     try {
       if (!window.supabaseClient) {
@@ -130,7 +170,7 @@ window.PrysmAuth = {
    */
   async loadOrCreateProfile(user) {
     // Check for demo user
-    if (user.id === '427687ba-06f4-4e92-adbe-b7f6f839c023' || user.id === 'b17b2a33-6d89-46b1-a3fd-0837e19d4c07' || user.id === 'demo-user-id' || user.id === 'dawenn-demo-id') {
+    if (user.id === '427687ba-06f4-4e92-adbe-b7f6f839c023' || user.id === 'b17b2a33-6d89-46b1-a3fd-0837e19d4c07' || user.id === 'demo-user-id' || user.id === 'f372230c-d8d3-4f75-9c11-76c119a26111') {
       return this.getDemoSession(user.email).profile;
     }
 
