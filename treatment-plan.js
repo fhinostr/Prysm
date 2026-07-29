@@ -72,20 +72,26 @@ async function handleCreateClient(event) {
     errorBox.textContent = '';
   }
 
-  const nameVal = document.getElementById('client-name').value.trim();
+  const rawName = document.getElementById('client-name').value.trim();
   const dobVal = document.getElementById('client-dob').value;
   const caregiverVal = document.getElementById('client-caregiver').value.trim();
   const phoneVal = document.getElementById('client-phone').value.trim();
   const diagnosisVal = document.getElementById('client-diagnosis').value;
   const clinicalIdVal = document.getElementById('client-clinical-id').value.trim();
+  
+  // Read mode destination
+  const modeDest = document.querySelector('input[name="client-mode-dest"]:checked')?.value || 'individual';
+
+  // Allow completely blank fields
+  const nameVal = rawName || `Client #${Math.floor(100 + Math.random() * 900)}`;
 
   // Create client model
   const newClient = {
     name: nameVal,
-    dob: dobVal,
+    dob: dobVal || '',
     caregiver: caregiverVal || '—',
     phone: phoneVal || '—',
-    diagnosis: diagnosisVal,
+    diagnosis: diagnosisVal || 'Pending Setup',
     clinicalId: clinicalIdVal || `CLN-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
   };
 
@@ -164,9 +170,19 @@ async function handleCreateClient(event) {
   // Reset button state
   if (submitBtn) {
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Create Client';
+    submitBtn.textContent = 'Save & Launch';
   }
 
   closeCreateClientModal();
-}
 
+  // If Dawenn is logged in, redirect to Data Collection module with chosen mode
+  const user = window.PRYSM_USER || {};
+  if (user.id === 'f372230c-d8d3-4f75-9c11-76c119a26111' || (user.email || '').toLowerCase().includes('dawenn') || user.id === 'dawenn-demo-id') {
+    // Optionally pass the mode and client ID via localStorage so data-collection.js can pick it up on load
+    try {
+      localStorage.setItem('dc_launch_client', newClient.id);
+      localStorage.setItem('dc_launch_mode', typeof modeDest !== 'undefined' ? modeDest : 'individual');
+    } catch (e) {}
+    window.location.href = 'data-collection.html';
+  }
+}

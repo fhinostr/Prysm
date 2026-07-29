@@ -166,13 +166,71 @@ const DCManager = {
       if (saved) this.savedTemplates = JSON.parse(saved);
     } catch(e) {}
 
+    // Check if redirected from main Client Hub with a selected client
+    try {
+      const launchClientId = localStorage.getItem('dc_launch_client');
+      const launchMode = localStorage.getItem('dc_launch_mode');
+      if (launchClientId) {
+        localStorage.removeItem('dc_launch_client');
+        localStorage.removeItem('dc_launch_mode');
+        
+        const storedClients = JSON.parse(localStorage.getItem('prysm_clients') || '[]');
+        const found = storedClients.find(c => c.id === launchClientId);
+        if (found && !this.allClients.some(c => c.id === found.id)) {
+          const newDcClient = {
+            id: found.id,
+            full_name: found.name,
+            date_of_birth: found.dob || '',
+            age: found.dob ? Math.floor((Date.now() - new Date(found.dob)) / 3.156e10) : 0,
+            diagnosis: found.diagnosis || 'Pending Setup',
+            insurance: 'Unspecified',
+            status: 'active',
+            programs: [
+              { id: `TGT-NEW-${Date.now()}-0`, name: 'Skill Acquisition Protocol', promptLevel: 'Partial Physical', correct: 0, total: 0, scores: [] }
+            ],
+            behaviors: [
+              { id: `BHV-NEW-${Date.now()}-0`, name: 'Disruption', count: 0 }
+            ],
+            historyPct: [50, 60, 65, 70]
+          };
+          this.allClients.push(newDcClient);
+
+          if (launchMode === 'group') {
+            this.groupClients.push(newDcClient);
+            this.activeGroupName = 'Active Group Cohort';
+            this.mode = 'group';
+          } else {
+            this.sessionClients.push(newDcClient);
+            this.activeClientId = newDcClient.id;
+            this.mode = 'individual';
+          }
+        }
+      }
+    } catch(e) {}
+
     // Start global session clock
     this._startGlobalClock();
+
+    // Setup initial DOM state based on mode
+    if (this.mode === 'group') {
+      document.getElementById('dc-view-individual').style.display = 'none';
+      document.getElementById('dc-view-group').style.display = 'block';
+      const b2 = document.getElementById('btn-mode-grp');
+      const b1 = document.getElementById('btn-mode-ind');
+      if (b2) b2.classList.add('active');
+      if (b1) b1.classList.remove('active');
+    }
 
     // Populate individual client chips with empty state
     this._renderIndividualClientChips();
     this._renderGroupChips();
     this._renderBatchClientSelect();
+    
+    if (this.mode === 'group') {
+      this._renderGroupGrid();
+    } else if (this.activeClientId) {
+      this.setActiveClient(this.activeClientId);
+    }
 
     // Pre-populate assign list
     this._renderAssignList('');
