@@ -443,13 +443,37 @@ function editTarget(targetId) {
 }
 
 window.openNewTargetModal = function() {
-  editingTargetId = null;
-  resetFormState();
-  if (submitButton) {
-    submitButton.innerHTML = '<i data-lucide="save"></i> Add Target';
-    try { lucide.createIcons(); } catch(e) {}
+  try {
+    editingTargetId = null;
+    
+    // Inline safe form reset
+    if (form) form.reset();
+    
+    const titleEl = document.getElementById('target-modal-title');
+    if (titleEl) titleEl.textContent = 'Create New Target';
+    
+    const domainEl = document.getElementById('target-domain');
+    if (domainEl) domainEl.value = 'skill';
+    
+    if (typeof updateDomainStyling === 'function') updateDomainStyling();
+    
+    const pctRadio = document.querySelector('input[name="measurement"][value="percent"]');
+    if (pctRadio) pctRadio.checked = true;
+    
+    if (typeof toggleDynamicFields === 'function') toggleDynamicFields();
+    
+    if (typeof updateMasteryCriteriaFields === 'function') updateMasteryCriteriaFields('percent');
+    
+    if (submitButton) {
+      submitButton.innerHTML = '<i data-lucide="save"></i> Add Target';
+      try { lucide.createIcons(); } catch(e) {}
+    }
+    
+    openTargetModal();
+  } catch(e) {
+    console.error(e);
+    alert("Error opening modal: " + e.message);
   }
-  openTargetModal();
 };
 
 function openTargetModal() {
