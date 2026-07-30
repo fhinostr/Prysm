@@ -89,32 +89,6 @@
           </div>
         </div>
 
-        <!-- Batch Action Dock -->
-        <div class="dc-batch-dock glass-panel" id="dc-batch-dock" style="display:none; margin-bottom: 0.5rem; padding: 0.5rem 1rem;">
-          <div class="dc-batch-label">
-            <i data-lucide="zap" style="width:14px;height:14px;"></i> Batch
-          </div>
-          <div class="dc-batch-actions">
-            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('meal')">
-              <i data-lucide="utensils" style="width:14px;height:14px;"></i> Mealtime
-            </button>
-            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('transition')">
-              <i data-lucide="arrow-right-left" style="width:14px;height:14px;"></i> Transition
-            </button>
-            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('break')">
-              <i data-lucide="coffee" style="width:14px;height:14px;"></i> Break
-            </button>
-            <button class="dc-batch-btn" onclick="DCManager.batchLogEvent('prompt_check')">
-              <i data-lucide="list-checks" style="width:14px;height:14px;"></i> Prompt Check
-            </button>
-            <button class="dc-batch-btn dc-batch-btn-note" onclick="DCManager.openBatchNoteModal()">
-              <i data-lucide="pencil" style="width:14px;height:14px;"></i> Group Note
-            </button>
-          </div>
-          <button class="glass-btn btn-sm dc-batch-end-btn" onclick="DCManager.endGroupSession()">
-            <i data-lucide="square" style="width:13px;height:13px;"></i> End Session
-          </button>
-        </div>
 
         <!-- 5-Client Concurrent Grid -->
         <div class="dc-group-workspace" id="dc-group-workspace" style="display:none;">
