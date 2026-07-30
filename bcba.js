@@ -443,9 +443,6 @@ function editTarget(targetId) {
 }
 
 window.openNewTargetModal = function() {
-  document.body.insertAdjacentHTML('beforeend', '<div id="debug-box" style="position:fixed; bottom:20px; right:20px; background:yellow; color:black; padding:10px; z-index:10000; font-weight:bold;">BUTTON CLICKED! CHECKING ERRORS...</div>');
-  setTimeout(() => { const db = document.getElementById('debug-box'); if(db) db.remove(); }, 2500);
-  
   try {
     editingTargetId = null;
     
