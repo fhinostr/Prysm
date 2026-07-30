@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeMobileMenu();
   registerServiceWorker();
   initializeAuthUI();
+  initializeProfileDropdown();
 });
 
 function initializeAuthUI() {
@@ -213,4 +214,22 @@ function updateToggleSlider(toggleBar, link) {
   slider._flowTimer = window.setTimeout(() => {
     slider.classList.remove('is-flowing');
   }, 520);
+}
+
+function initializeProfileDropdown() {
+  const btn = document.getElementById('profile-dropdown-btn');
+  const menu = document.getElementById('profile-dropdown-menu');
+  
+  if (btn && menu) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'flex' : 'none';
+    });
+    
+    document.addEventListener('click', (e) => {
+      if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = 'none';
+      }
+    });
+  }
 }

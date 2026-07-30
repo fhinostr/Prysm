@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contacts | Liquid Glass</title>
-  <meta name="description" content="Staff directory including BCBAs and RBTs.">
+  <title>My Profile | Liquid Glass</title>
+  <meta name="description" content="Personalize your user profile.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -21,13 +21,14 @@
   <main class="app-container home-container">
     <header class="app-header glass-panel">
       <div class="brand-chip"><img src="assets/prysm-logo-new.png" alt="Prysm" class="brand-chip-logo-horizontal"></div>
-      <nav class="site-toggle" aria-label="Site Navigation"><a href="index.html" class="site-toggle-link">Home</a>
+      <nav class="site-toggle" aria-label="Site Navigation">
+        <a href="index.html" class="site-toggle-link">Home</a>
         <a href="treatment-plan.html" class="site-toggle-link">Clients</a>
         <a href="billing.html" class="site-toggle-link">Billing</a>
         <a href="files.html" class="site-toggle-link">Files</a>
-        <a href="contacts.html" class="site-toggle-link active" aria-current="page">Staff</a>
+        <a href="contacts.html" class="site-toggle-link">Staff</a>
       </nav>
-                  <div class="header-right" style="display: flex; align-items: center; gap: 0.75rem;">
+      <div class="header-right" style="display: flex; align-items: center; gap: 0.75rem;">
         <a href="login.html" id="auth-sign-in-btn" class="glass-btn btn-sm" style="display: none; white-space: nowrap;">Sign In</a>
         <div id="auth-profile-menu" style="display: none; position: relative;">
           <button id="profile-dropdown-btn" class="glass-btn" style="padding: 0.25rem 0.5rem; display: flex; align-items: center; gap: 0.5rem; border-radius: 20px; cursor: pointer;">
@@ -52,47 +53,54 @@
 
     <section class="hub-hero glass-panel">
       <div>
-        <span class="hero-eyebrow">Contacts</span>
-        <h1>Staff Directory</h1>
+        <span class="hero-eyebrow">Personalize</span>
+        <h1>My Profile</h1>
       </div>
     </section>
 
-    <div class="subnav-shell">
-      <nav class="view-toggle contacts-toggle" aria-label="Staff Categories">
-        <button type="button" class="view-toggle-link active contacts-tab-btn" data-contacts-tab="bcbas" onclick="switchContactsTab('bcbas')">BCBAs</button>
-        <button type="button" class="view-toggle-link contacts-tab-btn" data-contacts-tab="rbts" onclick="switchContactsTab('rbts')">RBTs</button>
-        
-      </nav>
-    </div>
+    <section class="client-list-shell" style="max-width: 600px; margin: 2rem auto;">
+      <article class="glass-panel" style="padding: 2rem;">
+        <form id="profile-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+          
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center; margin-bottom: 1rem;">
+             <div id="profile-avatar-preview" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--color-blue), var(--color-turquoise)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 2.5rem; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">?</div>
+             <p style="font-size: 0.9rem; color: var(--text-muted);">Avatar updates automatically based on email</p>
+          </div>
 
-    <section class="client-list-shell">
-      <article class="client-list-card glass-panel contacts-tab-pane active" data-contacts-pane="bcbas">
-        <div class="client-list-header">
-          <h2>BCBAs</h2>
-          <span class="badge" id="bcba-count-badge">0</span>
-        </div>
-        <div id="bcba-list"></div>
-      </article>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label for="profile-email" style="font-weight: 600; font-size: 0.9rem;">Email Address</label>
+            <input type="email" id="profile-email" disabled style="padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.02); color: var(--text-muted); cursor: not-allowed; font-family: inherit;">
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label for="profile-name" style="font-weight: 600; font-size: 0.9rem;">Full Name</label>
+            <input type="text" id="profile-name" required placeholder="Enter your full name" style="padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit; font-size: 1rem; transition: border-color 0.2s;">
+          </div>
 
-      <article class="client-list-card glass-panel contacts-tab-pane" data-contacts-pane="rbts" style="display: none;">
-        <div class="client-list-header">
-          <h2>RBTs</h2>
-          <span class="badge" id="rbt-count-badge">0</span>
-        </div>
-        <div id="rbt-list"></div>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label for="profile-role" style="font-weight: 600; font-size: 0.9rem;">Role</label>
+            <input type="text" id="profile-role" disabled style="padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.02); color: var(--text-muted); cursor: not-allowed; font-family: inherit; text-transform: uppercase;">
+          </div>
+
+          <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+            <button type="submit" class="glass-btn primary" id="save-profile-btn" style="padding: 0.75rem 2rem;">
+              <i data-lucide="save"></i> Save Changes
+            </button>
+          </div>
+          <div id="profile-message" style="display: none; padding: 1rem; border-radius: 8px; text-align: center; font-weight: 500;"></div>
+        </form>
       </article>
     </section>
 
   </main>
 
-  <!-- Supabase Auth Integration -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js?v=12"></script>
   <script src="auth-utils-v8.js?v=12"></script>
   <script src="auth-guard-v9.js?v=12"></script>
   <script src="supabase-data.js"></script>
   <script src="nav.js"></script>
-  <script src="contacts.js"></script>
+  <script src="profile.js"></script>
   <script>
     lucide.createIcons();
   </script>
