@@ -99,9 +99,8 @@ const DCManager = {
             
             let allTargets = [];
             if (typeof loadProgramData === 'function') {
-              const memberProgramsData = loadProgramData(p.id).targets;
-              const groupProgramsData = targetProfile.type === 'group' ? loadProgramData(targetProfile.id).targets : [];
-              allTargets = [...memberProgramsData, ...groupProgramsData];
+              const memberProgramsData = loadProgramData(p.id).targets || [];
+              allTargets = [...memberProgramsData];
             }
             
             const uniqueTargets = Array.from(new Map(allTargets.map(item => [item.id, item])).values());
@@ -123,9 +122,7 @@ const DCManager = {
               measurementType: t.measurementType
             }));
 
-            if (programs.length === 0) programs.push({ id: `TGT-NEW-${Date.now()}-${Math.random()}`, name: 'Skill Acquisition Protocol', promptLevel: 'Partial Physical', correct: 0, total: 0, scores: [] });
-            if (behaviors.length === 0) behaviors.push({ id: `BHV-NEW-${Date.now()}-${Math.random()}`, name: 'Disruption', count: 0 });
-
+            // Removed dummy targets so empty profiles stay empty
             return {
               id: p.id,
               full_name: p.name,
