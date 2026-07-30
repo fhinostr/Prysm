@@ -15,96 +15,8 @@ const DAWENN_AUTH_ID        = 'f372230c-d8d3-4f75-9c11-76c119a26111';
 const DAWENN_DEMO_ID        = 'dawenn-demo-id';
 
 // ── DEMO DATA ─────────────────────────────────────────────────
-const DEMO_CLIENTS = [
-  {
-    id: 'CLT-001',
-    full_name: 'Ethan Rodriguez',
-    date_of_birth: '2018-03-15',
-    age: 7,
-    diagnosis: 'ASD Level 2',
-    insurance: 'Blue Cross Blue Shield',
-    status: 'active',
-    programs: [
-      { id: 'TGT-A', name: 'Manding for Items', promptLevel: 'Partial Physical', scores: [], correct: 0, total: 0 },
-      { id: 'TGT-B', name: 'Following 2-Step Directions', promptLevel: 'Verbal', scores: [], correct: 0, total: 0 },
-      { id: 'TGT-C', name: 'Greeting Peers', promptLevel: 'Gestural', scores: [], correct: 0, total: 0 },
-    ],
-    behaviors: [
-      { id: 'BHV-A', name: 'Aggression', count: 0 },
-      { id: 'BHV-B', name: 'Elopement', count: 0 },
-    ],
-    historyPct: [62, 70, 75, 80, 78]
-  },
-  {
-    id: 'CLT-002',
-    full_name: 'Sophia Chen',
-    date_of_birth: '2017-06-22',
-    age: 8,
-    diagnosis: 'ASD Level 1',
-    insurance: 'Aetna',
-    status: 'active',
-    programs: [
-      { id: 'TGT-D', name: 'Conversation Turn-Taking', promptLevel: 'Verbal', scores: [], correct: 0, total: 0 },
-      { id: 'TGT-E', name: 'Requesting Break', promptLevel: 'Independent', scores: [], correct: 0, total: 0 },
-    ],
-    behaviors: [
-      { id: 'BHV-C', name: 'Self-Injury', count: 0 },
-    ],
-    historyPct: [55, 60, 72, 68, 80]
-  },
-  {
-    id: 'CLT-003',
-    full_name: 'Liam Thompson',
-    date_of_birth: '2019-11-08',
-    age: 5,
-    diagnosis: 'ASD Level 3',
-    insurance: 'United Health',
-    status: 'active',
-    programs: [
-      { id: 'TGT-F', name: 'Eye Contact on Demand', promptLevel: 'Full Physical', scores: [], correct: 0, total: 0 },
-      { id: 'TGT-G', name: 'Tolerating Touch', promptLevel: 'Partial Physical', scores: [], correct: 0, total: 0 },
-    ],
-    behaviors: [
-      { id: 'BHV-D', name: 'Tantrum', count: 0 },
-      { id: 'BHV-E', name: 'Property Destruction', count: 0 },
-    ],
-    historyPct: [30, 38, 42, 50, 55]
-  },
-  {
-    id: 'CLT-004',
-    full_name: 'Mia Johnson',
-    date_of_birth: '2016-02-14',
-    age: 9,
-    diagnosis: 'ADHD',
-    insurance: 'Cigna',
-    status: 'active',
-    programs: [
-      { id: 'TGT-H', name: 'On-Task Behavior', promptLevel: 'Verbal', scores: [], correct: 0, total: 0 },
-      { id: 'TGT-I', name: 'Raising Hand', promptLevel: 'Gestural', scores: [], correct: 0, total: 0 },
-    ],
-    behaviors: [
-      { id: 'BHV-F', name: 'Out of Seat', count: 0 },
-    ],
-    historyPct: [45, 55, 60, 70, 75]
-  },
-  {
-    id: 'CLT-005',
-    full_name: 'Noah Williams',
-    date_of_birth: '2020-05-30',
-    age: 4,
-    diagnosis: 'ASD Level 2',
-    insurance: 'Medicaid',
-    status: 'active',
-    programs: [
-      { id: 'TGT-J', name: 'Imitation: Motor', promptLevel: 'Model', scores: [], correct: 0, total: 0 },
-      { id: 'TGT-K', name: 'Attending to Name', promptLevel: 'Partial Physical', scores: [], correct: 0, total: 0 },
-    ],
-    behaviors: [
-      { id: 'BHV-G', name: 'Aggression', count: 0 },
-    ],
-    historyPct: [20, 30, 40, 48, 55]
-  }
-];
+const DEMO_CLIENTS = [];
+
 
 // ── AVATAR COLORS ─────────────────────────────────────────────
 const AVATAR_COLORS = [
@@ -166,10 +78,14 @@ const DCManager = {
       if (saved) this.savedTemplates = JSON.parse(saved);
     } catch(e) {}
 
-    // Check if redirected from main Client Hub with a selected client in the URL
+    // Check if redirected from main Client Hub with a selected client in the URL or local storage
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const launchClientId = urlParams.get('client');
+      let launchClientId = urlParams.get('client');
+      if (!launchClientId) {
+        launchClientId = localStorage.getItem('dc_launch_client');
+      }
+
       
       if (launchClientId) {
         
@@ -262,15 +178,15 @@ const DCManager = {
         } else {
           // No client ID in URL -> fallback to grid with demo client
           this.activeGroupName = 'Individual Session';
-          this.groupClients.push(this.allClients[0]); // Jane Doe
+          if (this.allClients.length > 0) this.groupClients.push(this.allClients[0]);
         }
       } else {
         this.activeGroupName = 'Individual Session';
-        this.groupClients.push(this.allClients[0]);
+        if (this.allClients.length > 0) this.groupClients.push(this.allClients[0]);
       }
     } catch(e) {
         this.activeGroupName = 'Individual Session';
-        if(this.groupClients.length === 0) this.groupClients.push(this.allClients[0]);
+        if(this.groupClients.length === 0 && this.allClients.length > 0) this.groupClients.push(this.allClients[0]);
     }
 
     // Start global session clock
