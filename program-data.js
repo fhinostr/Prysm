@@ -122,7 +122,7 @@ function getDefaultMasteryCriteria(target) {
 }
 
 function normalizeProgramData(program) {
-  if (!program || !Array.isArray(program.targets) || program.targets.length === 0) {
+  if (!program || !Array.isArray(program.targets)) {
     return cloneProgramData(DEFAULT_PROGRAM);
   }
 

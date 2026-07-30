@@ -442,6 +442,16 @@ function editTarget(targetId) {
   openTargetModal();
 }
 
+window.openNewTargetModal = function() {
+  editingTargetId = null;
+  resetFormState();
+  if (submitButton) {
+    submitButton.innerHTML = '<i data-lucide="save"></i> Add Target';
+    try { lucide.createIcons(); } catch(e) {}
+  }
+  openTargetModal();
+};
+
 function openTargetModal() {
   try {
     const groupContainer = document.getElementById('group-assignment-container');
