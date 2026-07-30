@@ -14,6 +14,7 @@ function renderClientDirectory() {
 
   listContainer.innerHTML = clients.map(client => {
     if (client.type === 'group') {
+      return `
         <div class="client-group-wrapper" style="margin-bottom: 0.5rem;">
           <div class="client-row" style="background: rgba(32,178,170,0.08); border: 1px solid rgba(32,178,170,0.2); text-decoration: none; color: inherit; padding-right: 0.5rem;">
             <a href="client-hub.html?client=${encodeURIComponent(client.id)}" style="display: flex; flex: 1; align-items: center; text-decoration: none; color: inherit;">

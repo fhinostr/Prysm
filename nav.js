@@ -18,7 +18,7 @@ function initializeAuthUI() {
   }
 }
 
-function updateAuthUI(session) {
+async function updateAuthUI(session) {
   const authProfile = document.getElementById('auth-profile-menu');
   const authSignIn = document.getElementById('auth-sign-in-btn');
   
@@ -33,7 +33,18 @@ function updateAuthUI(session) {
         if (avatar) avatar.textContent = email.charAt(0).toUpperCase();
         if (nameEl) {
           nameEl.textContent = email.split('@')[0];
-          nameEl.style.display = 'inline'; // Show name on larger screens if desired, but we keep it hidden by default in CSS if space is tight.
+          nameEl.style.display = 'inline';
+          
+          if (window.PrysmAuth && typeof window.PrysmAuth.loadOrCreateProfile === 'function') {
+            try {
+              const profile = await window.PrysmAuth.loadOrCreateProfile(session.user);
+              if (profile && profile.full_name) {
+                nameEl.textContent = profile.full_name;
+              }
+            } catch (err) {
+              console.warn('Failed to load profile for nav', err);
+            }
+          }
         }
       }
     }
