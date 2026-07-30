@@ -14,7 +14,9 @@ const targetRuntimeState = {};
 initializeRbtView();
 
 function initializeRbtView() {
-  const program = loadProgramData();
+  const urlParams = new URLSearchParams(window.location.search);
+  const clientId = urlParams.get('client');
+  const program = loadProgramData(clientId);
   if (clientNameEl) {
     clientNameEl.textContent = `Client: ${program.clientName}`;
   }
