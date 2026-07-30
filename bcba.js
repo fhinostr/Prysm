@@ -220,6 +220,10 @@ function renderLibrary() {
   }
 
   try { lucide.createIcons(); } catch(e) {}
+  
+  if (typeof initializeRbtView === 'function') {
+    initializeRbtView();
+  }
 }
 
 function toggleCategory(catId) {
