@@ -14,15 +14,38 @@ function renderClientDirectory() {
 
   listContainer.innerHTML = clients.map(client => {
     if (client.type === 'group') {
-      return `
-        <a href="client-hub.html?client=${encodeURIComponent(client.id)}" class="client-row" style="background: rgba(32,178,170,0.08); border: 1px solid rgba(32,178,170,0.2); text-decoration: none; color: inherit;">
-          <div class="client-avatar" style="background: linear-gradient(135deg, var(--color-turquoise), #0288d1);"><i data-lucide="users" style="width:20px; color:white;"></i></div>
-          <div class="client-copy">
-            <strong>${escapeHtml(client.name)}</strong>
-            <span style="color: var(--color-turquoise-dark);">${(client.members || []).length} Members — ${escapeHtml(client.subtitle)}</span>
+        <div class="client-group-wrapper" style="margin-bottom: 0.5rem;">
+          <div class="client-row" style="background: rgba(32,178,170,0.08); border: 1px solid rgba(32,178,170,0.2); text-decoration: none; color: inherit; padding-right: 0.5rem;">
+            <a href="client-hub.html?client=${encodeURIComponent(client.id)}" style="display: flex; flex: 1; align-items: center; text-decoration: none; color: inherit;">
+              <div class="client-avatar" style="background: linear-gradient(135deg, var(--color-turquoise), #0288d1); margin-right: 1rem;"><i data-lucide="users" style="width:20px; color:white;"></i></div>
+              <div class="client-copy">
+                <strong>${escapeHtml(client.name)}</strong>
+                <span style="color: var(--color-turquoise-dark);">${(client.members || []).length} Members — ${escapeHtml(client.subtitle)}</span>
+              </div>
+            </a>
+            <div style="display: flex; align-items: center; gap: 0.25rem;">
+              <a href="client-hub.html?client=${encodeURIComponent(client.id)}" class="glass-btn btn-sm" style="padding: 0.4rem; color: var(--color-turquoise-dark);"><i data-lucide="chevron-right" style="width: 16px;"></i></a>
+              <button onclick="toggleGroupMembers('${client.id}')" class="glass-btn btn-sm" style="padding: 0.4rem; color: var(--color-turquoise-dark);" title="View Members">
+                <i data-lucide="chevron-down" id="group-icon-${client.id}" style="width: 16px; transition: transform 0.2s;"></i>
+              </button>
+            </div>
           </div>
-          <i data-lucide="chevron-right" style="color: var(--color-turquoise-dark);"></i>
-        </a>
+          <div id="group-members-${client.id}" style="display: none; padding-left: 1.5rem; margin-top: 0.25rem; flex-direction: column; gap: 0.25rem;">
+            ${(client.members || []).length > 0 ? (client.members || []).map(memberId => {
+              const member = clients.find(c => c.id === memberId);
+              if (!member) return '';
+              return `
+                <a href="client-hub.html?client=${encodeURIComponent(member.id)}" class="client-row" style="padding: 0.5rem 1rem; border: none; border-left: 2px solid var(--color-turquoise-dark); background: rgba(0,0,0,0.02); border-radius: 0 8px 8px 0; margin-bottom: 0; min-height: auto;">
+                  <div class="client-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; margin-right: 0.75rem;">${member.initials}</div>
+                  <div class="client-copy" style="font-size: 0.9rem;">
+                    <strong>${escapeHtml(member.name)}</strong>
+                  </div>
+                  <i data-lucide="chevron-right" style="width: 14px; opacity: 0.5;"></i>
+                </a>
+              `;
+            }).join('') : '<div style="padding: 0.5rem 1rem; font-size: 0.85rem; color: var(--text-muted);">No members in this group.</div>'}
+          </div>
+        </div>
       `;
     } else {
       return `
@@ -300,6 +323,20 @@ async function handleCreateClient(event) {
       } catch (e) {}
       window.location.href = 'data-collection.html';
     }
+  }
+}
+
+function toggleGroupMembers(clientId) {
+  const container = document.getElementById('group-members-' + clientId);
+  const icon = document.getElementById('group-icon-' + clientId);
+  if (!container) return;
+
+  if (container.style.display === 'none') {
+    container.style.display = 'flex';
+    if (icon) icon.style.transform = 'rotate(180deg)';
+  } else {
+    container.style.display = 'none';
+    if (icon) icon.style.transform = 'rotate(0deg)';
   }
 }
 

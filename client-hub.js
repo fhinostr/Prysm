@@ -476,3 +476,14 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+function hubDeleteProfile() {
+  if (confirm("Are you sure you want to delete this profile? This action cannot be undone.")) {
+    if (typeof deleteClientProfile === 'function') {
+      deleteClientProfile(_hubClientId);
+      window.location.href = 'treatment-plan.html';
+    } else {
+      console.error("deleteClientProfile is not defined");
+    }
+  }
+}

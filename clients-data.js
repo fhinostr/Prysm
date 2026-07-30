@@ -116,3 +116,19 @@ function saveClientProfile(client) {
   localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
   return client;
 }
+
+function deleteClientProfile(clientId) {
+  let profiles = getClientProfiles();
+  profiles = profiles.filter(c => c.id !== clientId);
+  
+  // Also remove this client from any group members arrays
+  profiles = profiles.map(p => {
+    if (p.type === 'group' && p.members && p.members.includes(clientId)) {
+      p.members = p.members.filter(id => id !== clientId);
+    }
+    return p;
+  });
+
+  _clientProfilesCache = profiles;
+  localStorage.setItem('prysm_client_profiles', JSON.stringify(profiles));
+}
