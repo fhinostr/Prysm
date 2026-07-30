@@ -10,9 +10,21 @@ function renderClientDirectory() {
   if (!listContainer || !countBadge) return;
 
   const clients = getClientProfiles();
-  countBadge.textContent = `${clients.length} Total Profiles`;
+  
+  // Find all client IDs that belong to any group
+  const groupedClientIds = new Set();
+  clients.forEach(c => {
+    if (c.type === 'group' && Array.isArray(c.members)) {
+      c.members.forEach(memberId => groupedClientIds.add(memberId));
+    }
+  });
 
-  listContainer.innerHTML = clients.map(client => {
+  // Filter top-level clients
+  const topLevelClients = clients.filter(c => c.type === 'group' || !groupedClientIds.has(c.id));
+  
+  countBadge.textContent = `${topLevelClients.length} Profiles`;
+
+  listContainer.innerHTML = topLevelClients.map(client => {
     if (client.type === 'group') {
       return `
         <div class="client-group-wrapper" style="margin-bottom: 0.5rem;">
