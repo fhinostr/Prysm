@@ -107,9 +107,9 @@ function renderHubGroupMembers(group) {
       if(!p) return '';
       return `
         <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.7); padding:0.4rem 0.5rem; border-radius:8px; border: 1px solid rgba(32,178,170,0.2);">
-          <div style="display:flex; align-items:center; gap:0.5rem;">
+          <div onclick="window.location.href='client-hub.html?client=${p.id}'" style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;" title="Go to ${escapeHtml(p.name)}'s Hub">
             <div style="width:20px; height:20px; border-radius:50%; background:var(--color-blue); color:white; display:flex; align-items:center; justify-content:center; font-size:0.5rem; font-weight:bold;">${p.initials}</div>
-            <span style="font-size:0.75rem; font-weight:600; color:var(--color-blue-dark);">${escapeHtml(p.name)}</span>
+            <span style="font-size:0.75rem; font-weight:600; color:var(--color-blue-dark); text-decoration:underline; text-decoration-color:transparent; transition:text-decoration-color 0.2s;" onmouseover="this.style.textDecorationColor='var(--color-blue-dark)'" onmouseout="this.style.textDecorationColor='transparent'">${escapeHtml(p.name)}</span>
           </div>
           <button class="btn-icon" onclick="hubRemoveGroupMember('${p.id}')" style="background:none; border:none; cursor:pointer; color:var(--color-red); padding:0.1rem;">
             <i data-lucide="x" style="width:12px;"></i>
